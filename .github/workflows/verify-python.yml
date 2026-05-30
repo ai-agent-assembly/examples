@@ -30,6 +30,25 @@ jobs:
       - name: Run smoke tests
         run: uv run pytest tests/ -v
 
+  llamaindex-tool-policy:
+    name: llamaindex-tool-policy
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: python/llamaindex-tool-policy
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+
+      - name: Install dependencies
+        run: uv sync --extra dev
+
+      - name: Run smoke tests
+        run: uv run pytest tests/ -v
+
   openai-agents-sdk:
     name: openai-agents-sdk
     runs-on: ubuntu-latest
