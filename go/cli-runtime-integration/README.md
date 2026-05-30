@@ -71,8 +71,9 @@ bash scripts/run-with-aasm.sh
 
 ```text
 [runtime] probing for aasm sidecar...
-[runtime] sidecar started at 127.0.0.1:7878
-[runtime] connecting to local sidecar via assembly.Init
+[runtime] sidecar ready at 127.0.0.1:7878
+[runtime] sidecar is running — governance calls will reach 127.0.0.1:7878
+[runtime] using offline mock client for this example (swap for real transport in production)
 [assembly] governance: ALLOWED  tool=echo input="Hello from the CLI runtime!"
 [assembly] tool result: Hello from the CLI runtime!
 ```
@@ -92,7 +93,8 @@ without needing `aasm` installed.
    if the sidecar is not already running, finds and spawns the `aasm` binary.
 2. If `assembly.ErrBinaryNotFound` is returned, the example logs the install hint
    and falls back to the offline mock governance client.
-3. If the sidecar starts, `assembly.Init()` connects to it at `http://127.0.0.1:7878`.
+3. If the sidecar is reachable, `buildGovernanceClient` logs the sidecar address and returns
+   the offline mock client. Swap this for a real transport-backed `GovernanceClient` in production.
 4. A governed `echoTool` call is made through `assembly.WrapTools`.
 5. `scripts/run-with-aasm.sh` handles sidecar startup orchestration for CI environments.
 
