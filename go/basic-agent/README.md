@@ -18,8 +18,8 @@ Minimal Go example showing how to initialize the Agent Assembly Go SDK and execu
 | Agent Assembly Go SDK | v0.0.1-alpha.2 |
 
 A live Agent Assembly gateway is **not required** to run this example. It uses an
-offline mock `GovernanceClient` by default. Set `ASSEMBLY_GATEWAY_URL` and
-`ASSEMBLY_API_KEY` to connect to a real gateway.
+offline mock `GovernanceClient` by default. To use a real gateway, replace `mockClient`
+in `policy.go` with a transport-backed `GovernanceClient` implementation.
 
 ## Setup
 
@@ -35,18 +35,10 @@ go mod download
 go run .
 ```
 
-### With a real gateway
-
-```bash
-export ASSEMBLY_GATEWAY_URL=https://your-gateway.example.com
-export ASSEMBLY_API_KEY=your-api-key
-go run .
-```
-
-## Expected output (offline mock)
+## Expected output
 
 ```text
-[assembly] no gateway configured — using offline mock governance client
+[assembly] using offline mock governance client
 [assembly] governance: ALLOWED  tool=echo input="Hello, Agent Assembly!"
 [assembly] tool result: Hello, Agent Assembly!
 ```
@@ -72,8 +64,8 @@ Tests run entirely offline using the mock client — no gateway required.
 | Problem | Fix |
 |---|---|
 | `go: module github.com/AI-agent-assembly/go-sdk: not found` | Run `go mod download` or check network access to `proxy.golang.org`. |
-| `init requires a running sidecar` | Only occurs when using `assembly.Init()` with an explicit gateway URL. This example avoids `Init()` — ignore if using mock mode. |
-| Unexpected denial | Check that `ASSEMBLY_GATEWAY_URL` is not set to an endpoint that has deny policies for the `echo` tool. |
+| `init requires a running sidecar` | Only occurs when `assembly.Init()` is called with an explicit gateway URL. This example uses the mock client only — `Init()` is never called. |
+| Unexpected denial | Verify you are not running a modified `policy.go` that returns `Denied: true`. |
 
 ## Go SDK docs
 
