@@ -1,34 +1,53 @@
 # Go Examples
 
-This directory contains runnable Go examples showing how to integrate Agent Assembly with Go-based AI agent applications.
+Runnable Go examples showing how to integrate Agent Assembly with Go-based AI agent applications.
 
 ## What lives here
 
-| Sub-project (coming soon)          | What it demonstrates                                            |
-|------------------------------------|-----------------------------------------------------------------|
-| `basic-agent/`                     | Build a basic governed agent using the Agent Assembly Go SDK    |
-| `tool-policy/`                     | Enforce tool-level allow/deny policies in Go                    |
-| `cli-runtime-integration/`         | Integrate the `aasm` CLI runtime into a Go agent workflow       |
+| Sub-project | What it demonstrates |
+|---|---|
+| [`basic-agent/`](./basic-agent/README.md) | Minimal Go SDK initialization and a governed tool call |
+| [`tool-policy/`](./tool-policy/README.md) | Explicit allow/deny policy behavior around Go tool execution |
+| [`cli-runtime-integration/`](./cli-runtime-integration/README.md) | Integrating the `aasm` CLI runtime sidecar with a Go agent |
 
-All examples use the `github.com/agent-assembly/go-sdk` Go module.
+All examples use the [`github.com/AI-agent-assembly/go-sdk`](https://pkg.go.dev/github.com/AI-agent-assembly/go-sdk) Go module.
 
 ## Prerequisites
 
-- Go >= 1.22
-- A running Agent Assembly gateway (see the sub-project README for local dev options)
+- Go >= 1.26
+- Agent Assembly Go SDK v0.0.1-alpha.2
 
-## Expected sub-project structure
+A live gateway is **not required** to run any of these examples — each uses an
+offline mock `GovernanceClient` by default so you can explore governance behavior
+locally without infrastructure.
 
-Each sub-project in this directory should follow this layout:
+## Quick start
+
+```bash
+# Pick an example
+cd go/basic-agent
+go mod download
+go run .
+```
+
+## Sub-project structure
+
+Each sub-project is a standalone Go module:
 
 ```text
 go/<example-name>/
-  README.md         ← prerequisites, setup, run, expected output, troubleshooting
-  .env.example      ← template for any required secrets or config (never .env)
-  go.mod
-  go.sum
-  main.go           ← entrypoint
+  README.md                 ← prerequisites, setup, run, expected output, troubleshooting
+  go.mod                    ← standalone module declaration
+  go.sum                    ← pinned dependency checksums
+  main.go                   ← entry point
+  policy.go                 ← GovernanceClient implementation (mock or rule-based)
+  *_test.go                 ← smoke tests (deterministic, no external calls)
 ```
+
+## CI
+
+Go examples are verified by `.github/workflows/verify-go.yml` on every push and
+pull request that touches the `go/` directory.
 
 ## Back to root
 
