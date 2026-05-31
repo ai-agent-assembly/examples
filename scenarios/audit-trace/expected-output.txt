@@ -1,0 +1,63 @@
+=== Agent Assembly — Audit / Trace Example ===
+
+--- Calling governed tools ---
+
+  → read_file(path='/data/report.csv')
+[AUDIT] <timestamp>  tool=read_file               decision=allow               reason=read operations are permitted by default
+    ✓ allowed  →  {'status': 'ok', 'data': '<result of read_file>'}
+
+  → delete_file(path='/data/important.csv')
+[AUDIT] <timestamp>  tool=delete_file             decision=deny                reason=destructive operations are blocked by policy
+    ✗ blocked  →  Tool 'delete_file' denied: destructive operations are blocked by policy
+
+  → send_email(to='team@example.com', subject='Quarterly Report')
+[AUDIT] <timestamp>  tool=send_email              decision=approval_required   reason=outbound communication requires human approval
+    ✗ blocked  →  Tool 'send_email' requires approval before proceeding: outbound communication requires human approval
+
+
+--- Full audit trace (JSON) ---
+
+{
+  "event_id": "<uuid>",
+  "timestamp": "<iso8601>",
+  "agent_id": "example-agent-001",
+  "tool": "read_file",
+  "decision": "allow",
+  "reason": "read operations are permitted by default",
+  "inputs": {
+    "path": "/data/report.csv"
+  },
+  "outputs": {
+    "status": "ok",
+    "data": "<result of read_file>"
+  }
+}
+
+{
+  "event_id": "<uuid>",
+  "timestamp": "<iso8601>",
+  "agent_id": "example-agent-001",
+  "tool": "delete_file",
+  "decision": "deny",
+  "reason": "destructive operations are blocked by policy",
+  "inputs": {
+    "path": "/data/important.csv"
+  },
+  "outputs": {}
+}
+
+{
+  "event_id": "<uuid>",
+  "timestamp": "<iso8601>",
+  "agent_id": "example-agent-001",
+  "tool": "send_email",
+  "decision": "approval_required",
+  "reason": "outbound communication requires human approval",
+  "inputs": {
+    "to": "team@example.com",
+    "subject": "Quarterly Report"
+  },
+  "outputs": {}
+}
+
+Total events recorded: 3
