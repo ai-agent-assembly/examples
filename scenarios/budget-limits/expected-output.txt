@@ -1,0 +1,30 @@
+=== Agent Assembly — Budget Limits Example ===
+
+Policy: max_cost=$0.50 per session (see policy.yaml)
+
+--- Running tool calls against budget ---
+
+  → web_search(query='latest AI news')  [cost=$0.05]
+  [BUDGET] charged $0.05 for 'web_search'  →  spent=$0.05 / limit=$0.50 (10%)
+    ✓ allowed  →  {'status': 'ok', 'tool': 'web_search', 'data': '<result of web_search>'}
+
+  → query_database(table='customers')  [cost=$0.10]
+  [BUDGET] charged $0.10 for 'query_database'  →  spent=$0.15 / limit=$0.50 (30%)
+    ✓ allowed  →  {'status': 'ok', 'tool': 'query_database', 'data': '<result of query_database>'}
+
+  → call_external_api(endpoint='/v1/report')  [cost=$0.20]
+  [BUDGET] charged $0.20 for 'call_external_api'  →  spent=$0.35 / limit=$0.50 (70%)
+    ✓ allowed  →  {'status': 'ok', 'tool': 'call_external_api', 'data': '<result of call_external_api>'}
+
+  → web_search(query='weather forecast')  [cost=$0.05]
+  [BUDGET] charged $0.05 for 'web_search'  →  spent=$0.40 / limit=$0.50 (80%)
+    ✓ allowed  →  {'status': 'ok', 'tool': 'web_search', 'data': '<result of web_search>'}
+
+  → generate_report(format='pdf')  [cost=$0.25]
+    ✗ denied   →  Budget exceeded: tool 'generate_report' costs $0.25 but only $0.10 remains (spent=$0.40 / limit=$0.50)
+
+  → web_search(query='follow-up search')  [cost=$0.05]
+    ✗ denied   →  Budget exceeded: tool 'web_search' costs $0.05 but only $0.10 remains (spent=$0.40 / limit=$0.50)
+
+
+Final budget state: spent=$0.40 / limit=$0.50 (80%)
