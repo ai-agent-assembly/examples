@@ -23,8 +23,8 @@ Policy: max_cost=$0.50 per session (see policy.yaml)
   → generate_report(format='pdf')  [cost=$0.25]
     ✗ denied   →  Budget exceeded: tool 'generate_report' costs $0.25 but only $0.10 remains (spent=$0.40 / limit=$0.50)
 
-  → web_search(query='follow-up search')  [cost=$0.05]
-    ✗ denied   →  Budget exceeded: tool 'web_search' costs $0.05 but only $0.10 remains (spent=$0.40 / limit=$0.50)
+  → call_external_api(endpoint='/v2/sync')  [cost=$0.20]
+    ✗ denied   →  Budget exceeded: tool 'call_external_api' costs $0.20 but only $0.10 remains (spent=$0.40 / limit=$0.50)
 
 
 Final budget state: spent=$0.40 / limit=$0.50 (80%)

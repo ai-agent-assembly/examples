@@ -27,8 +27,8 @@ Agent  →  call_tool("generate_report")  →  [Agent Assembly runtime]
 | `query_database`    | $0.10  | $0.15         | ✓ allow         |
 | `call_external_api` | $0.20  | $0.35         | ✓ allow         |
 | `web_search`        | $0.05  | $0.40         | ✓ allow         |
-| `generate_report`   | $0.25  | $0.65         | ✗ deny — exceeds $0.50 limit |
-| `web_search`        | $0.05  | —             | ✗ deny — budget already exhausted |
+| `generate_report`   | $0.25  | —             | ✗ deny — $0.25 > $0.10 remaining |
+| `call_external_api` | $0.20  | —             | ✗ deny — $0.20 > $0.10 remaining |
 
 ## Policy
 
