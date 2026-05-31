@@ -1,0 +1,26 @@
+{
+  "name": "@agent-assembly-examples/policy-enforcement",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Agent Assembly policy enforcement scenario — TypeScript implementation",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "start": "node --import tsx/esm src/index.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@agent-assembly/sdk": "*",
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "tsx": "^4.19.2",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.3"
+  }
+}
