@@ -116,6 +116,9 @@ agent-assembly-examples/
     README.md                   ← Go examples index
   scenarios/
     README.md                   ← Cross-language scenario examples index
+    audit-trace/                ← Governed tool calls + audit record inspection
+    budget-limits/              ← Budget guardrails and cost ceiling enforcement
+    sidecar-runtime/            ← Local Agent Assembly runtime via Docker Compose
   .github/
     workflows/
       README.md                 ← CI workflow documentation
