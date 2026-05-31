@@ -1,0 +1,24 @@
+{
+  "name": "@agent-assembly-examples/custom-tool-policy",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Minimal TypeScript example of Agent Assembly tool governance — no agent framework required",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "start": "node --import tsx/esm src/index.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@agent-assembly/sdk": "*"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.3"
+  }
+}
