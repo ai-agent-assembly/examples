@@ -1,0 +1,31 @@
+name: Verify Python Examples
+
+on:
+  pull_request:
+    paths:
+      - "python/**"
+  push:
+    branches:
+      - main
+    paths:
+      - "python/**"
+
+jobs:
+  langchain-basic-agent:
+    name: langchain-basic-agent
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: python/langchain-basic-agent
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+
+      - name: Install dependencies
+        run: uv sync --extra dev
+
+      - name: Run smoke tests
+        run: uv run pytest tests/ -v
