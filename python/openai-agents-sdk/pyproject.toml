@@ -1,0 +1,21 @@
+[project]
+name = "openai-agents-sdk"
+version = "0.1.0"
+description = "Agent Assembly governance demo with OpenAI Agents SDK"
+requires-python = ">=3.12"
+dependencies = [
+    "agent-assembly>=0.0.1a2",
+    "openai-agents>=0.0.3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-mock>=3.14.0",
+    "pytest-asyncio>=0.23.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+asyncio_mode = "auto"
