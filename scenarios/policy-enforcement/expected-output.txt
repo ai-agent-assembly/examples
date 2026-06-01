@@ -1,0 +1,25 @@
+==============================================================
+  Agent Assembly — Policy Enforcement Scenario
+==============================================================
+
+Policy loaded from policy.yaml  (4 rules, default: deny)
+  ALLOW  read_config    — Read-only configuration access is permitted
+  ALLOW  list_agents    — Read-only agent listing is permitted
+  DENY   delete_agent   — Destructive operations are blocked by policy (rule: no_destructive_ops)
+  DENY   send_email     — Network egress tools are blocked by default (rule: no_network_egress)
+
+Running governed tool calls:
+--------------------------------------------
+  → read_config(key='database.host')
+     ✅ ALLOWED  — localhost:5432
+
+  → list_agents()
+     ✅ ALLOWED  — ['agent-001', 'agent-002', 'agent-003']
+
+  → delete_agent(agent_id='agent-001')
+     ❌ DENIED   — Destructive operations are blocked by policy (rule: no_destructive_ops)
+
+  → send_email(to='admin@example.com', subject='Hello', body='Test message')
+     ❌ DENIED   — Network egress tools are blocked by default (rule: no_network_egress)
+
+4 tool calls: 2 allowed, 2 denied.

@@ -1,0 +1,22 @@
+version: "1"
+agent_id: policy-enforcement-demo
+
+rules:
+  - tool: read_config
+    action: allow
+    reason: "Read-only configuration access is permitted"
+
+  - tool: list_agents
+    action: allow
+    reason: "Read-only agent listing is permitted"
+
+  - tool: delete_agent
+    action: deny
+    reason: "Destructive operations are blocked by policy (rule: no_destructive_ops)"
+
+  - tool: send_email
+    action: deny
+    reason: "Network egress tools are blocked by default (rule: no_network_egress)"
+
+default_action: deny
+default_reason: "Unlisted tools are denied by default (fail-closed policy)"
