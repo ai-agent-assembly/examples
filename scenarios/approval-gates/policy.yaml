@@ -1,0 +1,14 @@
+version: "1"
+agent_id: approval-gates-demo
+
+rules:
+  - tool: get_balance
+    action: allow
+    reason: "Read-only balance check is permitted"
+
+  - tool: transfer_funds
+    action: approval_required
+    reason: "Fund transfers require human approval before execution"
+
+default_action: deny
+default_reason: "Unlisted tools are denied by default (fail-closed policy)"

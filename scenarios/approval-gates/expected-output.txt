@@ -1,0 +1,19 @@
+==============================================================
+  Agent Assembly — Approval Gates Scenario
+==============================================================
+
+Policy loaded from policy.yaml  (2 rules, default: deny)
+  ALLOW              get_balance    — Read-only balance check is permitted
+  APPROVAL_REQUIRED  transfer_funds — Fund transfers require human approval before execution
+
+Running governed tool calls:
+--------------------------------------------
+  → get_balance(account_id='acc-001')
+     ✅ EXECUTED — $12,450.00
+
+  → transfer_funds(from_account='acc-001', to_account='acc-002', amount=500.0)
+     ⏳ PENDING  — approval required for 'transfer_funds'
+     ✅ APPROVED — MockApprovalClient auto-approved (request_id='mock-req-001')
+     ✅ EXECUTED — Transferred $500.00 from acc-001 to acc-002
+
+2 tool calls: 2 succeeded (1 immediate, 1 via approval).
