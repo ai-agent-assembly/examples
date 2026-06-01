@@ -1,0 +1,28 @@
+{
+  "name": "@agent-assembly-examples/approval-gates",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Agent Assembly approval gates scenario — TypeScript implementation",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "start": "node --import tsx/esm src/index.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  },
+  "optionalDependencies": {
+    "@agent-assembly/sdk": "*"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "tsx": "^4.19.2",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.3"
+  }
+}
