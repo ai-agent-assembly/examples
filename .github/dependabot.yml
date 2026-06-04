@@ -13,6 +13,8 @@ updates:
   - package-ecosystem: "npm"
     directories:
       - "/node/*"
+      - "/scenarios/*/node"
+      - "/scenarios/sidecar-runtime/examples/node-agent"
     schedule:
       interval: "daily"
     open-pull-requests-limit: 10
@@ -23,6 +25,7 @@ updates:
   - package-ecosystem: "pip"
     directories:
       - "/python/*"
+      - "/scenarios/*/python"
     schedule:
       interval: "daily"
     open-pull-requests-limit: 10
