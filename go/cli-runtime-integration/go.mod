@@ -2,7 +2,7 @@ module example.com/cli-runtime-integration
 
 go 1.26.0
 
-require github.com/AI-agent-assembly/go-sdk v0.0.1-alpha.2
+require github.com/AI-agent-assembly/go-sdk v0.0.1-alpha.3
 
 require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
