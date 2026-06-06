@@ -6,10 +6,13 @@ on:
       - "python/**"
   push:
     branches:
-      - main
+      - master
     paths:
       - "python/**"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   langchain-basic-agent:
     name: langchain-basic-agent

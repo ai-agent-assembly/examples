@@ -12,6 +12,9 @@ on:
       - "go/**"
       - ".github/workflows/verify-go.yml"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   test:
     name: Test Go examples
