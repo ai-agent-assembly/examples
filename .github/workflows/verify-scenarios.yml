@@ -11,6 +11,9 @@ on:
     paths:
       - "scenarios/**"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   # ── Preflight: detect which scenarios are present on this branch ──────────
   preflight:
