@@ -1,5 +1,5 @@
-github.com/AI-agent-assembly/go-sdk v0.0.1-alpha.2 h1:0o+8dqLpBi3cIKNu8mXI0vP4RdgyYfgkKqtfI6B8u1A=
-github.com/AI-agent-assembly/go-sdk v0.0.1-alpha.2/go.mod h1:vsRXutpz1R1zFmIn08agGluNdSBB/2kiqSHtu63LxoU=
+github.com/AI-agent-assembly/go-sdk v0.0.1-alpha.3 h1:ljOnEEWwvZ6gv1Qvz84PFudBBwtPLtDvXhATYWlVBdw=
+github.com/AI-agent-assembly/go-sdk v0.0.1-alpha.3/go.mod h1:vsRXutpz1R1zFmIn08agGluNdSBB/2kiqSHtu63LxoU=
 github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=
 github.com/cespare/xxhash/v2 v2.3.0/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
