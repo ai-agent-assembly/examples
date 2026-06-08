@@ -5,7 +5,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/AI-agent-assembly/go-sdk/assembly"
+	"github.com/ai-agent-assembly/go-sdk/assembly"
 )
 
 func TestReadFileToolReturnsContents(t *testing.T) {
