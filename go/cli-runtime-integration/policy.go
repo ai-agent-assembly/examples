@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 
-	"github.com/AI-agent-assembly/go-sdk/assembly"
+	"github.com/ai-agent-assembly/go-sdk/assembly"
 )
 
 // mockClient is an offline GovernanceClient that always allows every tool call.

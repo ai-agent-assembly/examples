@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/AI-agent-assembly/go-sdk/assembly"
+	"github.com/ai-agent-assembly/go-sdk/assembly"
 )
 
 func TestEchoToolReturnsInput(t *testing.T) {
