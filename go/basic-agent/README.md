@@ -63,13 +63,13 @@ Tests run entirely offline using the mock client — no gateway required.
 
 | Problem | Fix |
 |---|---|
-| `go: module github.com/AI-agent-assembly/go-sdk: not found` | Run `go mod download` or check network access to `proxy.golang.org`. |
+| `go: module github.com/ai-agent-assembly/go-sdk: not found` | Run `go mod download` or check network access to `proxy.golang.org`. |
 | `init requires a running sidecar` | Only occurs when `assembly.Init()` is called with an explicit gateway URL. This example uses the mock client only — `Init()` is never called. |
 | Unexpected denial | Verify you are not running a modified `policy.go` that returns `Denied: true`. |
 
 ## Go SDK docs
 
-- Module: [`github.com/AI-agent-assembly/go-sdk`](https://pkg.go.dev/github.com/AI-agent-assembly/go-sdk)
+- Module: [`github.com/ai-agent-assembly/go-sdk`](https://pkg.go.dev/github.com/ai-agent-assembly/go-sdk)
 - `assembly.Tool` interface
 - `assembly.WrapTools` function
 - `assembly.GovernanceClient` interface

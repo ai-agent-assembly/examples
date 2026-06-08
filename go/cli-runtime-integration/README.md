@@ -28,7 +28,7 @@ brew install agent-assembly/tap/aasm
 curl -fsSL https://get.agent-assembly.io | sh
 
 # go install
-go install github.com/AI-agent-assembly/agent-assembly/cmd/aasm@latest
+go install github.com/ai-agent-assembly/agent-assembly/cmd/aasm@latest
 ```
 
 If `aasm` is not installed, the example detects `ErrBinaryNotFound` and continues
@@ -118,9 +118,9 @@ and continues with the mock client.
 
 ## Go SDK docs
 
-- [`assembly.InitAssembly`](https://pkg.go.dev/github.com/AI-agent-assembly/go-sdk/assembly#InitAssembly)
-- [`assembly.ErrBinaryNotFound`](https://pkg.go.dev/github.com/AI-agent-assembly/go-sdk/assembly#ErrBinaryNotFound)
-- [`assembly.Init`](https://pkg.go.dev/github.com/AI-agent-assembly/go-sdk/assembly#Init)
+- [`assembly.InitAssembly`](https://pkg.go.dev/github.com/ai-agent-assembly/go-sdk/assembly#InitAssembly)
+- [`assembly.ErrBinaryNotFound`](https://pkg.go.dev/github.com/ai-agent-assembly/go-sdk/assembly#ErrBinaryNotFound)
+- [`assembly.Init`](https://pkg.go.dev/github.com/ai-agent-assembly/go-sdk/assembly#Init)
 
 ## Back to Go examples
 

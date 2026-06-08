@@ -73,9 +73,9 @@ This pattern maps directly to production behavior: swap `policyClient` for a rea
 
 ## Go SDK docs
 
-- [`assembly.WrapTools`](https://pkg.go.dev/github.com/AI-agent-assembly/go-sdk/assembly#WrapTools)
-- [`assembly.PolicyViolationError`](https://pkg.go.dev/github.com/AI-agent-assembly/go-sdk/assembly#PolicyViolationError)
-- [`assembly.GovernanceClient`](https://pkg.go.dev/github.com/AI-agent-assembly/go-sdk/assembly#GovernanceClient)
+- [`assembly.WrapTools`](https://pkg.go.dev/github.com/ai-agent-assembly/go-sdk/assembly#WrapTools)
+- [`assembly.PolicyViolationError`](https://pkg.go.dev/github.com/ai-agent-assembly/go-sdk/assembly#PolicyViolationError)
+- [`assembly.GovernanceClient`](https://pkg.go.dev/github.com/ai-agent-assembly/go-sdk/assembly#GovernanceClient)
 
 ## Back to Go examples
 

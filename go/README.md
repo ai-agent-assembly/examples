@@ -10,7 +10,7 @@ Runnable Go examples showing how to integrate Agent Assembly with Go-based AI ag
 | [`tool-policy/`](./tool-policy/README.md) | Explicit allow/deny policy behavior around Go tool execution |
 | [`cli-runtime-integration/`](./cli-runtime-integration/README.md) | Integrating the `aasm` CLI runtime sidecar with a Go agent |
 
-All examples use the [`github.com/AI-agent-assembly/go-sdk`](https://pkg.go.dev/github.com/AI-agent-assembly/go-sdk) Go module.
+All examples use the [`github.com/ai-agent-assembly/go-sdk`](https://pkg.go.dev/github.com/ai-agent-assembly/go-sdk) Go module.
 
 ## Prerequisites
 
