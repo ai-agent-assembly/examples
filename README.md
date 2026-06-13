@@ -122,10 +122,6 @@ python scenarios/<scenario>/python/agent.py
 node   scenarios/<scenario>/node/agent.js
 ```
 
-> Node.js example type-checking (`pnpm typecheck`) is temporarily excluded from
-> CI while the examples are updated to the current `@agent-assembly/sdk` API
-> (tracked in AAASM-2824). The `pnpm test` smoke tests run in CI today.
-
 ## Security
 
 **No secrets are ever committed to this repository.**
