@@ -6,6 +6,21 @@ Runnable examples showing how to integrate [Agent Assembly](https://github.com/a
 
 Agent Assembly is a multi-layer AI agent governance platform that intercepts, inspects, and enforces policies on tool calls made by AI agents — without requiring you to rewrite your agent code. It works via three independently deployable layers: SDK wrappers (Python, Node.js, Go), a sidecar MitM proxy, and kernel-level eBPF probes. A central gateway holds the agent registry, evaluates policies, tracks budgets, and exposes gRPC and HTTP APIs for observability and control.
 
+## Official docs & SDKs
+
+These examples are the runnable companion to the official documentation and the
+language SDKs. Learn by running small, framework-specific examples for Python,
+Node.js/TypeScript, Go, policy enforcement, approvals, audit, trace, and runtime
+workflows — then go deeper in the docs.
+
+| Resource | Link |
+|---|---|
+| Documentation hub | <https://ai-agent-assembly.github.io/agent-assembly-docs/> |
+| Core runtime & CLI | [agent-assembly](https://github.com/AI-agent-assembly/agent-assembly) |
+| Python SDK | [python-sdk](https://github.com/AI-agent-assembly/python-sdk) |
+| Node.js / TypeScript SDK | [node-sdk](https://github.com/AI-agent-assembly/node-sdk) |
+| Go SDK | [go-sdk](https://github.com/AI-agent-assembly/go-sdk) |
+
 ## Who is this repo for?
 
 - **Application developers** who are adding Agent Assembly to an existing Python, Node.js, or Go agent application.
