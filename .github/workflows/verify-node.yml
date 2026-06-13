@@ -1,0 +1,91 @@
+name: Verify Node Examples
+
+on:
+  pull_request:
+    paths:
+      - "node/**"
+      - ".github/workflows/verify-node.yml"
+  push:
+    branches:
+      - master
+    paths:
+      - "node/**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# NOTE: a `tsc` typecheck/build step is intentionally NOT run yet. The node
+# examples currently fail `tsc` against @agent-assembly/sdk (withAssembly API
+# mismatch + missing @types/node) — tracked in AAASM-2824. They run via tsx and
+# their vitest smoke tests pass, which is what CI verifies here. Re-enable a
+# `pnpm typecheck` step in each job once AAASM-2824 lands.
+jobs:
+  custom-tool-policy:
+    name: custom-tool-policy
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: node/custom-tool-policy
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run smoke tests
+        run: pnpm test
+
+  langchain-js-basic-agent:
+    name: langchain-js-basic-agent
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: node/langchain-js-basic-agent
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run smoke tests
+        run: pnpm test
+
+  openai-node-tool-policy:
+    name: openai-node-tool-policy
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: node/openai-node-tool-policy
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run smoke tests
+        run: pnpm test
