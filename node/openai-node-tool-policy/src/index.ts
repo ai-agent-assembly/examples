@@ -1,4 +1,4 @@
-import { initAssembly, withAssembly } from "@agent-assembly/sdk";
+import { initAssembly } from "@agent-assembly/sdk";
 import { evaluate } from "./policy.js";
 import { TOOL_DEFINITIONS, searchWeb, sendEmail } from "./tools.js";
 
@@ -32,21 +32,17 @@ async function main(): Promise<void> {
     mode: "auto",
   });
 
-  const wrappedDispatch = withAssembly(dispatchToolCall, {
-    agentId: "openai-node-example-agent",
-  });
-
   console.log("Simulating OpenAI tool call: search_web");
-  await wrappedDispatch("search_web", { query: "Agent Assembly governance" });
+  await dispatchToolCall("search_web", { query: "Agent Assembly governance" });
 
   console.log("\nSimulating OpenAI tool call: send_email (should be denied)");
-  await wrappedDispatch("send_email", {
+  await dispatchToolCall("send_email", {
     to: "user@example.com",
     subject: "Hello from agent",
     body: "This would require approval.",
   });
 
-  console.log("\nAudit events emitted to gateway (or noop in offline mode).");
+  console.log("\nTool calls governed by the local policy.");
 }
 
 main().catch((err) => {
