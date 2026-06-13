@@ -15,11 +15,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-# NOTE: a `tsc` typecheck/build step is intentionally NOT run yet. The node
-# examples currently fail `tsc` against @agent-assembly/sdk (withAssembly API
-# mismatch + missing @types/node) — tracked in AAASM-2824. They run via tsx and
-# their vitest smoke tests pass, which is what CI verifies here. Re-enable a
-# `pnpm typecheck` step in each job once AAASM-2824 lands.
 jobs:
   custom-tool-policy:
     name: custom-tool-policy
@@ -40,6 +35,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
+
+      - name: Type-check
+        run: pnpm typecheck
 
       - name: Run smoke tests
         run: pnpm test
@@ -64,6 +62,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Type-check
+        run: pnpm typecheck
+
       - name: Run smoke tests
         run: pnpm test
 
@@ -86,6 +87,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
+
+      - name: Type-check
+        run: pnpm typecheck
 
       - name: Run smoke tests
         run: pnpm test
