@@ -32,6 +32,15 @@ updates:
     labels:
       - "dependencies"
       - "python"
+    ignore:
+      # The agent-assembly SDK's pydantic-ai adapter patches `Tool._run`, which
+      # exists only in the pydantic-ai 0.1.x–0.2.x line; 1.x removed that entry
+      # point so the governance hooks fail to attach (AttributeError). The
+      # example deliberately pins `pydantic-ai>=0.1.0,<0.3.0` for this reason.
+      # Skip major pydantic-ai bumps until the SDK supports pydantic-ai 1.x.
+      # See PR #79.
+      - dependency-name: "pydantic-ai"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "github-actions"
     directory: "/"
