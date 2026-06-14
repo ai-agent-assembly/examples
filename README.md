@@ -58,6 +58,48 @@ setup required, no API keys needed.
 All three scenarios include Python and Node.js examples. They run **offline by
 default** — no live gateway needed unless you opt into the Docker Compose path.
 
+## Framework examples
+
+Each language directory contains framework-specific examples that wire Agent
+Assembly into a real AI agent framework. The per-language indexes
+([`python/`](./python/README.md), [`node/`](./node/README.md),
+[`go/`](./go/README.md)) hold the full setup and run instructions; the catalog
+below is the shared cross-language view.
+
+### Python
+
+| Example | Framework | What it demonstrates |
+|---|---|---|
+| [`python/langchain-basic-agent/`](./python/langchain-basic-agent/) | LangChain | Wire Agent Assembly SDK into a basic LangChain agent |
+| [`python/openai-agents-sdk/`](./python/openai-agents-sdk/) | OpenAI Agents SDK | Govern tool calls made by an OpenAI Agents SDK agent |
+| [`python/llamaindex-tool-policy/`](./python/llamaindex-tool-policy/) | LlamaIndex | Enforce tool-level allow/deny policies with LlamaIndex |
+| [`python/custom-tool-policy/`](./python/custom-tool-policy/) | — | Write a custom Python tool wrapper with the SDK |
+| [`python/langchain-research-agent/`](./python/langchain-research-agent/) | LangChain | ReAct research agent with budget, egress allowlist, and credential-leak blocking |
+| [`python/crewai-research-crew/`](./python/crewai-research-crew/) | CrewAI | Multi-agent crew with delegation tracking, file-write approval, and shared budget |
+| [`python/langgraph/`](./python/langgraph/) | LangGraph | Node-level governance on a compiled `StateGraph`, blocking a destructive tool mid-graph |
+| [`python/pydantic-ai/`](./python/pydantic-ai/) | Pydantic AI | Tool-call governance driven offline by `TestModel` (allow / deny / pending) |
+| [`python/google-adk/`](./python/google-adk/) | Google ADK | Scripted offline tool trajectory governing `BaseTool.run_async` (no cloud creds) |
+
+### Node.js / TypeScript
+
+| Example | Framework | What it demonstrates |
+|---|---|---|
+| [`node/langchain-js-basic-agent/`](./node/langchain-js-basic-agent/) | LangChain.js | Tool governance hooks in a LangChain.js-style agent |
+| [`node/openai-node-tool-policy/`](./node/openai-node-tool-policy/) | OpenAI Node SDK | Policy enforcement using OpenAI function-calling format |
+| [`node/custom-tool-policy/`](./node/custom-tool-policy/) | — | Minimal SDK usage — no agent framework needed |
+| [`node/vercel-ai/`](./node/vercel-ai/) | Vercel AI SDK | Governing Vercel AI SDK `tool()` calls with `withAssembly` |
+| [`node/langgraph-js/`](./node/langgraph-js/) | LangGraph.js | Governing tool calls inside a LangGraph.js-style state machine |
+| [`node/mastra/`](./node/mastra/) | Mastra | Governing Mastra `createTool` calls with `withAssembly` |
+
+### Go
+
+| Example | Framework | What it demonstrates |
+|---|---|---|
+| [`go/basic-agent/`](./go/basic-agent/) | — | Minimal Go SDK initialization and a governed tool call |
+| [`go/tool-policy/`](./go/tool-policy/) | — | Explicit allow/deny policy behavior around Go tool execution |
+| [`go/langchaingo/`](./go/langchaingo/) | LangChainGo | Governing a LangChainGo agent's tool calls with Agent Assembly |
+| [`go/cli-runtime-integration/`](./go/cli-runtime-integration/) | — | Integrating the `aasm` CLI runtime sidecar with a Go agent |
+
 ## Prerequisites
 
 Install the prerequisites for the ecosystem you want to run.
@@ -161,10 +203,17 @@ agent-assembly-examples/
     choosing-an-example.md      ← decision guide: which example to run first
   python/
     README.md                   ← Python examples index
+    langchain-basic-agent/      ← LangChain · OpenAI Agents SDK · LlamaIndex ·
+    ...                            custom · langchain-research · crewai ·
+    ...                            langgraph · pydantic-ai · google-adk
   node/
     README.md                   ← Node.js / TypeScript examples index
+    langchain-js-basic-agent/   ← LangChain.js · OpenAI Node · custom ·
+    ...                            vercel-ai · langgraph-js · mastra
   go/
     README.md                   ← Go examples index
+    basic-agent/                ← basic · tool-policy · langchaingo ·
+    ...                            cli-runtime-integration
   scenarios/
     README.md                   ← Cross-language scenario examples index
     policy-enforcement/         ← Allow/deny policy enforcement scenario
