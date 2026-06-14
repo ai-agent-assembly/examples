@@ -1,46 +1,39 @@
-import { initAssembly } from "@agent-assembly/sdk";
-import { evaluate } from "./policy.js";
+import { PolicyViolationError, withAssembly } from "@agent-assembly/sdk";
+import { createPolicyGatewayClient } from "./policy.js";
 import { readFile, writeFile } from "./tools.js";
-
-async function executeTool(
-  name: string,
-  args: Record<string, unknown>,
-): Promise<string> {
-  const rule = evaluate(name);
-  if (rule.action === "deny") {
-    const msg = `[POLICY DENY] ${name}: ${rule.reason}`;
-    console.log(msg);
-    return msg;
-  }
-  if (name === "read_file") {
-    const result = readFile(String(args["path"] ?? ""));
-    console.log(`[POLICY ALLOW] ${name}: ${result.output}`);
-    return result.output;
-  }
-  if (name === "write_file") {
-    const result = writeFile(String(args["path"] ?? ""), String(args["content"] ?? ""));
-    console.log(result.output);
-    return result.output;
-  }
-  return `[ERROR] Unknown tool: ${name}`;
-}
 
 async function main(): Promise<void> {
   console.log("=== Custom Tool Policy — Minimal TypeScript Example ===\n");
   console.log("No agent framework required. Using @agent-assembly/sdk directly.\n");
 
-  const _ctx = await initAssembly({
-    agentId: "custom-tool-policy-agent",
-    mode: "auto",
-  });
+  const tools = withAssembly(
+    {
+      read_file: {
+        execute: async (args: Record<string, unknown>) => readFile(String(args.path ?? "")).output
+      },
+      write_file: {
+        execute: async (args: Record<string, unknown>) =>
+          writeFile(String(args.path ?? ""), String(args.content ?? "")).output
+      }
+    },
+    { gatewayClient: createPolicyGatewayClient(), agentId: "custom-tool-policy-agent" }
+  );
 
   console.log("Calling allowed tool: read_file");
-  await executeTool("read_file", { path: "/data/report.txt" });
+  console.log(`  [ALLOW] ${await tools.read_file.execute({ path: "/data/report.txt" })}`);
 
   console.log("\nCalling denied tool: write_file");
-  await executeTool("write_file", { path: "/etc/config", content: "override settings" });
+  try {
+    await tools.write_file.execute({ path: "/etc/config", content: "override settings" });
+  } catch (err) {
+    if (err instanceof PolicyViolationError) {
+      console.log(`  [BLOCKED] ${err.message}`);
+    } else {
+      throw err;
+    }
+  }
 
-  console.log("\nAll tool calls governed by the local policy.");
+  console.log("\nAll tool calls governed by withAssembly + the local policy.");
 }
 
 main().catch((err) => {
