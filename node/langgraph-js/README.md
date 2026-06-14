@@ -1,0 +1,88 @@
+# langgraph-js
+
+A TypeScript example showing how to govern a [LangGraph.js](https://langchain-ai.github.io/langgraphjs/)-style
+state machine with Agent Assembly.
+
+## What this example demonstrates
+
+- A minimal `StateGraph` (typed state, named nodes, edges) that mirrors LangGraph.js
+- Governing the tool calls inside graph nodes with `withAssembly()` + a local-policy `GatewayClient`
+- One **allowed** tool call (`search_docs`) in the `search` node
+- One **denied** tool call (`execute_shell`) in the `escalate` node — blocked with `PolicyViolationError`
+- Runs fully offline — no provider key, no live LLM, and no `@langchain/core`
+
+## Why a hand-rolled graph instead of `@langchain/langgraph`
+
+The real `@langchain/langgraph` package transitively installs `@langchain/core`.
+These non-LangChain examples deliberately avoid that dependency so they run offline
+in CI with no API keys. `src/graph.ts` replays the LangGraph.js shape — a typed
+state, `addNode`/`addEdge`/`setEntryPoint`/`compile`/`invoke` — so the example reads
+like a LangGraph.js graph while staying dependency-free. The governance path is
+identical to a real graph: each node calls a tool wrapped by `withAssembly`.
+
+## Prerequisites
+
+- Node.js >= 20 LTS
+- pnpm (`npm install -g pnpm`)
+
+## Install
+
+```bash
+pnpm install
+```
+
+## Run
+
+```bash
+pnpm start
+```
+
+### Expected output
+
+```
+=== LangGraph.js-style Graph — Agent Assembly Governance Example ===
+
+A two-node state machine whose tool calls are governed by withAssembly.
+
+Node "search" — calling allowed tool: search_docs
+  [ALLOW] Top result for "How does Agent Assembly work?": Agent Assembly governs every tool call. [mock]
+
+Node "escalate" — calling denied tool: execute_shell
+  [BLOCKED] Tool 'execute_shell' blocked: Arbitrary shell execution is never allowed from a graph node.
+
+Graph finished with 2 logged steps.
+Done. Graph-node tool calls governed by withAssembly + the local policy.
+```
+
+## Test
+
+```bash
+pnpm test
+```
+
+No gateway or API key required. All tests run offline.
+
+## TypeScript type check
+
+```bash
+pnpm typecheck
+```
+
+## Note on `.env.example`
+
+This example uses only mock/offline mode. No provider keys or gateway URL are needed.
+To connect to a real gateway, set `AAASM_GATEWAY_URL` in your environment directly.
+
+## Troubleshooting
+
+| Problem | Solution |
+|---------|----------|
+| `Cannot find module '@agent-assembly/sdk'` | Run `pnpm install` |
+| TypeScript errors | Run `pnpm typecheck` and check the Node.js version |
+
+## Links
+
+- [LangGraph.js](https://langchain-ai.github.io/langgraphjs/)
+- [Agent Assembly Node.js SDK](https://github.com/ai-agent-assembly/node-sdk)
+- [Node.js examples overview](../README.md)
+- [Root examples README](../../README.md)
