@@ -25,6 +25,7 @@ jobs:
         example:
           - basic-agent
           - tool-policy
+          - langchaingo
           - cli-runtime-integration
 
     steps:
