@@ -1,0 +1,24 @@
+[project]
+name = "pydantic-ai-governed-agent"
+version = "0.1.0"
+description = "Agent Assembly governance demo with Pydantic AI"
+requires-python = ">=3.12"
+dependencies = [
+    "agent-assembly>=0.0.1a2",
+    # The Agent Assembly Pydantic AI adapter patches `Tool._run`, which is
+    # present in the 0.1.x–0.2.x line. Newer 1.x releases renamed that internal
+    # entry point; pin to the supported range so governance hooks attach.
+    "pydantic-ai>=0.1.0,<0.3.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+    "pytest-mock>=3.14.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+asyncio_mode = "auto"
