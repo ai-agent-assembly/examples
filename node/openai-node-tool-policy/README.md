@@ -5,11 +5,11 @@ An OpenAI Node SDK-style agent example showing how to enforce tool policies usin
 ## What this example demonstrates
 
 - Defining tools in OpenAI function-calling format
-- Calling `initAssembly()` to register the agent with the gateway (or offline/noop mode)
+- Governing tool dispatch with `withAssembly()` + a custom `GatewayClient` enforcing a local policy
 - Enforcing a local policy on every tool dispatch
 - One **allowed** tool call (`search_web`) — executes and returns mock results
 - One **denied** tool call (`send_email`) — blocked at the policy layer before execution
-- Agent registered with `initAssembly()` (gateway, or offline/noop mode)
+- A denied tool throws `PolicyViolationError`; runs fully offline (no gateway, no `@langchain/core`)
 
 ## Prerequisites
 
@@ -36,12 +36,12 @@ pnpm start
 Available tools: search_web, send_email
 
 Simulating OpenAI tool call: search_web
-[POLICY ALLOW] search_web: Search results for "Agent Assembly governance": [mock result 1] [mock result 2]
+  [ALLOW] Search results for "Agent Assembly governance": [mock result 1] [mock result 2]
 
 Simulating OpenAI tool call: send_email (should be denied)
-[POLICY DENY] send_email: External communication requires human approval before sending.
+  [BLOCKED] Tool 'send_email' blocked: External communication requires human approval before sending.
 
-Tool calls governed by the local policy.
+Tool calls governed by withAssembly + the local policy.
 ```
 
 ## Test
