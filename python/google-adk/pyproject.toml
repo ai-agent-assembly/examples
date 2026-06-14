@@ -5,7 +5,7 @@ description = "Agent Assembly governance demo with Google ADK"
 requires-python = ">=3.12"
 dependencies = [
     "agent-assembly>=0.0.1a2",
-    "google-adk>=1.28.1,<2.0",
+    "google-adk>=1.28.1,<3.0",
 ]
 
 [project.optional-dependencies]
