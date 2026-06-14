@@ -8,7 +8,7 @@ dependencies = [
     # The Agent Assembly Pydantic AI adapter patches `Tool._run`, which is
     # present in the 0.1.x–0.2.x line. Newer 1.x releases renamed that internal
     # entry point; pin to the supported range so governance hooks attach.
-    "pydantic-ai>=0.1.0,<0.3.0",
+    "pydantic-ai>=0.1.0,<0.9.0",
 ]
 
 [project.optional-dependencies]
