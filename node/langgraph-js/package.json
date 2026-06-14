@@ -1,0 +1,25 @@
+{
+  "name": "@agent-assembly-examples/langgraph-js",
+  "version": "0.0.0",
+  "private": true,
+  "description": "LangGraph.js-style state-machine example with Agent Assembly governance",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "start": "node --import tsx/esm src/index.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@agent-assembly/sdk": "0.0.1-alpha.9.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.0",
+    "tsx": "^4.19.2",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.8"
+  }
+}
