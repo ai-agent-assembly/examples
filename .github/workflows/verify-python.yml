@@ -127,3 +127,60 @@ jobs:
 
       - name: Run smoke tests
         run: uv run pytest tests/ -v
+
+  langgraph:
+    name: langgraph
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: python/langgraph
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "latest"
+
+      - name: Install dependencies
+        run: uv sync --extra dev
+
+      - name: Run smoke tests
+        run: uv run pytest tests/ -v
+
+  pydantic-ai:
+    name: pydantic-ai
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: python/pydantic-ai
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "latest"
+
+      - name: Install dependencies
+        run: uv sync --extra dev
+
+      - name: Run smoke tests
+        run: uv run pytest tests/ -v
+
+  google-adk:
+    name: google-adk
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: python/google-adk
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "latest"
+
+      - name: Install dependencies
+        run: uv sync --extra dev
+
+      - name: Run smoke tests
+        run: uv run pytest tests/ -v
