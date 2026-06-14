@@ -12,6 +12,9 @@ This directory contains runnable Python examples showing how to integrate Agent 
 | `custom-tool-policy/`              | —                | Write a custom Python tool wrapper with SDK               |
 | `langchain-research-agent/`        | LangChain        | ReAct research agent with budget, egress allowlist, and credential-leak blocking |
 | `crewai-research-crew/`            | CrewAI           | Multi-agent crew with delegation tracking, file-write approval, and shared budget |
+| `langgraph/`                       | LangGraph        | Node-level governance on a compiled `StateGraph`, blocking a destructive tool mid-graph |
+| `pydantic-ai/`                     | Pydantic AI      | Tool-call governance driven offline by `TestModel` (allow / deny / pending) |
+| `google-adk/`                      | Google ADK       | Scripted offline tool trajectory governing `BaseTool.run_async` (no cloud creds) |
 
 All examples use the `agent-assembly` Python package (available on PyPI).
 
