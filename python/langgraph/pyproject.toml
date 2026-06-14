@@ -1,0 +1,20 @@
+[project]
+name = "langgraph-governed-agent"
+version = "0.1.0"
+description = "Agent Assembly governance demo with LangGraph"
+requires-python = ">=3.12"
+dependencies = [
+    "agent-assembly>=0.0.1a2",
+    "langgraph>=0.2.0",
+    "langchain-core>=0.2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-mock>=3.14.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
