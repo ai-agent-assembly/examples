@@ -7,6 +7,7 @@
   "engines": {
     "node": ">=20"
   },
+  "//typescript": "Pinned to ^5.9.3: TypeScript 6.0.x regresses NodeNext resolution of node: builtin imports (TS2591 'Cannot find name node:fs'). Bump to ^6 once fixed upstream.",
   "scripts": {
     "build": "tsc --noEmit",
     "start": "node --import tsx/esm src/index.ts",
@@ -18,8 +19,9 @@
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",
+    "@types/node": "^24.0.0",
     "tsx": "4.22.4",
-    "typescript": "^6.0.3",
+    "typescript": "^5.9.3",
     "vitest": "^4.1.8"
   },
   "pnpm": {

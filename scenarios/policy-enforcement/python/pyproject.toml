@@ -4,13 +4,13 @@ version = "0.1.0"
 description = "Agent Assembly policy enforcement scenario — offline demo"
 requires-python = ">=3.12"
 dependencies = [
-    "agent-assembly>=0.0.1a2",
-    "PyYAML>=6.0",
+    "agent-assembly>=0.0.1b2",
+    "PyYAML>=6.0.3",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=8.0.0",
+    "pytest>=9.0.0",
 ]
 
 [tool.pytest.ini_options]
