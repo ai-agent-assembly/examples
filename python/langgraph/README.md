@@ -20,7 +20,7 @@ The example runs **fully offline**: the graph is driven with deterministic nodes
 |---|---|
 | Python | >= 3.12 |
 | [uv](https://github.com/astral-sh/uv) | latest |
-| Agent Assembly Python SDK | >= 0.0.1a2 |
+| Agent Assembly Python SDK | >= 0.0.1b2 |
 
 No running Agent Assembly gateway is required for the offline demo.
 

@@ -4,7 +4,7 @@ requires-python = ">=3.12"
 
 [[package]]
 name = "agent-assembly"
-version = "0.0.1a9"
+version = "0.0.1b2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "grpcio" },
@@ -13,12 +13,12 @@ dependencies = [
     { name = "pydantic" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/1e/a7/665580c7f74cf624674d4ab2860fa2d97b373412c1637448facf310312e5/agent_assembly-0.0.1a9.tar.gz", hash = "sha256:657528c0445bf7f50c8a0da8442b1bfcbdd6c1947b3f160ca4e7509df47ded92", size = 68111, upload-time = "2026-06-13T18:13:06.519Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/fb/09/536043927316fad0abb592a0d26d4730d29dfdb34f00ea3109ee6d0aaae0/agent_assembly-0.0.1b2.tar.gz", hash = "sha256:53d28a4f7f58280fe2f7f24f08fb65b58a94030689e41520cfea54156be3ba65", size = 70392, upload-time = "2026-06-15T02:23:04.366Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f5/95/bc8cbca76618c0a16bb89c1108166ce5cc4251db4ae85b97ce225a857ae4/agent_assembly-0.0.1a9-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:f367119cf0d76e84cb78c3ffa8c2be00e609f7ecfc57477dad49c1e460b15942", size = 10522217, upload-time = "2026-06-13T18:12:57.157Z" },
-    { url = "https://files.pythonhosted.org/packages/f0/09/78b71165a9b465dd155830efb04d15d2aed0b087a4a156abfc876a436f9b/agent_assembly-0.0.1a9-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:696a830c10a7a16d1bd46c2181876333c5e081e9c499d83803a235be588f4ae8", size = 9213714, upload-time = "2026-06-13T18:12:59.285Z" },
-    { url = "https://files.pythonhosted.org/packages/e3/c7/a1f8251161d1eba9c0a1736e10a44cc381b41e183c4841fe5ee1a4f4974a/agent_assembly-0.0.1a9-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:46ce90cde9ac763e847ab4e11a61bcf637f2ad3c257f051a68fc7a545c82ff84", size = 10003531, upload-time = "2026-06-13T18:13:02.218Z" },
-    { url = "https://files.pythonhosted.org/packages/54/45/69baff2b7f60a0897c06df92c3ea4a3fa26812e04a4b5de4f9c696c082f3/agent_assembly-0.0.1a9-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f6e7d8e3e6f8fdcf51aabe9201eec97fd611deb8515ac196379add8029c18b2d", size = 11090621, upload-time = "2026-06-13T18:13:04.379Z" },
+    { url = "https://files.pythonhosted.org/packages/15/cb/95ce75263c627017a510bb2445a051b78c18b2d78e2d01517d78c79f6f9a/agent_assembly-0.0.1b2-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:87b7de97fbbf487603841de7b977d3380f8970e45f90bb9da14b91c3730bf2a6", size = 10524759, upload-time = "2026-06-15T02:22:55.846Z" },
+    { url = "https://files.pythonhosted.org/packages/03/50/91b8ace11dadeb9b497deecc7a4637b32d213e5adf917cfd05b481ed867a/agent_assembly-0.0.1b2-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:ca679b465e4bcbdf39b4c7d6e59dd09a7fae781de43eb822fe2f7b58c310b4d1", size = 9171842, upload-time = "2026-06-15T02:22:58.115Z" },
+    { url = "https://files.pythonhosted.org/packages/70/51/88447dab6e0e55b75551d31f78fb6f2d4b326c5c3303b382cffa5f00aad1/agent_assembly-0.0.1b2-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:2e7cb3ab63e5e5b852d404c619471daef8b6607b82b46ef703c56673d2863ea9", size = 10007357, upload-time = "2026-06-15T02:23:00.301Z" },
+    { url = "https://files.pythonhosted.org/packages/d0/0b/808cd9a52b858a7da8bc6f7d0c0d8a79465cdc8ecf3af584825d37c494c3/agent_assembly-0.0.1b2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6e15643aa3cc8c19288eb8b47ae59636b81530efe9cdae0c14aef3623db195ae", size = 11094577, upload-time = "2026-06-15T02:23:02.414Z" },
 ]
 
 [[package]]
@@ -331,9 +331,9 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "agent-assembly", specifier = ">=0.0.1a2" },
-    { name = "langchain-core", specifier = ">=0.2.0" },
-    { name = "langgraph", specifier = ">=0.2.0" },
+    { name = "agent-assembly", specifier = ">=0.0.1b2" },
+    { name = "langchain-core", specifier = ">=1.4.7" },
+    { name = "langgraph", specifier = ">=1.2.5" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0.0" },
     { name = "pytest-mock", marker = "extra == 'dev'", specifier = ">=3.14.0" },
 ]
