@@ -4,14 +4,14 @@ version = "0.1.0"
 description = "Agent Assembly governance demo: a CrewAI multi-agent research crew"
 requires-python = ">=3.12"
 dependencies = [
-    "agent-assembly>=0.0.1a2",
+    "agent-assembly>=0.0.1b2",
 ]
 
 [project.optional-dependencies]
 # The live integration drives a real CrewAI crew. The --mock demo (what CI runs)
 # needs none of this — it replays the crew's delegation trajectory offline.
 live = [
-    "crewai>=0.30.0",
+    "crewai>=1.14.7",
 ]
 dev = [
     "pytest>=8.0.0",

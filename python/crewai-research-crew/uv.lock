@@ -9,7 +9,7 @@ resolution-markers = [
 
 [[package]]
 name = "agent-assembly"
-version = "0.0.1a8"
+version = "0.0.1b2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "grpcio" },
@@ -18,12 +18,12 @@ dependencies = [
     { name = "pydantic" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/73/42/d54b49e00f0571a30e8722af9e8f462e3188db81d7ab08ec794190a4bcd1/agent_assembly-0.0.1a8.tar.gz", hash = "sha256:bb5dabd295d97068cd6edc9986f5393585b261cadbdefd4feb5048141adc3fdd", size = 68052, upload-time = "2026-06-13T06:50:37.854Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/fb/09/536043927316fad0abb592a0d26d4730d29dfdb34f00ea3109ee6d0aaae0/agent_assembly-0.0.1b2.tar.gz", hash = "sha256:53d28a4f7f58280fe2f7f24f08fb65b58a94030689e41520cfea54156be3ba65", size = 70392, upload-time = "2026-06-15T02:23:04.366Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d8/59/a6e7cd5c06d73c7e9bd52b7d55df654aba304c2338b0843812e82468b332/agent_assembly-0.0.1a8-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:38b76423887d5969a725773e078bff6bf4a4e33b0d4c2dc6533a08ac771a3371", size = 10519655, upload-time = "2026-06-13T06:50:27.3Z" },
-    { url = "https://files.pythonhosted.org/packages/20/a6/50e93ee445d40717217e948e0f2a1dcc478b3b6c0d1226da47ce85e76c7d/agent_assembly-0.0.1a8-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:fa315fc450abbfdf503a62bea0380eca19e6ade475b7ff3ce4ce2607a2be39bb", size = 9199739, upload-time = "2026-06-13T06:50:29.515Z" },
-    { url = "https://files.pythonhosted.org/packages/d8/5a/7bf4f770f1e1520efb469a8b159ac45b80e75b1f0ff223c87082debf3bd4/agent_assembly-0.0.1a8-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:1eeec2807d03bbbbe48f23d864dadb91535a414b24bff2ef6b276cd35bc256c2", size = 10004722, upload-time = "2026-06-13T06:50:32.262Z" },
-    { url = "https://files.pythonhosted.org/packages/94/28/443bbc3fa6965d91b2ac647a37b23f02adcad7e6a920ca2c6ad4dd5443f8/agent_assembly-0.0.1a8-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ff59cd7ca52fcc718e93fd584d75559d5ff4788478a9dbd717910be2896786a7", size = 11093513, upload-time = "2026-06-13T06:50:34.324Z" },
+    { url = "https://files.pythonhosted.org/packages/15/cb/95ce75263c627017a510bb2445a051b78c18b2d78e2d01517d78c79f6f9a/agent_assembly-0.0.1b2-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:87b7de97fbbf487603841de7b977d3380f8970e45f90bb9da14b91c3730bf2a6", size = 10524759, upload-time = "2026-06-15T02:22:55.846Z" },
+    { url = "https://files.pythonhosted.org/packages/03/50/91b8ace11dadeb9b497deecc7a4637b32d213e5adf917cfd05b481ed867a/agent_assembly-0.0.1b2-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:ca679b465e4bcbdf39b4c7d6e59dd09a7fae781de43eb822fe2f7b58c310b4d1", size = 9171842, upload-time = "2026-06-15T02:22:58.115Z" },
+    { url = "https://files.pythonhosted.org/packages/70/51/88447dab6e0e55b75551d31f78fb6f2d4b326c5c3303b382cffa5f00aad1/agent_assembly-0.0.1b2-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:2e7cb3ab63e5e5b852d404c619471daef8b6607b82b46ef703c56673d2863ea9", size = 10007357, upload-time = "2026-06-15T02:23:00.301Z" },
+    { url = "https://files.pythonhosted.org/packages/d0/0b/808cd9a52b858a7da8bc6f7d0c0d8a79465cdc8ecf3af584825d37c494c3/agent_assembly-0.0.1b2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6e15643aa3cc8c19288eb8b47ae59636b81530efe9cdae0c14aef3623db195ae", size = 11094577, upload-time = "2026-06-15T02:23:02.414Z" },
 ]
 
 [[package]]
@@ -619,8 +619,8 @@ live = [
 
 [package.metadata]
 requires-dist = [
-    { name = "agent-assembly", specifier = ">=0.0.1a2" },
-    { name = "crewai", marker = "extra == 'live'", specifier = ">=0.30.0" },
+    { name = "agent-assembly", specifier = ">=0.0.1b2" },
+    { name = "crewai", marker = "extra == 'live'", specifier = ">=1.14.7" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0.0" },
     { name = "pytest-mock", marker = "extra == 'dev'", specifier = ">=3.14.0" },
 ]
@@ -726,11 +726,11 @@ wheels = [
 
 [[package]]
 name = "filelock"
-version = "3.29.3"
+version = "3.29.4"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/91/f5/3557bf28e0f1943e4849154c821533706e6dea010f96fb6aa0b6949037d1/filelock-3.29.3.tar.gz", hash = "sha256:7fc1b3f39cf172fd8203812043c57b8a65aef9969f38b6704f628b881f761a84", size = 61956, upload-time = "2026-06-10T17:37:11.832Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e6/dc/be6cbe99670cd6e4ad387123647cb08e0c32975e223f82551e914c5568a6/filelock-3.29.4.tar.gz", hash = "sha256:10cdb3656fc44541cdf30652a93fb10ec6b05325620eb316bd26893e4201538a", size = 63028, upload-time = "2026-06-13T16:12:00.744Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/81/8f/b61d427c4f49a8bdadc93f4e7e74df8a6df6f77ee6e26bf0df53d3925363/filelock-3.29.3-py3-none-any.whl", hash = "sha256:e58333029cc9b925f39aad59b1d8f0a1ad836af4e60d7217f4a4dba87461261d", size = 42324, upload-time = "2026-06-10T17:37:10.37Z" },
+    { url = "https://files.pythonhosted.org/packages/13/37/a065dc3bd6e49423a6532c642ca7378d3f467b1ef44c2800c937af7f9739/filelock-3.29.4-py3-none-any.whl", hash = "sha256:dac1648087d5115554850d113e7dd8c83ab2d38e3435dde2d4f163847e57b767", size = 42757, upload-time = "2026-06-13T16:11:59.582Z" },
 ]
 
 [[package]]
@@ -2506,7 +2506,7 @@ wheels = [
 
 [[package]]
 name = "pytest"
-version = "9.0.3"
+version = "9.1.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "colorama", marker = "sys_platform == 'win32'" },
@@ -2515,9 +2515,9 @@ dependencies = [
     { name = "pluggy" },
     { name = "pygments" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/7d/0d/549bd94f1a0a402dc8cf64563a117c0f3765662e2e668477624baeec44d5/pytest-9.0.3.tar.gz", hash = "sha256:b86ada508af81d19edeb213c681b1d48246c1a91d304c6c81a427674c17eb91c", size = 1572165, upload-time = "2026-04-07T17:16:18.027Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/84/0e/b5858858d74958632c49b72cb25a3976ff9f632397626715be71c89d3971/pytest-9.1.0.tar.gz", hash = "sha256:41dd9148c08072446394cefd3d79701701335a9f4cae69ba92e39f6c7f5c061c", size = 1634181, upload-time = "2026-06-13T18:52:45.983Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d4/24/a372aaf5c9b7208e7112038812994107bc65a84cd00e0354a88c2c77a617/pytest-9.0.3-py3-none-any.whl", hash = "sha256:2c5efc453d45394fdd706ade797c0a81091eccd1d6e4bccfcd476e2b8e0ab5d9", size = 375249, upload-time = "2026-04-07T17:16:16.13Z" },
+    { url = "https://files.pythonhosted.org/packages/8b/5a/ba30a81239b909821b3153e303e7def45178bf353da4f72380e6c5e8793b/pytest-9.1.0-py3-none-any.whl", hash = "sha256:8ebb0e7888bdf2bdfc602ec51f8f62d50200af37356c74e503c79a94f5c81f32", size = 386453, upload-time = "2026-06-13T18:52:44.045Z" },
 ]
 
 [[package]]

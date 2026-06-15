@@ -26,7 +26,7 @@ audit event.
 |---|---|
 | Python | >= 3.12 |
 | [uv](https://github.com/astral-sh/uv) | latest |
-| Agent Assembly Python SDK | >= 0.0.1a2 |
+| Agent Assembly Python SDK | >= 0.0.1b2 |
 
 The mock demo needs no gateway, no `crewai`, and no API keys. The optional
 `live` extra (`crewai`) is only required for the real-crew integration.
