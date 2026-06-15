@@ -3,8 +3,9 @@
 The agent is wired with ``TestModel`` — Pydantic AI's built-in offline model —
 so it runs deterministically with **no API key and no network**. ``TestModel``
 is told which tool to call, which lets the demo exercise the allow / deny /
-pending governance paths the Agent Assembly adapter installs on
-``Tool._run``.
+pending governance paths the Agent Assembly adapter installs on Pydantic AI's
+tool-execution path (``AbstractToolset.call_tool`` on >=0.3.0, ``Tool._run`` on
+<0.3.0).
 """
 from __future__ import annotations
 

@@ -4,10 +4,12 @@ In production, Agent Assembly's gateway enforces policy server-side. This
 module simulates that governance layer locally so the demo runs without a
 running gateway.
 
-The ``PydanticAIAdapter`` patches ``pydantic_ai.tools.Tool._run`` and routes
-every tool invocation through ``check_tool_start`` below. A ``deny`` (or an
-unapproved ``pending``) decision raises ``PolicyViolationError`` before the
-tool body runs.
+The ``PydanticAIAdapter`` installs a version-tolerant tool hook — it patches
+``pydantic_ai.toolsets.AbstractToolset.call_tool`` (and concrete toolsets such
+as ``FunctionToolset``) on pydantic-ai >=0.3.0, falling back to
+``pydantic_ai.tools.Tool._run`` on <0.3.0 — and routes every tool invocation
+through ``check_tool_start`` below. A ``deny`` (or an unapproved ``pending``)
+decision raises ``PolicyViolationError`` before the tool body runs.
 
 Production setup:
     ctx = init_assembly(gateway_url="http://localhost:8080", agent_id="my-agent")

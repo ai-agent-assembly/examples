@@ -52,7 +52,8 @@ async def _run_demo() -> None:
     print(f"Initializing Agent Assembly (gateway: {gateway_url}, sdk-only mode)...")
 
     # Install our local-policy tool hooks BEFORE init_assembly. The adapter
-    # patches `pydantic_ai.tools.Tool._run`; because the patch is idempotent,
+    # patches Pydantic AI's tool-execution path (`AbstractToolset.call_tool` on
+    # >=0.3.0, `Tool._run` on <0.3.0); because the patch is idempotent,
     # registering first makes init_assembly's auto-detection a no-op and keeps
     # the offline `LocalPolicyEngine` wired as the governance interceptor.
     adapter = PydanticAIAdapter()
