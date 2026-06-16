@@ -14,7 +14,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@agent-assembly/sdk": "0.0.1-beta.2",
+    "@agent-assembly/sdk": "0.0.1-beta.3",
     "@mastra/core": "^1.42.0",
     "zod": "^4.4.3"
   },
