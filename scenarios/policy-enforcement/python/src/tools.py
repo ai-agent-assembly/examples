@@ -28,4 +28,4 @@ def delete_agent(agent_id: str) -> str:
 
 def send_email(to: str, subject: str, body: str) -> str:
     """Send an email (RISKY — DENIED by policy: network egress)."""
-    return f"Email sent to {to}: {subject}"
+    return f"Email sent to {to}: {subject} ({len(body)} bytes)"
