@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { evaluate, POLICY_RULES, DEFAULT_ACTION } from "../src/policy.js";
-import { readConfig, listAgents, deleteAgent, sendEmail } from "../src/tools.js";
+import { readConfig, listAgents, deleteAgent } from "../src/tools.js";
 
 describe("policy", () => {
   it("loads policy.yaml with 4 rules", () => {

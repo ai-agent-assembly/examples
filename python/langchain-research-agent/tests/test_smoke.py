@@ -37,7 +37,7 @@ def test_calculator_is_free_and_allowed(
         input_str='{"expression": "1 + 1"}',
         run_id=uuid4(),
     )
-    assert policy.budget.spent == 0.0
+    assert policy.budget.spent == pytest.approx(0.0)
 
 
 def test_non_allowlisted_egress_is_blocked(handler: AssemblyCallbackHandler) -> None:

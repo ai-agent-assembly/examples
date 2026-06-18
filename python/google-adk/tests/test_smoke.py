@@ -1,6 +1,7 @@
 """Smoke tests for google-adk-governed-agent — offline, no gateway required."""
 from __future__ import annotations
 
+from collections.abc import Iterator
 from types import SimpleNamespace
 from unittest.mock import patch
 
@@ -23,7 +24,7 @@ def _tool_context() -> SimpleNamespace:
 
 
 @pytest.fixture
-def governed_tool_class() -> type[DemoTool]:
+def governed_tool_class() -> Iterator[type[DemoTool]]:
     govern_tool_class(DemoTool, LocalPolicyEngine())
     yield DemoTool
     ungovern_tool_class(DemoTool)

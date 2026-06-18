@@ -12,7 +12,7 @@ This module defines:
 from __future__ import annotations
 
 from typing import Any
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 from agent_assembly.adapters.langchain import AssemblyCallbackHandler
 from agent_assembly.exceptions import ToolExecutionBlockedError
@@ -29,8 +29,6 @@ class LocalPolicyEngine:
     def check_tool_start(
         self,
         serialized: dict[str, Any],
-        input_str: str,
-        run_id: UUID | None = None,
         **kwargs: Any,
     ) -> dict[str, str]:
         tool_name = serialized.get("name", "")

@@ -11,7 +11,7 @@
 
 'use strict';
 
-const { randomUUID } = require('crypto');
+const { randomUUID } = require('node:crypto');
 
 // ---------------------------------------------------------------------------
 // Minimal Agent Assembly SDK stubs used in this offline example.

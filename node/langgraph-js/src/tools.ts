@@ -19,9 +19,9 @@ export function executeShell(command: string): ToolResult {
 
 export const TOOLS = {
   search_docs: (args: Record<string, unknown>): ToolResult =>
-    searchDocs(String(args["query"] ?? "")),
+    searchDocs(typeof args["query"] === "string" ? args["query"] : ""),
   execute_shell: (args: Record<string, unknown>): ToolResult =>
-    executeShell(String(args["command"] ?? "")),
+    executeShell(typeof args["command"] === "string" ? args["command"] : ""),
 } as const;
 
 export type ToolName = keyof typeof TOOLS;

@@ -7,7 +7,7 @@ type DemoCall =
 
 const DEMO_CALLS: DemoCall[] = [
   { name: "get_balance", args: { accountId: "acc-001" } },
-  { name: "transfer_funds", args: { fromAccount: "acc-001", toAccount: "acc-002", amount: 500.0 } },
+  { name: "transfer_funds", args: { fromAccount: "acc-001", toAccount: "acc-002", amount: 500 } },
 ];
 
 function runTool(call: DemoCall): string {

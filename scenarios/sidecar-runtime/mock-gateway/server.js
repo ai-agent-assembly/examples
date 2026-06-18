@@ -10,7 +10,8 @@
  * Replace this container with the real gateway image when you have access.
  */
 
-const http = require('http');
+const http = require('node:http');
+const { randomUUID } = require('node:crypto');
 
 const LOG_LEVEL = process.env.LOG_LEVEL || 'info';
 
@@ -50,7 +51,7 @@ const server = http.createServer((req, res) => {
 
       const tool = payload.tool || 'unknown';
       const { decision, reason } = evaluate(tool);
-      const auditId = `audit-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+      const auditId = `audit-${Date.now()}-${randomUUID().slice(0, 8)}`;
 
       log(`tool=${tool.padEnd(25)} decision=${decision.padEnd(6)} reason=${reason}`);
 

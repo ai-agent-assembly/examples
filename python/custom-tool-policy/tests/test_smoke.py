@@ -20,7 +20,7 @@ def policy() -> LocalPolicyEngine:
 
 def test_compute_sum_is_allowed(policy: LocalPolicyEngine) -> None:
     fn = governed("compute_sum", compute_sum, policy)
-    assert fn(a=3.0, b=4.0) == 7.0
+    assert fn(a=3.0, b=4.0) == pytest.approx(7.0)
 
 
 def test_fetch_stock_price_is_allowed(policy: LocalPolicyEngine) -> None:

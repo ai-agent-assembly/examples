@@ -10,11 +10,15 @@ async function main(): Promise<void> {
   const tools = withAssembly(
     {
       search_web: {
-        execute: async (args: Record<string, unknown>) => searchWeb(String(args.query ?? "")).output
+        execute: async (args: Record<string, unknown>) =>
+          searchWeb(typeof args.query === "string" ? args.query : "").output
       },
       send_email: {
         execute: async (args: Record<string, unknown>) =>
-          sendEmail(String(args.to ?? ""), String(args.subject ?? "")).output
+          sendEmail(
+            typeof args.to === "string" ? args.to : "",
+            typeof args.subject === "string" ? args.subject : ""
+          ).output
       }
     },
     { gatewayClient: createPolicyGatewayClient(), agentId: "openai-node-example-agent" }
@@ -37,7 +41,9 @@ async function main(): Promise<void> {
   console.log("\nTool calls governed by withAssembly + the local policy.");
 }
 
-main().catch((err) => {
+try {
+  await main();
+} catch (err) {
   console.error(err);
   process.exit(1);
-});
+}

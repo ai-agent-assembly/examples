@@ -26,7 +26,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from typing import Any
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 from agent_assembly.types import AuditEvent, CallStackNode
 
@@ -82,7 +82,7 @@ class MockApprover:
     def __init__(self, auto_approve: bool = False) -> None:
         self.auto_approve = auto_approve
 
-    def decide(self, tool_name: str, acting_agent: str) -> bool:
+    def decide(self, _tool_name: str, _acting_agent: str) -> bool:
         return self.auto_approve
 
 
@@ -149,8 +149,6 @@ class CrewPolicyEngine:
     def check_tool_start(
         self,
         serialized: dict[str, Any],
-        input_str: str,
-        run_id: UUID | None = None,
         **kwargs: Any,
     ) -> dict[str, str]:
         tool_name = serialized.get("name", "")
@@ -189,8 +187,6 @@ class CrewPolicyEngine:
     def wait_for_tool_approval(
         self,
         serialized: dict[str, Any],
-        input_str: str,
-        run_id: UUID | None = None,
         **kwargs: Any,
     ) -> dict[str, str]:
         """Called by the SDK after a ``pending`` decision on a file write."""

@@ -23,7 +23,6 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from typing import Any
-from uuid import UUID
 
 # ---------------------------------------------------------------------------
 # Balanced policy configuration (mirrors gateway policy.yaml in production)
@@ -122,7 +121,6 @@ class BalancedPolicyEngine:
         self,
         serialized: dict[str, Any],
         input_str: str,
-        run_id: UUID | None = None,
         **kwargs: Any,
     ) -> dict[str, str]:
         tool_name = serialized.get("name", "")

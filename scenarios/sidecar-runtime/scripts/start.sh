@@ -17,14 +17,14 @@ docker compose -f "$COMPOSE_DIR/docker-compose.yml" up -d --build
 echo "Waiting for gateway health check..."
 MAX_WAIT=60
 ELAPSED=0
-until docker compose -f "$COMPOSE_DIR/docker-compose.yml" ps | grep -q "healthy" || [ $ELAPSED -ge $MAX_WAIT ]; do
+until docker compose -f "$COMPOSE_DIR/docker-compose.yml" ps | grep -q "healthy" || [[ $ELAPSED -ge $MAX_WAIT ]]; do
   sleep 2
   ELAPSED=$((ELAPSED + 2))
 done
 
-if [ $ELAPSED -ge $MAX_WAIT ]; then
-  echo "ERROR: Gateway did not become healthy within ${MAX_WAIT}s."
-  echo "Run: docker compose -f $COMPOSE_DIR/docker-compose.yml logs assembly-gateway"
+if [[ $ELAPSED -ge $MAX_WAIT ]]; then
+  echo "ERROR: Gateway did not become healthy within ${MAX_WAIT}s." >&2
+  echo "Run: docker compose -f $COMPOSE_DIR/docker-compose.yml logs assembly-gateway" >&2
   exit 1
 fi
 

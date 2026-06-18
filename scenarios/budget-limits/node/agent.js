@@ -14,13 +14,13 @@
 // Per-call costs matching policy.yaml
 const TOOL_COSTS = {
   web_search: 0.05,
-  query_database: 0.10,
-  call_external_api: 0.20,
+  query_database: 0.1,
+  call_external_api: 0.2,
   generate_report: 0.25,
 };
 
 // Session budget ceiling matching policy.yaml budget.max_cost
-const BUDGET_LIMIT = 0.50;
+const BUDGET_LIMIT = 0.5;
 
 // ---------------------------------------------------------------------------
 // Minimal Agent Assembly SDK stubs used in this offline example.

@@ -64,7 +64,7 @@ class AssemblyClient:
         self.agent_id = agent_id
         self._budget = budget
 
-    def call_tool(self, tool: str, **inputs: Any) -> dict[str, Any]:
+    def call_tool(self, tool: str, **_inputs: Any) -> dict[str, Any]:
         cost = TOOL_COSTS.get(tool, 0.01)
 
         if cost > self._budget.remaining:

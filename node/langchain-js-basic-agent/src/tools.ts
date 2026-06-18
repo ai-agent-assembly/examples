@@ -19,9 +19,9 @@ export function deleteFile(path: string): ToolResult {
 
 export const TOOLS = {
   get_weather: (args: Record<string, unknown>): ToolResult =>
-    getWeather(String(args["location"] ?? "unknown")),
+    getWeather(typeof args["location"] === "string" ? args["location"] : "unknown"),
   delete_file: (args: Record<string, unknown>): ToolResult =>
-    deleteFile(String(args["path"] ?? "")),
+    deleteFile(typeof args["path"] === "string" ? args["path"] : ""),
 } as const;
 
 export type ToolName = keyof typeof TOOLS;

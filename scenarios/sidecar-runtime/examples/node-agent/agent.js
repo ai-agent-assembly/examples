@@ -17,7 +17,7 @@
 
 'use strict';
 
-const http = require('http');
+const http = require('node:http');
 
 // ---------------------------------------------------------------------------
 // Gateway client — tries the local runtime, falls back to an offline policy

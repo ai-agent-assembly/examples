@@ -9,11 +9,15 @@ async function main(): Promise<void> {
   const tools = withAssembly(
     {
       read_file: {
-        execute: async (args: Record<string, unknown>) => readFile(String(args.path ?? "")).output
+        execute: async (args: Record<string, unknown>) =>
+          readFile(typeof args.path === "string" ? args.path : "").output
       },
       write_file: {
         execute: async (args: Record<string, unknown>) =>
-          writeFile(String(args.path ?? ""), String(args.content ?? "")).output
+          writeFile(
+            typeof args.path === "string" ? args.path : "",
+            typeof args.content === "string" ? args.content : ""
+          ).output
       }
     },
     { gatewayClient: createPolicyGatewayClient(), agentId: "custom-tool-policy-agent" }
@@ -36,7 +40,9 @@ async function main(): Promise<void> {
   console.log("\nAll tool calls governed by withAssembly + the local policy.");
 }
 
-main().catch((err) => {
+try {
+  await main();
+} catch (err) {
   console.error(err);
   process.exit(1);
-});
+}

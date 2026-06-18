@@ -25,7 +25,7 @@ import json
 import time
 from pathlib import Path
 from typing import Any
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 import yaml
 
@@ -107,7 +107,6 @@ class ApprovalPolicyEngine:
         self,
         serialized: dict[str, Any],
         input_str: str,
-        run_id: UUID | None = None,
         **kwargs: Any,
     ) -> dict[str, str]:
         tool_name = serialized.get("name", "")
@@ -129,9 +128,6 @@ class ApprovalPolicyEngine:
 
     def wait_for_tool_approval(
         self,
-        serialized: dict[str, Any],
-        input_str: str,
-        run_id: UUID | None = None,
         **kwargs: Any,
     ) -> dict[str, str]:
         """Called by the SDK after check_tool_start returns pending.

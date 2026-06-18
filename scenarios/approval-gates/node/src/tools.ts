@@ -3,9 +3,9 @@ export interface ToolResult {
 }
 
 const BALANCES: Record<string, number> = {
-  "acc-001": 12450.00,
-  "acc-002": 3200.00,
-  "acc-003": 875.50,
+  "acc-001": 12450,
+  "acc-002": 3200,
+  "acc-003": 875.5,
 };
 
 export function getBalance(accountId: string): ToolResult {

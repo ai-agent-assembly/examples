@@ -11,7 +11,6 @@ Production setup:
 from __future__ import annotations
 
 from typing import Any
-from uuid import UUID
 
 DENIED_TOOLS: frozenset[str] = frozenset({
     "delete_files",
@@ -34,8 +33,6 @@ class LocalPolicyEngine:
     def check_tool_start(
         self,
         serialized: dict[str, Any],
-        input_str: str,
-        run_id: UUID | None = None,
         **kwargs: Any,
     ) -> dict[str, str]:
         tool_name = serialized.get("name", "")
@@ -57,8 +54,6 @@ class LocalPolicyEngine:
     def wait_for_tool_approval(
         self,
         serialized: dict[str, Any],
-        input_str: str,
-        run_id: UUID | None = None,
         **kwargs: Any,
     ) -> dict[str, str]:
         """Offline mode: no approver is available, so pending tools are denied."""

@@ -27,9 +27,9 @@ cleanup() {
 trap cleanup EXIT
 
 if ! command -v aasm &>/dev/null; then
-    echo "[run-with-aasm] ERROR: aasm binary not found."
-    echo "[run-with-aasm] Install: brew install agent-assembly/tap/aasm"
-    echo "[run-with-aasm]          curl -fsSL https://get.agent-assembly.io | sh"
+    echo "[run-with-aasm] ERROR: aasm binary not found." >&2
+    echo "[run-with-aasm] Install: brew install agent-assembly/tap/aasm" >&2
+    echo "[run-with-aasm]          curl -fsSL https://get.agent-assembly.io | sh" >&2
     exit 1
 fi
 
@@ -47,7 +47,7 @@ for i in $(seq 1 "$WAIT_SECONDS"); do
 done
 
 if ! nc -z 127.0.0.1 "$AASM_PORT" 2>/dev/null; then
-    echo "[run-with-aasm] ERROR: sidecar did not start within ${WAIT_SECONDS}s — check $AASM_LOG"
+    echo "[run-with-aasm] ERROR: sidecar did not start within ${WAIT_SECONDS}s — check $AASM_LOG" >&2
     exit 1
 fi
 

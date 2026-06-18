@@ -18,7 +18,6 @@ from __future__ import annotations
 
 import json
 import os
-import urllib.error
 import urllib.request
 from typing import Any
 
@@ -56,7 +55,7 @@ def evaluate_tool(tool: str, inputs: dict[str, Any]) -> dict[str, Any]:
     if GATEWAY_URL:
         try:
             return _call_gateway(tool, inputs)
-        except (urllib.error.URLError, OSError) as exc:
+        except OSError as exc:  # URLError subclasses OSError
             print(f"  [WARN] Gateway unreachable ({exc}); falling back to offline policy.")
     return _call_offline(tool)
 
@@ -94,10 +93,10 @@ def run() -> None:
 
         if decision == "allow":
             print(f"  [GATEWAY] decision=allow   reason={reason}")
-            print(f"    ✓ allowed\n")
+            print("    ✓ allowed\n")
         else:
             print(f"  [GATEWAY] decision=deny    reason={reason}")
-            print(f"    ✗ denied\n")
+            print("    ✗ denied\n")
 
         if audit_id:
             print(f"  Audit ID: {audit_id}")
