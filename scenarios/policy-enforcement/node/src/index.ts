@@ -1,17 +1,19 @@
 import { evaluate, POLICY_RULES, DEFAULT_ACTION } from "./policy.js";
 import { readConfig, listAgents, deleteAgent, sendEmail } from "./tools.js";
 
+// `tool` is the snake_case policy key (matches policy.yaml / POLICY_RULES and the
+// Python twin); `name` is the camelCase TypeScript function dispatched locally.
 type DemoCall =
-  | { name: "readConfig"; args: { key: string } }
-  | { name: "listAgents"; args: Record<string, never> }
-  | { name: "deleteAgent"; args: { agentId: string } }
-  | { name: "sendEmail"; args: { to: string; subject: string; body: string } };
+  | { tool: "read_config"; name: "readConfig"; args: { key: string } }
+  | { tool: "list_agents"; name: "listAgents"; args: Record<string, never> }
+  | { tool: "delete_agent"; name: "deleteAgent"; args: { agentId: string } }
+  | { tool: "send_email"; name: "sendEmail"; args: { to: string; subject: string; body: string } };
 
 const DEMO_CALLS: DemoCall[] = [
-  { name: "readConfig", args: { key: "database.host" } },
-  { name: "listAgents", args: {} },
-  { name: "deleteAgent", args: { agentId: "agent-001" } },
-  { name: "sendEmail", args: { to: "admin@example.com", subject: "Hello", body: "Test message" } },
+  { tool: "read_config", name: "readConfig", args: { key: "database.host" } },
+  { tool: "list_agents", name: "listAgents", args: {} },
+  { tool: "delete_agent", name: "deleteAgent", args: { agentId: "agent-001" } },
+  { tool: "send_email", name: "sendEmail", args: { to: "admin@example.com", subject: "Hello", body: "Test message" } },
 ];
 
 function runTool(call: DemoCall): string {
@@ -42,8 +44,8 @@ function main(): void {
   let denied = 0;
   for (const call of DEMO_CALLS) {
     const argsStr = Object.entries(call.args).map(([k, v]) => `${k}='${v}'`).join(", ");
-    console.log(`  → ${call.name}(${argsStr})`);
-    const decision = evaluate(call.name);
+    console.log(`  → ${call.tool}(${argsStr})`);
+    const decision = evaluate(call.tool);
     if (decision.action === "allow") {
       const result = runTool(call);
       console.log(`     ✅ ALLOWED  — ${result}`);
