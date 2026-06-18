@@ -1,6 +1,8 @@
 """Smoke tests for custom-tool-policy — fully offline, no gateway or framework needed."""
 from __future__ import annotations
 
+import os
+import tempfile
 from unittest.mock import patch
 
 import pytest
@@ -49,7 +51,11 @@ def test_denied_fn_body_never_executes(policy: LocalPolicyEngine) -> None:
 
 def test_unknown_tool_name_is_allowed(policy: LocalPolicyEngine) -> None:
     fn = governed("read_file", lambda path: f"contents of {path}", policy)
-    result = fn(path="/tmp/safe.txt")
+    # Use a per-run private temp dir instead of a hardcoded world-writable
+    # /tmp path (python:S5443). The lambda never touches disk; the path is
+    # only echoed back, so a secure mkdtemp() path keeps the assertion intact.
+    safe_path = os.path.join(tempfile.mkdtemp(), "safe.txt")
+    result = fn(path=safe_path)
     assert "contents" in result
 
 

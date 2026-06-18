@@ -13,6 +13,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: anishathalye/proof-html@v2.2.3
+      - uses: anishathalye/proof-html@a76b66427e600c6992e8937a741afffd2264a613  # v2.2.3
         with:
           directory: ./
