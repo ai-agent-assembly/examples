@@ -34,7 +34,9 @@ async function main(): Promise<void> {
   console.log("\nDone. Tool calls governed by withAssembly + the local policy.");
 }
 
-main().catch((err) => {
+try {
+  await main();
+} catch (err) {
   console.error(err);
   process.exit(1);
-});
+}
