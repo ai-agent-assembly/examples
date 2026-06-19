@@ -1,0 +1,21 @@
+=== Agent Assembly — Live-Core Enforcement Example ===
+
+Agent ID:   live-core-demo-agent
+Gateway:    http://localhost:7391
+Runtime:    /tmp/aa-runtime-live-core-demo-agent.sock
+
+Registered agent 'live-core-demo-agent' (network mode: sdk-only).
+
+--- Calling governed tools via the SDK -> live runtime -> gateway ---
+
+  → read_file(path='/data/report.csv')
+  [GATEWAY] decision=allow
+    ✓ allowed — tool would execute
+
+  → delete_file(path='/data/important.csv')
+  [GATEWAY] decision=deny    reason=tool 'delete_file' is denied by policy
+    ✗ blocked — tool did NOT execute
+
+    Audit ID: audit-...
+
+Total tool calls: 2  |  blocked by policy: 1
