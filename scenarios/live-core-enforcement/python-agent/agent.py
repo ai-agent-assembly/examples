@@ -45,6 +45,7 @@ import sys
 from agent_assembly import init_assembly
 from agent_assembly.core.runtime_interceptor import (
     RuntimeQueryInterceptor,
+    _resolve_runtime_socket_path,
     connect_runtime_client,
 )
 
@@ -82,7 +83,9 @@ def run() -> int:
     print("=== Agent Assembly — Live-Core Enforcement Example ===\n")
     print(f"Agent ID:   {AGENT_ID}")
     print(f"Gateway:    {GATEWAY_URL}")
-    print(f"Runtime:    {os.environ.get('AA_RUNTIME_SOCKET', f'/tmp/aa-runtime-{AGENT_ID}.sock')}\n")
+    # Resolve the runtime socket display value through the SDK's own resolver
+    # (AA_RUNTIME_SOCKET > per-agent default) rather than hardcoding a path.
+    print(f"Runtime:    {_resolve_runtime_socket_path(AGENT_ID)}\n")
 
     # init_assembly registers the agent with the real gateway over the native
     # runtime client and wires the pre-execution check. enforce = a deny blocks.
