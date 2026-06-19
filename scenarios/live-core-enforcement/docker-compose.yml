@@ -1,0 +1,53 @@
+# Live-core enforcement — REAL Agent Assembly stack.
+#
+# This compose file brings up the genuine runtime + gateway (not a mock):
+#
+#   aa-runtime  — the published sidecar image, which bundles the gateway binary
+#                 and loads the section-based policy.yaml. It exposes the SDK IPC
+#                 socket at /tmp/aa-runtime-<agent_id>.sock on a shared volume.
+#   live-agent  — the Python example, built from python-agent/Dockerfile. It
+#                 installs the REAL `agent-assembly` SDK + native extension and
+#                 connects to the runtime over the shared socket volume.
+#
+# AA_AGENT_ID MUST be identical in both services — it determines the socket name.
+#
+# Start:  bash scripts/start.sh    (or: docker compose up --build)
+# Stop:   bash scripts/stop.sh     (or: docker compose down -v)
+
+services:
+  aa-runtime:
+    # The published runtime image bundles aa-gateway. Pin a tag for
+    # reproducibility in real use; `latest` is fine for a local demo.
+    image: ghcr.io/ai-agent-assembly/aa-runtime:latest
+    restart: unless-stopped
+    environment:
+      AA_AGENT_ID: "live-core-demo-agent"
+      AA_POLICY: "/etc/aa/policy.yaml"      # section-based policy loaded by the gateway
+      # AA_METRICS_ADDR: "0.0.0.0:8080"     # default shown for reference
+    volumes:
+      - aa-runtime-socket:/tmp              # IPC socket: /tmp/aa-runtime-live-core-demo-agent.sock
+      - ./policy.yaml:/etc/aa/policy.yaml:ro
+    ports:
+      - "8080:8080"                         # health + metrics
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/ready || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+  live-agent:
+    build:
+      context: python-agent
+    depends_on:
+      aa-runtime:
+        condition: service_healthy
+    environment:
+      AA_AGENT_ID: "live-core-demo-agent"   # MUST match aa-runtime
+      AA_RUNTIME_SOCKET: "/tmp/aa-runtime-live-core-demo-agent.sock"
+      AA_GATEWAY_URL: "http://aa-runtime:7391"
+    volumes:
+      - aa-runtime-socket:/tmp              # same socket the runtime created
+
+volumes:
+  aa-runtime-socket:
