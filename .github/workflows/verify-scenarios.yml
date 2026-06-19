@@ -10,6 +10,9 @@ on:
       - master
     paths:
       - "scenarios/**"
+  # Opt-in trigger for the real end-to-end live-core-enforcement run, which needs
+  # a real aa-runtime image + native SDK build that the offline matrix lacks.
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -23,6 +26,7 @@ jobs:
       audit_trace: ${{ steps.check.outputs.audit_trace }}
       budget_limits: ${{ steps.check.outputs.budget_limits }}
       sidecar_runtime: ${{ steps.check.outputs.sidecar_runtime }}
+      live_core: ${{ steps.check.outputs.live_core }}
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  # v6
 
@@ -32,15 +36,19 @@ jobs:
           audit_trace="false"
           budget_limits="false"
           sidecar_runtime="false"
+          live_core="false"
           [[ -f "scenarios/audit-trace/python/agent.py" ]]                          && audit_trace="true"
           [[ -f "scenarios/budget-limits/python/agent.py" ]]                        && budget_limits="true"
           [[ -f "scenarios/sidecar-runtime/examples/python-agent/agent.py" ]]      && sidecar_runtime="true"
+          [[ -f "scenarios/live-core-enforcement/python-agent/agent.py" ]]         && live_core="true"
           echo "audit_trace=$audit_trace"   >> "$GITHUB_OUTPUT"
           echo "budget_limits=$budget_limits" >> "$GITHUB_OUTPUT"
           echo "sidecar_runtime=$sidecar_runtime" >> "$GITHUB_OUTPUT"
+          echo "live_core=$live_core" >> "$GITHUB_OUTPUT"
           echo "audit-trace present:      $audit_trace"
           echo "budget-limits present:    $budget_limits"
           echo "sidecar-runtime present:  $sidecar_runtime"
+          echo "live-core present:        $live_core"
 
   # ── Structural check: required files must be present ─────────────────────
   structure-check:
@@ -49,7 +57,8 @@ jobs:
     if: |
       needs.preflight.outputs.audit_trace == 'true'   ||
       needs.preflight.outputs.budget_limits == 'true' ||
-      needs.preflight.outputs.sidecar_runtime == 'true'
+      needs.preflight.outputs.sidecar_runtime == 'true' ||
+      needs.preflight.outputs.live_core == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  # v6
@@ -57,7 +66,7 @@ jobs:
       - name: Check required scenario files
         run: |
           set -e
-          for scenario in audit-trace budget-limits sidecar-runtime; do
+          for scenario in audit-trace budget-limits sidecar-runtime live-core-enforcement; do
             if [[ -d "scenarios/$scenario" ]]; then
               echo "Checking scenarios/$scenario ..."
               test -f "scenarios/$scenario/README.md" \
@@ -76,6 +85,12 @@ jobs:
           [[ -f "scenarios/sidecar-runtime/docker-compose.yml" ]] \
             && echo "sidecar-runtime/docker-compose.yml ✓" \
             || echo "INFO: sidecar-runtime not yet present"
+          [[ -f "scenarios/live-core-enforcement/docker-compose.yml" ]] \
+            && echo "live-core-enforcement/docker-compose.yml ✓" \
+            || echo "INFO: live-core-enforcement not yet present"
+          [[ -f "scenarios/live-core-enforcement/policy.yaml" ]] \
+            && echo "live-core-enforcement/policy.yaml ✓" \
+            || echo "INFO: live-core-enforcement not yet present"
           echo "Structure check passed for all present scenarios."
 
   # ── Python smoke paths ───────────────────────────────────────────────────
@@ -118,6 +133,49 @@ jobs:
       - name: Run sidecar-runtime Python example in offline mode
         run: python scenarios/sidecar-runtime/examples/python-agent/agent.py
         # ASSEMBLY_GATEWAY_URL intentionally unset — tests the offline fallback path.
+
+  # ── live-core-enforcement: offline-safe validation ───────────────────────
+  # This scenario's real allow/deny flow needs a real aa-runtime + aa-gateway,
+  # which CI cannot build/run inline. The live run is opt-in / manual (see the
+  # scenario README and the `live-core-enforcement-live` job below). Offline,
+  # CI honestly asserts only that the example code is valid and imports the REAL
+  # SDK (no shim), and that policy.yaml is a valid section-based policy.
+  validate-live-core:
+    name: "validate: live-core-enforcement (offline, no gateway)"
+    needs: preflight
+    if: needs.preflight.outputs.live_core == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  # v6
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6
+        with:
+          python-version: "3.12"
+      - name: Install PyYAML for policy validation
+        run: pip install pyyaml
+      - name: Validate example code + policy shape (no gateway required)
+        run: python scenarios/live-core-enforcement/scripts/check-offline.py
+      - name: Validate docker-compose config
+        run: docker compose -f scenarios/live-core-enforcement/docker-compose.yml config -q
+
+  # ── live-core-enforcement: real end-to-end run (opt-in, manual) ──────────
+  # Disabled in normal CI: it requires the real aa-runtime image and a native
+  # SDK build, which the offline runner does not have. Trigger it deliberately
+  # via the Actions "Run workflow" button when a gateway image is available.
+  live-core-enforcement-live:
+    name: "live: live-core-enforcement (real gateway)"
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  # v6
+      - name: Bring up the real stack and run the agent
+        run: |
+          cd scenarios/live-core-enforcement
+          bash scripts/start.sh
+      - name: Tear down
+        if: always()
+        run: |
+          cd scenarios/live-core-enforcement
+          bash scripts/stop.sh || true
 
   # ── Node.js smoke paths ──────────────────────────────────────────────────
   smoke-node-audit-trace:
