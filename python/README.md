@@ -18,6 +18,7 @@ This directory contains runnable Python examples showing how to integrate Agent 
 | `haystack-tool-policy/`            | Haystack         | Govern a real Haystack agent via the native adapter — real `Tool.invoke` allow/deny through a `ToolInvoker` |
 | `smolagents-tool-policy/`          | Smolagents       | Govern real `smolagents.Tool` calls via `Tool.__call__`, blocking a destructive tool offline (no model creds) |
 | `microsoft-agent-framework-tool-policy/` | Microsoft Agent Framework | Govern `FunctionTool.invoke` (allow / deny / pending); mock + live paths |
+| `agno-tool-policy/`                | Agno             | Govern real Agno `FunctionCall.execute` tool calls (allow / deny / pending); offline, no model creds |
 
 All examples use the `agent-assembly` Python package (available on PyPI).
 

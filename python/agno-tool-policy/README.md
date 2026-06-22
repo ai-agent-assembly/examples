@@ -1,0 +1,109 @@
+# agno-tool-policy
+
+Demonstrates [Agent Assembly](https://github.com/AI-agent-assembly/agent-assembly-examples) governance of an [Agno](https://docs.agno.com/) (formerly Phidata) agent using Agno's **native Agent Assembly adapter**.
+
+Agno runs every function-tool call through a single chokepoint — `agno.tools.function.FunctionCall.execute`. The SDK's Agno adapter patches that method, so every tool an Agno agent invokes passes through policy **before** its body executes: a `deny` short-circuits the tool entirely (its body never runs), an `allow` runs it. This example wires the real adapter (`AgnoPatch`) to a local offline policy and drives genuine Agno `@tool` functions exactly as an Agno `Agent` does, so you can watch the safe tools run and the dangerous one get blocked — with no gateway, API key, or live LLM.
+
+## What this example demonstrates
+
+- Initializing Agent Assembly with `init_assembly()`.
+- Governing real Agno `@tool` functions through the **native Agno adapter** (`AgnoPatch` over `FunctionCall.execute`).
+- An **allowed** tool call (`get_weather`) that runs and returns its real output.
+- Another **allowed** tool call (`summarize_docs`).
+- A **denied** tool call (`execute_sql`) whose body is short-circuited by `deny_arbitrary_execution` — the tool never executes.
+
+## Prerequisites
+
+| Requirement | Version |
+|---|---|
+| Python | >= 3.12 |
+| [uv](https://github.com/astral-sh/uv) | latest |
+| Agent Assembly Python SDK | >= 0.0.1b4 |
+| Agno | >= 2.0.0 |
+
+No API key or running gateway is required for the offline demo.
+
+## Setup
+
+```bash
+cd python/agno-tool-policy
+uv sync --extra dev
+```
+
+## Run
+
+```bash
+uv run python src/main.py
+```
+
+### Expected output
+
+```
+==============================================================
+  Agent Assembly — Agno Tool Policy Demo
+==============================================================
+
+Initializing Agent Assembly (gateway: http://localhost:8080, sdk-only mode)...
+  Agent:    agno-demo-agent
+  Gateway:  http://localhost:8080
+  Mode:     sdk-only (offline demo)
+
+Policy rules (local simulation of gateway policy):
+  DENY   — execute_sql, run_shell_command  (arbitrary execution)
+  ALLOW  — everything else
+
+Agno governance hook installed on FunctionCall.execute.
+Tools governed: get_weather, summarize_docs, execute_sql
+
+Running governed tool calls:
+--------------------------------------------
+  → get_weather({'city': 'London'})
+     ✅ ALLOWED  — Weather in London: sunny, 22C (mock)
+
+  → summarize_docs({'topic': 'policy enforcement'})
+     ✅ ALLOWED  — Summary for 'policy enforcement': Agent Assembly provides governance... (mock)
+
+  → execute_sql({'sql': 'DROP TABLE users; --'})
+     ❌ BLOCKED  — [BLOCKED by governance policy] Tool 'execute_sql' is blocked by policy rule 'deny_arbitrary_execution'. ...
+
+Assembly context shut down.
+```
+
+## Run tests
+
+```bash
+uv run pytest tests/ -v
+```
+
+The smoke tests are a real governance proof: the deny test asserts the denied tool's body **never ran** (a no-op patch would let it execute), and the allow test asserts the real tool body ran and returned its output.
+
+## How governance attaches
+
+In production, `init_assembly()` **auto-detects** Agno and installs the governance hook automatically — you do not call `AgnoPatch` yourself, and the live runtime answers each allow/deny decision. This offline demo has no live runtime, so `init_assembly()` installs a no-op hook; the example reverts it and re-applies the hook wired to a local `LocalPolicyEngine` so the allow/deny decisions are visible without a gateway.
+
+## Switching to production mode
+
+1. Start an Agent Assembly gateway or use your SaaS workspace URL.
+2. Copy `.env.example` to `.env` and fill in credentials.
+3. Drop the manual `AgnoPatch` wiring — `init_assembly()` auto-detects Agno and the live runtime governs every `FunctionCall.execute` automatically:
+
+```python
+with init_assembly(gateway_url="http://localhost:8080", agent_id="my-agno-agent") as ctx:
+    # Agno is auto-detected and governed; just run your agent as usual.
+    agent.run("...")
+```
+
+## Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| `ModuleNotFoundError: agent_assembly` | Run `uv sync` first |
+| `ModuleNotFoundError: agno` | Run `uv sync` — `agno` is a required dependency |
+| `execute_sql` shows ALLOWED | The `init_assembly()` no-op hook was not reverted before applying the policy hook — the patch is idempotent, so revert it first (the example does this) |
+
+## Links
+
+- [Agent Assembly Python SDK](https://github.com/AI-agent-assembly/python-sdk)
+- [Agno docs](https://docs.agno.com/)
+- [Agent Assembly Examples](../../README.md)
+- [Python Examples](../README.md)
