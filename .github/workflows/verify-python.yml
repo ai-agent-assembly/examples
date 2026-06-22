@@ -166,6 +166,31 @@ jobs:
       - name: Run smoke tests
         run: uv run pytest tests/ -v
 
+  microsoft-agent-framework-tool-policy:
+    name: microsoft-agent-framework-tool-policy
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: python/microsoft-agent-framework-tool-policy
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+
+      - uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39  # v8.2.0
+        with:
+          version: "latest"
+
+      # `agent-framework` lives under the `live` extra (heavy, pre-release tree),
+      # so CI installs `dev` only. The smoke tests importorskip it and the mock
+      # demo runs without it — the offline path this repo's CI is meant to verify.
+      - name: Install dependencies
+        run: uv sync --extra dev
+
+      - name: Run smoke tests
+        run: uv run pytest tests/ -v
+
+      - name: Run offline mock demo
+        run: uv run python src/main.py --mock
+
   google-adk:
     name: google-adk
     runs-on: ubuntu-latest
