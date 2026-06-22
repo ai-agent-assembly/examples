@@ -5,20 +5,13 @@ requires-python = ">=3.12"
 [[package]]
 name = "agent-assembly"
 version = "0.0.1b4"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/ai-agent-assembly/python-sdk.git?branch=master#7181dc693192bc29d7bf85a6cf6eac5a8f78c4bf" }
 dependencies = [
     { name = "grpcio" },
     { name = "httpx" },
     { name = "protobuf" },
     { name = "pydantic" },
     { name = "typing-extensions" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/17/39/8f0a125499538ee678c206a8a9d7a07de5accb6ecf5e98d8d58b1177316f/agent_assembly-0.0.1b4.tar.gz", hash = "sha256:6b27db7497d2fcf002d53d9be24fc814b2afd074d2600945c9e94d7b2c98be00", size = 83047, upload-time = "2026-06-20T07:28:40.343Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/78/47/80eee43088780663055a21b8c7c29b7b29a3baa6fcba6f60e8e9b200543c/agent_assembly-0.0.1b4-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:c27a4bd4086eb71c36f62fceea5d1c15f16e38f24ffd55f95c14cba07d30e344", size = 17693709, upload-time = "2026-06-20T07:28:30.441Z" },
-    { url = "https://files.pythonhosted.org/packages/81/c3/de14e9a983e6f741bbff1475a92712617d34faf66f9759d16394a10069cb/agent_assembly-0.0.1b4-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:fff359776848bcd29ef123e02cb7d1f9bd36f43f2c70085ff374e3723f6bb385", size = 15774974, upload-time = "2026-06-20T07:28:33.156Z" },
-    { url = "https://files.pythonhosted.org/packages/1a/49/0a9277a9d661f58751c71366c25b4f9aad4c903e492d89aad880ae0b5248/agent_assembly-0.0.1b4-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:90ed53eecb20d27051aaa085bdd4b117b3d751ef047ac0b406d874b484f94dd4", size = 17252347, upload-time = "2026-06-20T07:28:35.67Z" },
-    { url = "https://files.pythonhosted.org/packages/b6/05/c1acedcc2238cf78a49bcf17435c45526e98f1a58d52bd98d022febd4f0f/agent_assembly-0.0.1b4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9478169bd3baffc9288af0e915517ebf6f69a62eafebc31702023497b2ec78a0", size = 18599795, upload-time = "2026-06-20T07:28:38.139Z" },
 ]
 
 [[package]]
@@ -773,7 +766,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "agent-assembly", specifier = ">=0.0.1b2" },
+    { name = "agent-assembly", git = "https://github.com/ai-agent-assembly/python-sdk.git?branch=master" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0.0" },
     { name = "pytest-mock", marker = "extra == 'dev'", specifier = ">=3.14.0" },
     { name = "smolagents", specifier = ">=1.0.0,<2.0.0" },
