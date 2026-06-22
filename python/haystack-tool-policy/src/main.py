@@ -27,6 +27,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from agent_assembly import init_assembly
 from agent_assembly.adapters.haystack import HaystackPatch
+from haystack.tools import Tool
 
 from src.policy import LocalPolicyEngine
 from src.tools import EXECUTED, build_tools
@@ -42,7 +43,9 @@ _DEMO_CALLS: list[tuple[str, dict[str, str]]] = [
 _BLOCKED_MARKER = "[BLOCKED by governance policy]"
 
 
-def _invoke_through_tool_invoker(tools: list, tool_name: str, arguments: dict[str, str]) -> str:  # noqa: ANN001
+def _invoke_through_tool_invoker(
+    tools: list[Tool], tool_name: str, arguments: dict[str, str]
+) -> str:
     """Run *tool_name* via a real Haystack ``ToolInvoker`` and return its result.
 
     Feeds the invoker a hand-built ``ToolCall`` (the shape a chat model would emit)
@@ -54,7 +57,9 @@ def _invoke_through_tool_invoker(tools: list, tool_name: str, arguments: dict[st
 
     invoker = ToolInvoker(tools=tools)
     invoker.warm_up()
-    message = ChatMessage.from_assistant(tool_calls=[ToolCall(tool_name=tool_name, arguments=arguments)])
+    message = ChatMessage.from_assistant(
+        tool_calls=[ToolCall(tool_name=tool_name, arguments=arguments)]
+    )
     output = invoker.run(messages=[message])
     return str(output["tool_messages"][0].tool_call_results[0].result)
 

@@ -59,7 +59,9 @@ def test_denied_tool_is_blocked(governed) -> None:  # noqa: ANN001
 def test_denied_tool_body_never_runs(governed) -> None:  # noqa: ANN001
     """The no-op guard: a denied tool's underlying function must not execute."""
     _by_name(governed, "execute_sql").invoke(sql="SELECT * FROM secrets")
-    assert "execute_sql" not in tools_module.EXECUTED, "deny let the tool body run — governance is a no-op!"
+    assert "execute_sql" not in tools_module.EXECUTED, (
+        "deny let the tool body run — governance is a no-op!"
+    )
 
 
 def test_denied_tool_runs_normally_after_revert() -> None:
@@ -87,7 +89,9 @@ def test_init_assembly_sdk_only_requires_no_gateway() -> None:
 
     with (
         mock_patch.object(_core, "_register_adapters", return_value=[]),
-        mock_patch.object(_core, "_start_network_layer", return_value=("sdk-only", lambda: None)),
+        mock_patch.object(
+            _core, "_start_network_layer", return_value=("sdk-only", lambda: None)
+        ),
     ):
         ctx = init_assembly(
             gateway_url="http://localhost:8080",

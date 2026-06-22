@@ -31,7 +31,9 @@ class LocalPolicyEngine:
     #: Fail-closed posture marker the adapter reads (AAASM-3106 / AAASM-3107).
     _enforce = True
 
-    def check_tool_start(self, *, tool_name: str = "", **_kwargs: Any) -> dict[str, str]:
+    def check_tool_start(
+        self, *, tool_name: str = "", **_kwargs: Any
+    ) -> dict[str, str]:
         """Return an allow/deny verdict for *tool_name*.
 
         The adapter passes the tool name as a keyword; deny the
@@ -40,6 +42,8 @@ class LocalPolicyEngine:
         if tool_name in DENIED_TOOLS:
             return {
                 "status": "deny",
-                "reason": (f"Tool '{tool_name}' is blocked by policy rule 'deny_arbitrary_execution'."),
+                "reason": (
+                    f"Tool '{tool_name}' is blocked by policy rule 'deny_arbitrary_execution'."
+                ),
             }
         return {"status": "allow"}
