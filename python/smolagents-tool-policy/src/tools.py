@@ -32,7 +32,9 @@ class SummarizeTool(Tool):  # type: ignore[misc]  # base is a runtime framework 
     output_type = "string"
 
     def forward(self, topic: str) -> str:
-        return f"summary of '{topic}': Agent Assembly governs agent tool calls... (mock)"
+        return (
+            f"summary of '{topic}': Agent Assembly governs agent tool calls... (mock)"
+        )
 
 
 class RunShellCommandTool(Tool):  # type: ignore[misc]  # base is a runtime framework class (untyped)

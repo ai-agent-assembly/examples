@@ -57,7 +57,9 @@ class LocalPolicyEngine:
         if tool_name in DENIED_TOOLS:
             return {
                 "status": "deny",
-                "reason": (f"Tool '{tool_name}' is blocked by policy rule 'deny_destructive_operations'."),
+                "reason": (
+                    f"Tool '{tool_name}' is blocked by policy rule 'deny_destructive_operations'."
+                ),
             }
         return {"status": "allow"}
 

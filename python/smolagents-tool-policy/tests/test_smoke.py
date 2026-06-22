@@ -37,7 +37,9 @@ def test_check_tool_start_allows_safe_tool() -> None:
 
 
 def test_check_tool_start_denies_destructive_tool() -> None:
-    decision = LocalPolicyEngine().check_tool_start(tool_name="run_shell_command", args={})
+    decision = LocalPolicyEngine().check_tool_start(
+        tool_name="run_shell_command", args={}
+    )
     assert decision["status"] == "deny"
     assert "deny_destructive_operations" in decision["reason"]
 
@@ -83,7 +85,9 @@ def test_init_assembly_sdk_only_requires_no_gateway() -> None:
 
     with (
         patch.object(_core, "_register_adapters", return_value=[]),
-        patch.object(_core, "_start_network_layer", return_value=("sdk-only", lambda: None)),
+        patch.object(
+            _core, "_start_network_layer", return_value=("sdk-only", lambda: None)
+        ),
     ):
         ctx = init_assembly(
             gateway_url="http://localhost:8080",
