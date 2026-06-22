@@ -88,7 +88,10 @@ async def test_denied_tool_body_does_not_run(
 
     ran: list[str] = []
 
-    @af.tool
+    # `agent_framework` ships no type stubs, so `af.tool` is an untyped (`Any`)
+    # decorator; the scoped ignore is the genuine framework limitation, not a
+    # real typing defect (mirrors src/tools.py).
+    @af.tool  # type: ignore[untyped-decorator]
     def delete_records(path: str) -> str:
         """Delete records (denied by policy)."""
         ran.append(path)
