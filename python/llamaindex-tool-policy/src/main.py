@@ -42,7 +42,7 @@ _DEMO_CALLS = [
 ]
 
 
-def _run_governed_call(tool: object, kwargs: dict) -> None:
+def _run_governed_call(tool: object, kwargs: dict[str, str]) -> None:
     name = tool.metadata.get_name()  # type: ignore[attr-defined]
     print(f"  → {name}({kwargs})")
     # The adapter has patched FunctionTool.call, so this single call is governed.
