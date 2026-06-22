@@ -15,6 +15,7 @@ This directory contains runnable Python examples showing how to integrate Agent 
 | `langgraph/`                       | LangGraph        | Node-level governance on a compiled `StateGraph`, blocking a destructive tool mid-graph |
 | `pydantic-ai/`                     | Pydantic AI      | Tool-call governance driven offline by `TestModel` (allow / deny / pending) |
 | `google-adk/`                      | Google ADK       | Scripted offline tool trajectory governing `BaseTool.run_async` (no cloud creds) |
+| `microsoft-agent-framework-tool-policy/` | Microsoft Agent Framework | Govern `FunctionTool.invoke` (allow / deny / pending); mock + live paths |
 
 All examples use the `agent-assembly` Python package (available on PyPI).
 
