@@ -82,6 +82,7 @@ below is the shared cross-language view.
 | [`python/haystack-tool-policy/`](./python/haystack-tool-policy/) | Haystack | Govern a real Haystack agent via the native adapter — real `Tool.invoke` allow/deny through a `ToolInvoker` |
 | [`python/smolagents-tool-policy/`](./python/smolagents-tool-policy/) | Smolagents | Govern real `smolagents.Tool` calls via `Tool.__call__`, blocking a destructive tool offline (no model creds) |
 | [`python/agno-tool-policy/`](./python/agno-tool-policy/) | Agno | Govern real Agno `FunctionCall.execute` tool calls (allow / deny / pending); offline, no model creds |
+| [`python/microsoft-agent-framework-tool-policy/`](./python/microsoft-agent-framework-tool-policy/) | Microsoft Agent Framework | Govern `agent_framework.FunctionTool.invoke` (allow / deny / pending); offline mock + live paths |
 
 ### Node.js / TypeScript
 
