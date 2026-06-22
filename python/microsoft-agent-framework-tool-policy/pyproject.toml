@@ -44,3 +44,11 @@ prerelease = "allow"
 # Track the SDK's git master so the example validates against the merged
 # adapter until 0.0.1b5 publishes it to PyPI. Revert to the PyPI pin then.
 agent-assembly = { git = "https://github.com/ai-agent-assembly/python-sdk.git", branch = "master" }
+
+[tool.mypy]
+# The Microsoft Agent Framework (`agent_framework`) ships no type stubs and is
+# only present under the `live` extra, so its import is unresolved under the
+# `dev`-only typecheck. Treat it as untyped rather than failing the whole run.
+[[tool.mypy.overrides]]
+module = "agent_framework"
+ignore_missing_imports = true

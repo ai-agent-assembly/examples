@@ -98,7 +98,9 @@ async def _run_demo(*, mock: bool) -> None:
     api_key = os.environ.get("AGENT_ASSEMBLY_API_KEY")
     mode_label = "mock" if mock else "live"
 
-    print(f"Initializing Agent Assembly (gateway: {gateway_url}, sdk-only mode, {mode_label})...")
+    print(
+        f"Initializing Agent Assembly (gateway: {gateway_url}, sdk-only mode, {mode_label})..."
+    )
 
     policy = LocalPolicyEngine()
 

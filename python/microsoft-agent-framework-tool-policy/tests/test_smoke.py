@@ -104,7 +104,9 @@ def test_init_assembly_sdk_only_requires_no_gateway() -> None:
     from agent_assembly.core import assembly as _core
 
     with patch.object(_core, "_register_adapters", return_value=[]):
-        with patch.object(_core, "_start_network_layer", return_value=("sdk-only", lambda: None)):
+        with patch.object(
+            _core, "_start_network_layer", return_value=("sdk-only", lambda: None)
+        ):
             ctx = init_assembly(
                 gateway_url="http://localhost:8080",
                 agent_id="test-maf-agent",

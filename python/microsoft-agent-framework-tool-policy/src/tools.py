@@ -25,17 +25,20 @@ def build_tools() -> dict[str, Any]:
     """
     import agent_framework as af
 
-    @af.tool
+    # `agent_framework` ships no type stubs, so `af.tool` is an untyped (`Any`)
+    # decorator; the scoped ignore is the genuine framework limitation, not a
+    # real typing defect.
+    @af.tool  # type: ignore[untyped-decorator]
     def get_weather(city: str) -> str:
         """Get the current weather for a city (safe — allowed by policy)."""
         return f"Weather in {city}: 22C, partly cloudy (mock response)"
 
-    @af.tool
+    @af.tool  # type: ignore[untyped-decorator]
     def delete_records(path: str) -> str:
         """Delete records at a path (destructive — denied by policy)."""
         return f"Deleted records at {path}"
 
-    @af.tool
+    @af.tool  # type: ignore[untyped-decorator]
     def send_email(to: str) -> str:
         """Send an email (requires approval — pending then denied offline)."""
         return f"Email sent to {to}"
