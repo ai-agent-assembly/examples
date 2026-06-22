@@ -1,0 +1,113 @@
+# smolagents-tool-policy
+
+Demonstrates how to integrate [Agent Assembly](https://github.com/ai-agent-assembly/agent-assembly-examples) with [Smolagents](https://github.com/huggingface/smolagents) (Hugging Face) to enforce governance policy on tool calls **before** they execute.
+
+## What this example demonstrates
+
+- Initializing Agent Assembly with `init_assembly()` in offline `sdk-only` mode.
+- Governing **real** `smolagents.Tool` instances through the SDK's native Smolagents adapter, which hooks `smolagents.tools.Tool.__call__` — the single chokepoint every smolagents tool execution flows through (`Tool.__call__` runs `self.forward(...)`).
+- An **allowed** tool call (`search_docs`, `summarize`) that runs its real body, and a **denied** tool call (`run_shell_command`) that is short-circuited with the `[BLOCKED by governance policy]` message **before** `forward()` executes.
+
+## Why this example invokes the tools directly (offline note)
+
+A smolagents agent (`ToolCallingAgent` / `CodeAgent`) drives its loop against an **LLM** that *decides* which tool to call, which needs a model and a network call. To keep the example runnable with **no secrets**, it does not start a live model. Instead it invokes the real governed `smolagents.Tool` instances directly — the exact call (`tool(**inputs)` → `Tool.__call__` → `forward`) a smolagents agent makes to execute a tool. The genuine allow / deny governance code runs; only the LLM that would *choose* the tools is absent.
+
+This is not a mock: the tools are real `smolagents.Tool` subclasses and the governance is the production `SmolagentsPatch`. The denied tool's `forward()` body genuinely never runs.
+
+### Wiring note
+
+`init_assembly()` auto-detects smolagents and installs the hook with its default interceptor. So that the **offline policy** wins, this example applies the adapter's patch with a `LocalPolicyEngine` **before** calling `init_assembly()` (the patch is idempotent, so init's auto-detect then leaves the already-governed `Tool.__call__` alone). In production you skip this — `init_assembly()` wires the real gateway-backed interceptor for you.
+
+## Prerequisites
+
+| Requirement | Version |
+|---|---|
+| Python | >= 3.12 |
+| [uv](https://github.com/astral-sh/uv) | latest |
+| Agent Assembly Python SDK | >= 0.0.1b2 |
+| smolagents | >= 1.0, < 2.0 |
+
+No running Agent Assembly gateway and no model/API credentials are required for the offline demo.
+
+## Setup
+
+```bash
+cd python/smolagents-tool-policy
+uv sync --extra dev
+```
+
+## Run
+
+```bash
+uv run python src/main.py
+```
+
+### Expected output
+
+```
+==============================================================
+  Agent Assembly — Smolagents Tool Policy Demo
+==============================================================
+
+Initializing Agent Assembly (gateway: http://localhost:8080, sdk-only mode)...
+  Agent:    smolagents-demo-agent
+  Gateway:  http://localhost:8080
+  Mode:     sdk-only (offline demo)
+
+Policy rules (local simulation of gateway policy):
+  DENY   — run_shell_command, delete_records  (destructive ops)
+  ALLOW  — everything else
+
+Governing real smolagents.Tool instances via Tool.__call__:
+  Tools: search_docs, summarize, run_shell_command
+
+Running governed tool calls:
+--------------------------------------------
+  → search_docs({'query': 'what is Agent Assembly?'})
+     ✅ ALLOWED  — docs results for 'what is Agent Assembly?': [chunk-12, chunk-44, chunk-07] (mock)
+
+  → summarize({'topic': 'policy enforcement'})
+     ✅ ALLOWED  — summary of 'policy enforcement': Agent Assembly governs agent tool calls... (mock)
+
+  → run_shell_command({'command': 'rm -rf /var/data'})
+     ❌ BLOCKED  — [BLOCKED by governance policy] Tool 'run_shell_command' is blocked by policy rule 'deny_destructive_operations'.. Please choose a different approach to accomplish this task.
+
+Assembly context shut down.
+```
+
+## Run tests
+
+```bash
+uv run pytest tests/ -v
+```
+
+The smoke suite includes a **negative control** (`test_negative_control_ungoverned_tool_runs_destructively`): with no adapter applied, the deny policy cannot block the tool body — proving the governed cases are real interception, not a no-op.
+
+## Switching to production mode
+
+1. Start an Agent Assembly gateway or use your SaaS workspace URL.
+2. Copy `.env.example` to `.env` and fill in your credentials (and a model provider key to drive a live smolagents agent loop).
+3. Build a real `smolagents.ToolCallingAgent` (or `CodeAgent`) with your tools and run it.
+4. Run with gateway environment variables:
+
+```bash
+AGENT_ASSEMBLY_GATEWAY_URL=http://localhost:8080 \
+AGENT_ASSEMBLY_API_KEY=your-key \
+uv run python src/main.py
+```
+
+In production, `init_assembly()` auto-detects smolagents and registers the adapter automatically, and the gateway enforces the policy rules — you drop the manual `SmolagentsPatch` + `LocalPolicyEngine` wiring entirely.
+
+## Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| `ModuleNotFoundError: agent_assembly` | Run `uv sync` first |
+| `ModuleNotFoundError: smolagents` | Run `uv sync` — `smolagents` is a required dependency |
+| The denied tool ran instead of being blocked | Ensure the `SmolagentsPatch` is applied **before** `init_assembly()` (see the wiring note above) |
+
+## Links
+
+- [Agent Assembly Python SDK](https://github.com/ai-agent-assembly/python-sdk)
+- [Agent Assembly Examples](../../README.md)
+- [Python Examples](../README.md)

@@ -16,6 +16,7 @@ This directory contains runnable Python examples showing how to integrate Agent 
 | `pydantic-ai/`                     | Pydantic AI      | Tool-call governance driven offline by `TestModel` (allow / deny / pending) |
 | `google-adk/`                      | Google ADK       | Scripted offline tool trajectory governing `BaseTool.run_async` (no cloud creds) |
 | `haystack-tool-policy/`            | Haystack         | Govern a real Haystack agent via the native adapter — real `Tool.invoke` allow/deny through a `ToolInvoker` |
+| `smolagents-tool-policy/`          | Smolagents       | Govern real `smolagents.Tool` calls via `Tool.__call__`, blocking a destructive tool offline (no model creds) |
 
 All examples use the `agent-assembly` Python package (available on PyPI).
 

@@ -1,0 +1,39 @@
+[project]
+name = "smolagents-tool-policy"
+version = "0.1.0"
+description = "Agent Assembly governance demo with Smolagents (Hugging Face)"
+requires-python = ">=3.12"
+dependencies = [
+    "agent-assembly>=0.0.1b2",
+    # smolagents is light (no chromadb-style native tree), so it stays in the base
+    # deps: the demo governs *real* smolagents.Tool instances through the SDK's
+    # native adapter, both offline and live. Pinned <2.0 to the 1.x line whose
+    # Tool.__call__ -> forward chokepoint the adapter hooks.
+    "smolagents>=1.0.0,<2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-mock>=3.14.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.mypy]
+# smolagents ships no py.typed marker, so importing smolagents.Tool is an
+# untyped import. Declare it explicitly here (the same per-module override the
+# python-sdk uses for code it does not own) so --strict accepts the import
+# without loosening type checking on the example's own code. The Tool subclasses
+# in src/tools.py still carry their own scoped `# type: ignore[misc]` for the
+# resulting "subclassing Any" base.
+[[tool.mypy.overrides]]
+module = ["smolagents", "smolagents.*"]
+ignore_missing_imports = true
+
+[tool.uv.sources]
+# Track the SDK's git master so the example validates against the merged
+# adapter until 0.0.1b5 publishes it to PyPI. Revert to the PyPI pin then.
+agent-assembly = { git = "https://github.com/ai-agent-assembly/python-sdk.git", branch = "master" }
