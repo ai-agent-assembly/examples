@@ -79,6 +79,7 @@ below is the shared cross-language view.
 | [`python/langgraph/`](./python/langgraph/) | LangGraph | Node-level governance on a compiled `StateGraph`, blocking a destructive tool mid-graph |
 | [`python/pydantic-ai/`](./python/pydantic-ai/) | Pydantic AI | Tool-call governance driven offline by `TestModel` (allow / deny / pending) |
 | [`python/google-adk/`](./python/google-adk/) | Google ADK | Scripted offline tool trajectory governing `BaseTool.run_async` (no cloud creds) |
+| [`python/haystack-tool-policy/`](./python/haystack-tool-policy/) | Haystack | Govern a real Haystack agent via the native adapter — real `Tool.invoke` allow/deny through a `ToolInvoker` |
 | [`python/smolagents-tool-policy/`](./python/smolagents-tool-policy/) | Smolagents | Govern real `smolagents.Tool` calls via `Tool.__call__`, blocking a destructive tool offline (no model creds) |
 
 ### Node.js / TypeScript

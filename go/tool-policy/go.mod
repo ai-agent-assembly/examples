@@ -2,7 +2,7 @@ module example.com/tool-policy
 
 go 1.26.0
 
-require github.com/ai-agent-assembly/go-sdk v0.0.1-beta.2
+require github.com/ai-agent-assembly/go-sdk v0.0.1-beta.3
 
 require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect

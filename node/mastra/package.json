@@ -14,12 +14,12 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@agent-assembly/sdk": "0.0.1-beta.3",
-    "@mastra/core": "^1.42.0",
+    "@agent-assembly/sdk": "0.0.1-beta.4",
+    "@mastra/core": "^1.45.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@types/node": "^25.9.3",
+    "@types/node": "^26.0.0",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3",
     "vitest": "^4.1.8"
