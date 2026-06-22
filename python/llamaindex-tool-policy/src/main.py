@@ -1,45 +1,57 @@
-"""
-llamaindex-tool-policy: Agent Assembly governance demo with LlamaIndex.
+"""llamaindex-tool-policy: Agent Assembly governance demo with LlamaIndex.
 
-LlamaIndex does not yet have a native Agent Assembly adapter, so this example
-shows how to add governance by wrapping each FunctionTool with GovernedToolRunner.
-This pattern works for ANY Python callable, not just LlamaIndex.
+LlamaIndex has a native Agent Assembly adapter
+(``agent_assembly.adapters.llamaindex``): it monkey-patches the concrete
+``FunctionTool.call`` / ``acall`` execution methods, so once the adapter's hooks
+are registered, **every** LlamaIndex tool call is governed automatically — the
+exact method a ``FunctionAgent`` / ``ReActAgent`` invokes to run a tool. A denied
+tool's body never executes; the adapter returns a ``ToolOutput`` flagged
+``is_error=True`` carrying a ``[BLOCKED by governance policy]`` message so the
+agent loop can react instead of crashing.
 
-Run (offline mode, no gateway or API key required):
+This is an **offline** demo: ``LocalPolicyEngine`` simulates the gateway's
+allow/deny verdict in-process, so no gateway or API key is required. The tools
+and their ``FunctionTool.call`` invocations are real — only the policy decision
+is local.
+
+Run:
     uv run python src/main.py
 """
+
 from __future__ import annotations
 
 import os
 import sys
-from typing import Any
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from agent_assembly import init_assembly
-from agent_assembly.exceptions import ToolExecutionBlockedError
+from agent_assembly.adapters.llamaindex import LlamaIndexAdapter, LlamaIndexPatch
 
-from src.policy import GovernedToolRunner, LocalPolicyEngine
-from src.tools import _execute_sql_fn, _query_index_fn, _summarize_docs_fn
+from src.policy import LocalPolicyEngine
+from src.tools import execute_sql, query_index, summarize_docs
 
-_DEMO_CALLS: list[tuple[str, Any, dict]] = [
-    ("query_index", _query_index_fn, {"query": "what is Agent Assembly?"}),
-    ("summarize_docs", _summarize_docs_fn, {"topic": "policy enforcement"}),
-    ("execute_sql", _execute_sql_fn, {"sql": "DROP TABLE users; --"}),
+#: The adapter's deny short-circuit marker. The LlamaIndex tool patch returns a
+#: ToolOutput carrying this string on a deny rather than raising.
+_BLOCKED_MARKER = "[BLOCKED by governance policy]"
+
+_DEMO_CALLS = [
+    (query_index, {"query": "what is Agent Assembly?"}),
+    (summarize_docs, {"topic": "policy enforcement"}),
+    (execute_sql, {"sql": "DROP TABLE users; --"}),
 ]
 
 
-def _run_governed_call(
-    runner: GovernedToolRunner,
-    label: str,
-    kwargs: dict,
-) -> None:
-    print(f"  → {label}({kwargs})")
-    try:
-        result = runner.run(**kwargs)
-        print(f"     ✅ ALLOWED  — {result}")
-    except ToolExecutionBlockedError as exc:
-        print(f"     ❌ BLOCKED  — {exc}")
+def _run_governed_call(tool: object, kwargs: dict[str, str]) -> None:
+    name = tool.metadata.get_name()  # type: ignore[attr-defined]
+    print(f"  → {name}({kwargs})")
+    # The adapter has patched FunctionTool.call, so this single call is governed.
+    output = tool.call(**kwargs)  # type: ignore[attr-defined]
+    content = str(getattr(output, "content", output))
+    if _BLOCKED_MARKER in content:
+        print(f"     ❌ BLOCKED  — {content}")
+    else:
+        print(f"     ✅ ALLOWED  — {content}")
     print()
 
 
@@ -65,31 +77,36 @@ def main() -> None:
         print(f"  Mode:     {ctx.network_mode} (offline demo)")
         print()
 
-        policy = LocalPolicyEngine()
-
         print("Policy rules (local simulation of gateway policy):")
         print("  DENY   — execute_sql, run_shell_command  (arbitrary execution)")
         print("  ALLOW  — everything else")
         print()
 
-        print("Wrapping LlamaIndex tools with GovernedToolRunner...")
-        runners = {
-            name: GovernedToolRunner(name, fn, policy)
-            for name, fn, _ in _DEMO_CALLS
-        }
-        print("  Tools wrapped: query_index, summarize_docs, execute_sql")
+        # Register the native LlamaIndex adapter against the local policy engine.
+        # This patches FunctionTool.call so every tool call below is governed
+        # automatically — no per-tool wrapper needed.
+        #
+        # init_assembly() in sdk-only mode already auto-detected LlamaIndex and
+        # patched FunctionTool.call against a no-op interceptor (there is no
+        # gateway offline). Revert that first so this example's LocalPolicyEngine
+        # is the live interceptor; in production init_assembly wires the adapter
+        # to the gateway and this manual step is unnecessary.
+        print("Registering the native LlamaIndex governance adapter...")
+        LlamaIndexPatch(callback_handler=None).revert()
+        adapter = LlamaIndexAdapter()
+        adapter.register_hooks(LocalPolicyEngine())
+        print("  FunctionTool.call / acall are now governed by Agent Assembly.")
         print()
 
-        print("Running governed tool calls:")
-        print("-" * 44)
-        for tool_name, fn, kwargs in _DEMO_CALLS:
-            _run_governed_call(runners[tool_name], tool_name, kwargs)
+        try:
+            print("Running governed tool calls:")
+            print("-" * 44)
+            for tool, kwargs in _DEMO_CALLS:
+                _run_governed_call(tool, kwargs)
+        finally:
+            adapter.unregister_hooks()
 
     print("Assembly context shut down.")
-    print()
-    print("Note: When a native LlamaIndex adapter is available,")
-    print("  GovernedToolRunner will no longer be needed — governance")
-    print("  will be applied automatically by init_assembly().")
 
 
 if __name__ == "__main__":

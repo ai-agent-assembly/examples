@@ -1,17 +1,16 @@
 # llamaindex-tool-policy
 
-Demonstrates how to add [Agent Assembly](https://github.com/ai-agent-assembly/agent-assembly-examples) governance to [LlamaIndex](https://docs.llamaindex.ai/) tool calls when no native adapter is available.
+Demonstrates [Agent Assembly](https://github.com/ai-agent-assembly/agent-assembly-examples) governance for [LlamaIndex](https://docs.llamaindex.ai/) tool calls using the **native LlamaIndex adapter**.
 
-Because LlamaIndex does not yet have a native Agent Assembly adapter, this example shows the **manual wrapper pattern** — wrapping each `FunctionTool` with `GovernedToolRunner` so governance is enforced before every tool invocation. This pattern works for any Python callable.
+LlamaIndex has a native Agent Assembly adapter (`agent_assembly.adapters.llamaindex`). It monkey-patches the concrete `FunctionTool.call` / `acall` execution methods, so once the adapter's hooks are registered, **every** LlamaIndex tool call is governed automatically — the exact method a `FunctionAgent` / `ReActAgent` invokes to run a tool. A denied tool's body never executes; the adapter returns a `ToolOutput` flagged `is_error=True` carrying a `[BLOCKED by governance policy]` message so the agent loop can react instead of crashing.
 
 ## What this example demonstrates
 
 - Initializing Agent Assembly with `init_assembly()`.
-- Applying governance to `FunctionTool` calls using `GovernedToolRunner`.
-- Running an **allowed** tool call (`query_index`).
+- Registering the native `LlamaIndexAdapter` against a local policy interceptor.
+- Running an **allowed** tool call (`query_index`) through the patched `FunctionTool.call`.
 - Running another **allowed** tool call (`summarize_docs`).
-- Running a **denied** tool call (`execute_sql` — blocked by `deny_arbitrary_execution`).
-- How to add governance to any framework that lacks a native adapter.
+- Running a **denied** tool call (`execute_sql` — blocked by `deny_arbitrary_execution`); its body never runs.
 
 ## Prerequisites
 
@@ -19,7 +18,7 @@ Because LlamaIndex does not yet have a native Agent Assembly adapter, this examp
 |---|---|
 | Python | >= 3.12 |
 | [uv](https://github.com/astral-sh/uv) | latest |
-| Agent Assembly Python SDK | >= 0.0.1b2 |
+| Agent Assembly Python SDK | >= 0.0.1b2 (with the LlamaIndex adapter) |
 
 No API key or running gateway is required for the offline demo.
 
@@ -52,8 +51,8 @@ Policy rules (local simulation of gateway policy):
   DENY   — execute_sql, run_shell_command  (arbitrary execution)
   ALLOW  — everything else
 
-Wrapping LlamaIndex tools with GovernedToolRunner...
-  Tools wrapped: query_index, summarize_docs, execute_sql
+Registering the native LlamaIndex governance adapter...
+  FunctionTool.call / acall are now governed by Agent Assembly.
 
 Running governed tool calls:
 --------------------------------------------
@@ -64,7 +63,7 @@ Running governed tool calls:
      ✅ ALLOWED  — 📝 Summary for 'policy enforcement': Agent Assembly provides governance...
 
   → execute_sql({'sql': 'DROP TABLE users; --'})
-     ❌ BLOCKED  — Tool 'execute_sql' is blocked by policy rule 'deny_arbitrary_execution'.
+     ❌ BLOCKED  — [BLOCKED by governance policy] Tool 'execute_sql' is blocked by policy rule 'deny_arbitrary_execution'. ...
 ```
 
 ## Run tests
@@ -77,13 +76,9 @@ uv run pytest tests/ -v
 
 1. Start an Agent Assembly gateway or use your SaaS workspace URL.
 2. Copy `.env.example` to `.env` and fill in credentials.
-3. Replace `LocalPolicyEngine` with the gateway-backed `GatewayClient`:
-
-```python
-with init_assembly(gateway_url="http://localhost:8080", agent_id="my-agent") as ctx:
-    runner = GovernedToolRunner("query_index", query_fn, ctx.client)
-    result = runner.run(query="...")
-```
+3. Let `init_assembly()` auto-detect and register the LlamaIndex adapter against
+   the live gateway interceptor instead of the local `LocalPolicyEngine` — the
+   tool-call code does not change; only the policy source does.
 
 ## Troubleshooting
 
@@ -91,7 +86,7 @@ with init_assembly(gateway_url="http://localhost:8080", agent_id="my-agent") as 
 |---|---|
 | `ModuleNotFoundError: agent_assembly` | Run `uv sync` first |
 | `ModuleNotFoundError: llama_index` | Run `uv sync` — `llama-index-core` is a required dependency |
-| `ToolExecutionBlockedError` in tests | Expected — the deny policy rule for `execute_sql` is intentional |
+| `ImportError: cannot import name 'LlamaIndexAdapter'` | Your installed SDK predates the LlamaIndex adapter — upgrade `agent-assembly` |
 
 ## Links
 

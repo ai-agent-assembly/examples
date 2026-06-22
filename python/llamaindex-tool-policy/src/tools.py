@@ -5,6 +5,7 @@ Three tools are defined:
   - summarize_docs  — safe summarisation tool (ALLOWED by policy)
   - execute_sql     — arbitrary SQL execution (DENIED by policy)
 """
+
 from __future__ import annotations
 
 from llama_index.core.tools import FunctionTool
