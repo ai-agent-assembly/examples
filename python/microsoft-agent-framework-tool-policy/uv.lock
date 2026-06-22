@@ -48,20 +48,13 @@ wheels = [
 [[package]]
 name = "agent-assembly"
 version = "0.0.1b4"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/ai-agent-assembly/python-sdk.git?branch=master#7181dc693192bc29d7bf85a6cf6eac5a8f78c4bf" }
 dependencies = [
     { name = "grpcio" },
     { name = "httpx" },
     { name = "protobuf" },
     { name = "pydantic" },
     { name = "typing-extensions" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/17/39/8f0a125499538ee678c206a8a9d7a07de5accb6ecf5e98d8d58b1177316f/agent_assembly-0.0.1b4.tar.gz", hash = "sha256:6b27db7497d2fcf002d53d9be24fc814b2afd074d2600945c9e94d7b2c98be00", size = 83047, upload-time = "2026-06-20T07:28:40.343Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/78/47/80eee43088780663055a21b8c7c29b7b29a3baa6fcba6f60e8e9b200543c/agent_assembly-0.0.1b4-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:c27a4bd4086eb71c36f62fceea5d1c15f16e38f24ffd55f95c14cba07d30e344", size = 17693709, upload-time = "2026-06-20T07:28:30.441Z" },
-    { url = "https://files.pythonhosted.org/packages/81/c3/de14e9a983e6f741bbff1475a92712617d34faf66f9759d16394a10069cb/agent_assembly-0.0.1b4-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:fff359776848bcd29ef123e02cb7d1f9bd36f43f2c70085ff374e3723f6bb385", size = 15774974, upload-time = "2026-06-20T07:28:33.156Z" },
-    { url = "https://files.pythonhosted.org/packages/1a/49/0a9277a9d661f58751c71366c25b4f9aad4c903e492d89aad880ae0b5248/agent_assembly-0.0.1b4-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:90ed53eecb20d27051aaa085bdd4b117b3d751ef047ac0b406d874b484f94dd4", size = 17252347, upload-time = "2026-06-20T07:28:35.67Z" },
-    { url = "https://files.pythonhosted.org/packages/b6/05/c1acedcc2238cf78a49bcf17435c45526e98f1a58d52bd98d022febd4f0f/agent_assembly-0.0.1b4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9478169bd3baffc9288af0e915517ebf6f69a62eafebc31702023497b2ec78a0", size = 18599795, upload-time = "2026-06-20T07:28:38.139Z" },
 ]
 
 [[package]]
@@ -349,10 +342,10 @@ name = "agent-framework-hyperlight"
 version = "1.0.0b260521"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "agent-framework-core" },
-    { name = "hyperlight-sandbox" },
+    { name = "agent-framework-core", marker = "python_full_version < '3.14'" },
+    { name = "hyperlight-sandbox", marker = "python_full_version < '3.14'" },
     { name = "hyperlight-sandbox-backend-wasm", marker = "(python_full_version < '3.14' and platform_machine == 'x86_64' and sys_platform == 'linux') or (python_full_version < '3.14' and platform_machine == 'AMD64' and sys_platform == 'win32')" },
-    { name = "hyperlight-sandbox-python-guest" },
+    { name = "hyperlight-sandbox-python-guest", marker = "python_full_version < '3.14'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/a4/31/96b9a4ead1adfe37717e89716eb309b9091ad3756a6c3a88d42d5613c2c1/agent_framework_hyperlight-1.0.0b260521.tar.gz", hash = "sha256:a42069d6ce1bd95333def0c76ff5cfc9b727e4bf1e4df3c464f155967bc44782", size = 20198, upload-time = "2026-05-22T02:24:03.169Z" }
 wheels = [
@@ -565,9 +558,9 @@ name = "aiologic"
 version = "0.17.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "sniffio", marker = "python_full_version < '3.14'" },
+    { name = "sniffio", marker = "python_full_version < '3.13'" },
     { name = "typing-extensions", marker = "python_full_version < '3.13'" },
-    { name = "wrapt", marker = "python_full_version < '3.14'" },
+    { name = "wrapt", marker = "python_full_version < '3.13'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/53/a7/809482759f40079f4c4328c7318bf569ae25d457f5017aad30a1b9aafedc/aiologic-0.17.0.tar.gz", hash = "sha256:65aa058e858c94cd208badb188e7f00b54dcabb3ba85b34f794db98074d108b9", size = 251625, upload-time = "2026-06-14T12:24:35.367Z" }
 wheels = [
@@ -1008,7 +1001,7 @@ name = "clr-loader"
 version = "0.2.10"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cffi" },
+    { name = "cffi", marker = "python_full_version < '3.14'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/18/24/c12faf3f61614b3131b5c98d3bf0d376b49c7feaa73edca559aeb2aee080/clr_loader-0.2.10.tar.gz", hash = "sha256:81f114afbc5005bafc5efe5af1341d400e22137e275b042a8979f3feb9fc9446", size = 83605, upload-time = "2026-01-03T23:13:06.984Z" }
 wheels = [
@@ -1079,7 +1072,7 @@ name = "culsans"
 version = "0.11.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "aiologic", marker = "python_full_version < '3.14'" },
+    { name = "aiologic", marker = "python_full_version < '3.13'" },
     { name = "typing-extensions", marker = "python_full_version < '3.13'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/d9/e3/49afa1bc180e0d28008ec6bcdf82a4072d1c7a41032b5b759b60814ca4b0/culsans-0.11.0.tar.gz", hash = "sha256:0b43d0d05dce6106293d114c86e3fb4bfc63088cfe8ff08ed3fe36891447fe33", size = 107546, upload-time = "2025-12-31T23:15:38.196Z" }
@@ -1805,7 +1798,7 @@ live = [
 
 [package.metadata]
 requires-dist = [
-    { name = "agent-assembly", specifier = ">=0.0.1b2" },
+    { name = "agent-assembly", git = "https://github.com/ai-agent-assembly/python-sdk.git?branch=master" },
     { name = "agent-framework", marker = "extra == 'live'", specifier = ">=1.9,<2" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0.0" },
     { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.24.0" },
@@ -2232,8 +2225,8 @@ name = "powerfx"
 version = "0.0.34"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cffi" },
-    { name = "pythonnet" },
+    { name = "cffi", marker = "python_full_version < '3.14'" },
+    { name = "pythonnet", marker = "python_full_version < '3.14'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/9f/fb/6c4bf87e0c74ca1c563921ce89ca1c5785b7576bca932f7255cdf81082a7/powerfx-0.0.34.tar.gz", hash = "sha256:956992e7afd272657ed16d80f4cad24ec95d9e4a79fb9dfa4a068a09e136af32", size = 3237555, upload-time = "2025-12-22T15:50:59.682Z" }
 wheels = [
@@ -2592,7 +2585,7 @@ name = "pythonnet"
 version = "3.0.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "clr-loader" },
+    { name = "clr-loader", marker = "python_full_version < '3.14'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/9a/d6/1afd75edd932306ae9bd2c2d961d603dc2b52fcec51b04afea464f1f6646/pythonnet-3.0.5.tar.gz", hash = "sha256:48e43ca463941b3608b32b4e236db92d8d40db4c58a75ace902985f76dac21cf", size = 239212, upload-time = "2024-12-13T08:30:44.393Z" }
 wheels = [
