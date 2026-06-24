@@ -58,7 +58,7 @@ No API key or gateway is required — this scenario runs fully offline.
 
 ```bash
 cd scenarios/policy-enforcement/python
-uv sync
+uv sync --extra dev
 uv run python src/main.py
 ```
 
