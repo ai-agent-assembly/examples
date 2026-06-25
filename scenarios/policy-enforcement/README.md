@@ -71,10 +71,15 @@ uv run pytest tests/ -v
 ## Run: Node.js
 
 ```bash
-# Coming soon — see scenarios/README.md for the planned structure
 cd scenarios/policy-enforcement/node
 pnpm install
 pnpm start
+```
+
+### Run tests
+
+```bash
+pnpm test
 ```
 
 ## Run: Go
