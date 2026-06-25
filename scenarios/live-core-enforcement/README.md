@@ -58,7 +58,7 @@ bash scripts/stop.sh
 If you already have a runtime + gateway running locally and a native SDK build:
 
 ```bash
-pip install "agent-assembly>=0.0.2a1"   # plus the native extension (maturin)
+pip install "agent-assembly>=0.0.1b5"   # plus the native extension (maturin)
 cp python-agent/.env.example .env       # then export the vars
 python python-agent/agent.py
 ```
