@@ -4,12 +4,10 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-COMPOSE_DIR="$(dirname "$SCRIPT_DIR")/scenarios/sidecar-runtime"
-
-# Allow running from anywhere by resolving relative to this script
-if [[ -f "$SCRIPT_DIR/../docker-compose.yml" ]]; then
-  COMPOSE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-fi
+# Resolve the scenario compose directory relative to this script's location
+# (scripts/ lives directly under scenarios/sidecar-runtime/), so the script
+# works no matter what directory it is invoked from.
+COMPOSE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 echo "Starting Agent Assembly local runtime..."
 docker compose -f "$COMPOSE_DIR/docker-compose.yml" up -d --build
