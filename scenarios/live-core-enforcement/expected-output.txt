@@ -1,7 +1,7 @@
 === Agent Assembly — Live-Core Enforcement Example ===
 
 Agent ID:   live-core-demo-agent
-Gateway:    http://localhost:7391
+Gateway:    http://localhost:50051
 Runtime:    /tmp/aa-runtime-live-core-demo-agent.sock
 
 Registered agent 'live-core-demo-agent' (network mode: sdk-only).
