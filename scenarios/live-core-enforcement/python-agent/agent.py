@@ -51,10 +51,10 @@ from agent_assembly.core.runtime_interceptor import (
 
 AGENT_ID = os.environ.get("AA_AGENT_ID", "live-core-demo-agent")
 
-# The native fast path connects to the runtime UDS. init_assembly also resolves
-# a gateway_url for the SDK's non-native routes; against the local stack the
-# runtime owns the gRPC/UDS transport, so this only needs to be set.
-GATEWAY_URL = os.environ.get("AA_GATEWAY_URL", "http://localhost:7391")
+# The native fast path connects to the runtime UDS, but agent *registration* is
+# a direct SDK -> gateway gRPC call (ADR 0004), so this must point at the real
+# gateway's gRPC endpoint. The bundled stack serves it on :50051.
+GATEWAY_URL = os.environ.get("AA_GATEWAY_URL", "http://localhost:50051")
 
 # Tool calls this agent attempts. With policy.yaml loaded into the gateway,
 # read_file is allowed and delete_file is denied.
