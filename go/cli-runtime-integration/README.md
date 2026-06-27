@@ -15,7 +15,7 @@ Go example showing how to integrate the `aasm` CLI runtime sidecar into a Go age
 | Requirement | Version |
 |---|---|
 | Go | >= 1.26 |
-| Agent Assembly Go SDK | v0.0.1-beta.3 |
+| Agent Assembly Go SDK | v0.0.1-rc.2 |
 | `aasm` binary | Optional — example runs in fallback mode without it |
 
 ### Install `aasm` (optional)

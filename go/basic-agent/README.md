@@ -15,7 +15,7 @@ Minimal Go example showing how to initialize the Agent Assembly Go SDK and execu
 | Requirement | Version |
 |---|---|
 | Go | >= 1.26 |
-| Agent Assembly Go SDK | v0.0.1-beta.3 |
+| Agent Assembly Go SDK | v0.0.1-rc.2 |
 
 A live Agent Assembly gateway is **not required** to run this example. It uses an
 offline mock `GovernanceClient` by default. To use a real gateway, replace `mockClient`

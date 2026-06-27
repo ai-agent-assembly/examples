@@ -15,7 +15,7 @@ Go example showing explicit allow and deny behavior using Agent Assembly policy 
 | Requirement | Version |
 |---|---|
 | Go | >= 1.26 |
-| Agent Assembly Go SDK | v0.0.1-beta.3 |
+| Agent Assembly Go SDK | v0.0.1-rc.2 |
 
 No live gateway is required. Policy rules are applied by an in-process mock client.
 

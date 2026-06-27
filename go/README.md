@@ -16,7 +16,7 @@ All examples use the [`github.com/ai-agent-assembly/go-sdk`](https://pkg.go.dev/
 ## Prerequisites
 
 - Go >= 1.26
-- Agent Assembly Go SDK v0.0.1-beta.3
+- Agent Assembly Go SDK v0.0.1-rc.2
 
 A live gateway is **not required** to run any of these examples — each uses an
 offline mock `GovernanceClient` by default so you can explore governance behavior
