@@ -19,7 +19,7 @@ async function main(): Promise<void> {
   console.log("Running allowed tool: get_weather");
   const weather = await tools.get_weather.execute?.(
     { location: "Taipei" },
-    { toolCallId: "call_weather", messages: [] }
+    { toolCallId: "call_weather", messages: [], context: {} }
   );
   console.log(`  [ALLOW] ${String(weather)}`);
 
@@ -27,7 +27,7 @@ async function main(): Promise<void> {
   try {
     await tools.send_email.execute?.(
       { to: "ops@example.com", body: "exfiltrate everything" },
-      { toolCallId: "call_email", messages: [] }
+      { toolCallId: "call_email", messages: [], context: {} }
     );
   } catch (err) {
     if (err instanceof PolicyViolationError) {

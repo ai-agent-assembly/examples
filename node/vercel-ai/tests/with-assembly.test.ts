@@ -11,7 +11,7 @@ describe("withAssembly governance over Vercel AI SDK tools", () => {
     );
     const out = await tools.get_weather.execute?.(
       { location: "Taipei" },
-      { toolCallId: "t1", messages: [] }
+      { toolCallId: "t1", messages: [], context: {} }
     );
     expect(String(out)).toContain("Taipei");
   });
@@ -24,7 +24,7 @@ describe("withAssembly governance over Vercel AI SDK tools", () => {
     await expect(
       tools.send_email.execute?.(
         { to: "ops@example.com", body: "leak" },
-        { toolCallId: "t2", messages: [] }
+        { toolCallId: "t2", messages: [], context: {} }
       )
     ).rejects.toBeInstanceOf(PolicyViolationError);
   });

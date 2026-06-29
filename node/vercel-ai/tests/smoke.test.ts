@@ -20,7 +20,7 @@ describe("vercel ai tools", () => {
   it("get_weather executes and returns mock output", async () => {
     const out = await getWeatherTool.execute?.(
       { location: "Taipei" },
-      { toolCallId: "t1", messages: [] }
+      { toolCallId: "t1", messages: [], context: {} }
     );
     expect(String(out)).toContain("Taipei");
   });
@@ -28,7 +28,7 @@ describe("vercel ai tools", () => {
   it("send_email executes and returns mock output", async () => {
     const out = await sendEmailTool.execute?.(
       { to: "ops@example.com", body: "hi" },
-      { toolCallId: "t2", messages: [] }
+      { toolCallId: "t2", messages: [], context: {} }
     );
     expect(String(out)).toContain("ops@example.com");
   });
