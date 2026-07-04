@@ -52,7 +52,7 @@ func startSidecar() bool {
 	if err != nil {
 		if errors.Is(err, assembly.ErrBinaryNotFound) {
 			fmt.Println("[runtime] aasm binary not found — continuing in offline fallback mode")
-			fmt.Println("[runtime] install aasm: brew install agent-assembly/tap/aasm")
+			fmt.Println("[runtime] install aasm: brew install ai-agent-assembly/tap/aasm")
 			return false
 		}
 		log.Printf("[runtime] sidecar init warning: %v", err)
