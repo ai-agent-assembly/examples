@@ -7,7 +7,7 @@
 # Requirements:
 #   - aasm must be installed and on PATH
 #     Install: brew install ai-agent-assembly/tap/aasm
-#              curl -fsSL https://get.agent-assembly.io | sh
+#              curl -fsSL https://agent-assembly.com/install.sh | sh
 #
 # The script starts the sidecar in the background, waits for it to become
 # healthy, runs the Go example, then shuts the sidecar down on exit.
@@ -29,7 +29,7 @@ trap cleanup EXIT
 if ! command -v aasm &>/dev/null; then
     echo "[run-with-aasm] ERROR: aasm binary not found." >&2
     echo "[run-with-aasm] Install: brew install ai-agent-assembly/tap/aasm" >&2
-    echo "[run-with-aasm]          curl -fsSL https://get.agent-assembly.io | sh" >&2
+    echo "[run-with-aasm]          curl -fsSL https://agent-assembly.com/install.sh | sh" >&2
     exit 1
 fi
 

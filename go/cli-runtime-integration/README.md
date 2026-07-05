@@ -24,8 +24,8 @@ Go example showing how to integrate the `aasm` CLI runtime sidecar into a Go age
 # Homebrew
 brew install ai-agent-assembly/tap/aasm
 
-# curl installer
-curl -fsSL https://get.agent-assembly.io | sh
+# curl installer (checksum-verified against SHA256SUMS)
+curl -fsSL https://agent-assembly.com/install.sh | sh
 
 # go install
 go install github.com/ai-agent-assembly/agent-assembly/cmd/aasm@latest
