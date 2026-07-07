@@ -64,16 +64,18 @@ async def test_denied_tool_raises_policy_violation(
     governed_adapter: MicrosoftAgentFrameworkAdapter,
 ) -> None:
     tool = build_tools()["delete_records"]
+    args = tool_arguments("delete_records")
     with pytest.raises(PolicyViolationError, match="blocked by governance policy"):
-        await tool.invoke(arguments=tool_arguments("delete_records"))
+        await tool.invoke(arguments=args)
 
 
 async def test_pending_tool_raises_policy_violation(
     governed_adapter: MicrosoftAgentFrameworkAdapter,
 ) -> None:
     tool = build_tools()["send_email"]
+    args = tool_arguments("send_email")
     with pytest.raises(PolicyViolationError, match="rejected during approval"):
-        await tool.invoke(arguments=tool_arguments("send_email"))
+        await tool.invoke(arguments=args)
 
 
 async def test_denied_tool_body_does_not_run(

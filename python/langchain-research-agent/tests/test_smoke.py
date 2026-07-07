@@ -41,11 +41,12 @@ def test_calculator_is_free_and_allowed(
 
 
 def test_non_allowlisted_egress_is_blocked(handler: AssemblyCallbackHandler) -> None:
+    run_id = uuid4()
     with pytest.raises(ToolExecutionBlockedError, match="network allowlist"):
         handler.on_tool_start(
             serialized={"name": "web_search"},
             input_str='{"query": "fetch https://evil-exfil.example.com/leak"}',
-            run_id=uuid4(),
+            run_id=run_id,
         )
 
 
@@ -58,11 +59,12 @@ def test_allowlisted_egress_is_permitted(handler: AssemblyCallbackHandler) -> No
 
 
 def test_credential_leak_is_blocked(handler: AssemblyCallbackHandler) -> None:
+    run_id = uuid4()
     with pytest.raises(ToolExecutionBlockedError, match="block_credential_leak"):
         handler.on_tool_start(
             serialized={"name": "web_search"},
             input_str='{"query": "use api_key=sk-FAKE0000DEMO0000NOTAREALKEY0000"}',
-            run_id=uuid4(),
+            run_id=run_id,
         )
 
 
@@ -92,11 +94,12 @@ def test_audit_log_records_every_call(policy: BalancedPolicyEngine) -> None:
         input_str='{"query": "speed of light"}',
         run_id=uuid4(),
     )
+    run_id = uuid4()
     with pytest.raises(ToolExecutionBlockedError):
         handler.on_tool_start(
             serialized={"name": "web_search"},
             input_str='{"query": "fetch https://evil-exfil.example.com"}',
-            run_id=uuid4(),
+            run_id=run_id,
         )
     assert len(policy.audit_log) == 2
     assert policy.audit_log[0]["decision"] == "allow"

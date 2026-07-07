@@ -28,20 +28,22 @@ def test_allowed_tool_passes(handler: AssemblyCallbackHandler) -> None:
 
 
 def test_denied_tool_raises_blocked(handler: AssemblyCallbackHandler) -> None:
+    run_id = uuid4()
     with pytest.raises(ToolExecutionBlockedError, match="blocked by policy rule"):
         handler.on_tool_start(
             serialized={"name": "delete_files"},
             input_str='{"path": "/etc/passwd"}',
-            run_id=uuid4(),
+            run_id=run_id,
         )
 
 
 def test_pending_tool_denied_without_approver(handler: AssemblyCallbackHandler) -> None:
+    run_id = uuid4()
     with pytest.raises(ToolExecutionBlockedError, match="no approver is available"):
         handler.on_tool_start(
             serialized={"name": "send_email"},
             input_str='{"to": "all@co.com"}',
-            run_id=uuid4(),
+            run_id=run_id,
         )
 
 

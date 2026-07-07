@@ -26,42 +26,46 @@ def test_search_documents_is_allowed(handler: AssemblyCallbackHandler) -> None:
 
 
 def test_delete_record_is_denied(handler: AssemblyCallbackHandler) -> None:
+    run_id = uuid4()
     with pytest.raises(ToolExecutionBlockedError, match="deny_destructive_data_ops"):
         handler.on_tool_start(
             serialized={"name": "delete_record"},
             input_str='{"record_id": "rec-001"}',
-            run_id=uuid4(),
+            run_id=run_id,
         )
 
 
 def test_drop_table_is_denied(handler: AssemblyCallbackHandler) -> None:
+    run_id = uuid4()
     with pytest.raises(ToolExecutionBlockedError):
         handler.on_tool_start(
             serialized={"name": "drop_table"},
             input_str='{"table": "users"}',
-            run_id=uuid4(),
+            run_id=run_id,
         )
 
 
 def test_send_message_requires_approval_and_is_denied_offline(
     handler: AssemblyCallbackHandler,
 ) -> None:
+    run_id = uuid4()
     with pytest.raises(ToolExecutionBlockedError, match="no approver is available"):
         handler.on_tool_start(
             serialized={"name": "send_message_to_user"},
             input_str='{"user_id": "u-001", "message": "Hello"}',
-            run_id=uuid4(),
+            run_id=run_id,
         )
 
 
 def test_trigger_payment_also_requires_approval(
     handler: AssemblyCallbackHandler,
 ) -> None:
+    run_id = uuid4()
     with pytest.raises(ToolExecutionBlockedError):
         handler.on_tool_start(
             serialized={"name": "trigger_payment"},
             input_str='{"amount": 100, "currency": "USD"}',
-            run_id=uuid4(),
+            run_id=run_id,
         )
 
 
