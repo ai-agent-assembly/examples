@@ -13,10 +13,10 @@ importers:
     dependencies:
       '@agent-assembly/sdk':
         specifier: 0.0.1-rc.3
-        version: 0.0.1-rc.3(@mastra/core@1.49.0(@bufbuild/protobuf@2.12.0)(@grpc/grpc-js@1.14.4)(express@5.2.1)(zod@4.4.3))
+        version: 0.0.1-rc.3(@mastra/core@1.50.0(@bufbuild/protobuf@2.12.0)(@grpc/grpc-js@1.14.4)(express@5.2.1)(zod@4.4.3))
       '@mastra/core':
-        specifier: ^1.49.0
-        version: 1.49.0(@bufbuild/protobuf@2.12.0)(@grpc/grpc-js@1.14.4)(express@5.2.1)(zod@4.4.3)
+        specifier: ^1.50.0
+        version: 1.50.0(@bufbuild/protobuf@2.12.0)(@grpc/grpc-js@1.14.4)(express@5.2.1)(zod@4.4.3)
       zod:
         specifier: ^4.4.3
         version: 4.4.3
@@ -343,8 +343,8 @@ packages:
     resolution: {integrity: sha512-qC72D4+CDdjGqJvkFMMEAtancHUQ7/d/tAiHf64z8MopFDmcrtbcJuerDtFceuAfQJ2pDSfCKCtbqoGBNnwg0w==}
     engines: {node: '>=8'}
 
-  '@mastra/core@1.49.0':
-    resolution: {integrity: sha512-ZZGiPY317qIMv4qpSdxpOdEz9IbBiFJEexDBN0ALV7vK5yAAbT7AlN40SZEObc8bVxpjnI8jZTcEZQZGsQ8PmQ==}
+  '@mastra/core@1.50.0':
+    resolution: {integrity: sha512-gccYBkLk7jjXl13YnjvPVgnvWcedNTzHdqku5xd3pAt/zsxAbnXrNlBRn3vjcdb8DKVC6U6HXMogpM65/kqjMA==}
     engines: {node: '>=22.13.0'}
     peerDependencies:
       zod: ^3.25.0 || ^4.0.0
@@ -377,8 +377,8 @@ packages:
   '@posthog/core@1.39.6':
     resolution: {integrity: sha512-o6ajIwN5zXoNP0D4H/QPmOyibNTUkSyOR6ya7AG5U2ywXx4awo72L2KnCoiZPQM5x/bXv6jPBdimH8M18Ax0aw==}
 
-  '@posthog/types@1.392.0':
-    resolution: {integrity: sha512-nctNujXL3FC1v99FktaTMSugSD9ZOZekEpahUSafkU2TSvW+XGKNkQZbokuJtiWvPBK208dwMJva8UfBkChqpw==}
+  '@posthog/types@1.392.1':
+    resolution: {integrity: sha512-Qg6Gl7/1vlr8+gPtBi5gwnLgAgiyFoKOVmTvTtDcvya9cpTwZfna7rQmkGQ4B63CunUYNNbOlqcwiUwUDyTK6w==}
 
   '@protobufjs/aspromise@1.1.2':
     resolution: {integrity: sha512-j+gKExEuLmKwvz3OgROXtrJ2UG2x8Ch2YZUxahh+s1F2HZ+wAceUNLkvy6zKCPVRkU++ZWQrdxsUeQXmcg4uoQ==}
@@ -886,8 +886,8 @@ packages:
     resolution: {integrity: sha512-T2UbfbBEF32wiepXIsMlTW9+dDYC6wMh/t/vYA4tuOMKqWz/n3vr1NFSxQiyP+zk2mXsoMA/i/7qV6LKut1t1A==}
     engines: {node: '>= 0.4'}
 
-  hono@4.12.27:
-    resolution: {integrity: sha512-1yrb/+w6HWQJrUCLkJ2IF5jNIPvvFkblV5RNOYl6bV+OA6p9GLcMpHFFGTosSvHvcAUibuUukRqhlYI4z32C7Q==}
+  hono@4.12.28:
+    resolution: {integrity: sha512-YwUvVpSF7m1yOblFPrU3Hbo8XhPheBoiyfGuII6z19LnOr6JpDnyyp7LFNrfV56wS8tpvtBFGRISHN02pDdLOA==}
     engines: {node: '>=16.9.0'}
 
   http-errors@2.0.1:
@@ -898,8 +898,8 @@ packages:
     resolution: {integrity: sha512-eKCa6bwnJhvxj14kZk5NCPc6Hb6BdsU9DZcOnmQKSnO1VKrfV0zCvtttPZUsBvjmNDn8rpcJfpwSYnHBjc95MQ==}
     engines: {node: '>=18.18.0'}
 
-  iconv-lite@0.7.2:
-    resolution: {integrity: sha512-im9DjEDQ55s9fL4EYzOAv0yMqmMBSZp6G0VvFyTMPKWxiSBHUj9NW/qqLmXUwXrrM7AvqSlTCfvqRb0cM8yYqw==}
+  iconv-lite@0.7.3:
+    resolution: {integrity: sha512-IKXpvIzjnC9XTAUbVBcMfGS0EPaIXtW6v+zr+RRp+hqULEpo0owZax6wyRwPOJbWbzjYspQwusTsfVr0ifh4uQ==}
     engines: {node: '>=0.10.0'}
 
   ignore@7.0.5:
@@ -1688,7 +1688,7 @@ snapshots:
   '@agent-assembly/runtime-linux-x64@0.0.1-rc.3':
     optional: true
 
-  '@agent-assembly/sdk@0.0.1-rc.3(@mastra/core@1.49.0(@bufbuild/protobuf@2.12.0)(@grpc/grpc-js@1.14.4)(express@5.2.1)(zod@4.4.3))':
+  '@agent-assembly/sdk@0.0.1-rc.3(@mastra/core@1.50.0(@bufbuild/protobuf@2.12.0)(@grpc/grpc-js@1.14.4)(express@5.2.1)(zod@4.4.3))':
     dependencies:
       '@bufbuild/protobuf': 2.12.0
       '@grpc/grpc-js': 1.14.4
@@ -1697,7 +1697,7 @@ snapshots:
       '@agent-assembly/runtime-darwin-x64': 0.0.1-rc.3
       '@agent-assembly/runtime-linux-arm64': 0.0.1-rc.3
       '@agent-assembly/runtime-linux-x64': 0.0.1-rc.3
-      '@mastra/core': 1.49.0(@bufbuild/protobuf@2.12.0)(@grpc/grpc-js@1.14.4)(express@5.2.1)(zod@4.4.3)
+      '@mastra/core': 1.50.0(@bufbuild/protobuf@2.12.0)(@grpc/grpc-js@1.14.4)(express@5.2.1)(zod@4.4.3)
 
   '@ai-sdk/provider-utils@2.2.8(zod@4.4.3)':
     dependencies:
@@ -1859,9 +1859,9 @@ snapshots:
       protobufjs: 7.6.4
       yargs: 17.7.3
 
-  '@hono/node-server@1.19.14(hono@4.12.27)':
+  '@hono/node-server@1.19.14(hono@4.12.28)':
     dependencies:
-      hono: 4.12.27
+      hono: 4.12.28
 
   '@isaacs/ttlcache@2.1.5': {}
 
@@ -1875,7 +1875,7 @@ snapshots:
     dependencies:
       '@lukeed/csprng': 1.1.0
 
-  '@mastra/core@1.49.0(@bufbuild/protobuf@2.12.0)(@grpc/grpc-js@1.14.4)(express@5.2.1)(zod@4.4.3)':
+  '@mastra/core@1.50.0(@bufbuild/protobuf@2.12.0)(@grpc/grpc-js@1.14.4)(express@5.2.1)(zod@4.4.3)':
     dependencies:
       '@a2a-js/sdk': 0.3.13(@bufbuild/protobuf@2.12.0)(@grpc/grpc-js@1.14.4)(express@5.2.1)
       '@ai-sdk/provider-utils-v5': '@ai-sdk/provider-utils@3.0.25(zod@4.4.3)'
@@ -1931,7 +1931,7 @@ snapshots:
 
   '@modelcontextprotocol/sdk@1.29.0(zod@4.4.3)':
     dependencies:
-      '@hono/node-server': 1.19.14(hono@4.12.27)
+      '@hono/node-server': 1.19.14(hono@4.12.28)
       ajv: 8.20.0
       ajv-formats: 3.0.1(ajv@8.20.0)
       content-type: 1.0.5
@@ -1941,7 +1941,7 @@ snapshots:
       eventsource-parser: 3.1.0
       express: 5.2.1
       express-rate-limit: 8.5.2(express@5.2.1)
-      hono: 4.12.27
+      hono: 4.12.28
       jose: 6.2.3
       json-schema-typed: 8.0.2
       pkce-challenge: 5.0.1
@@ -1962,9 +1962,9 @@ snapshots:
 
   '@posthog/core@1.39.6':
     dependencies:
-      '@posthog/types': 1.392.0
+      '@posthog/types': 1.392.1
 
-  '@posthog/types@1.392.0': {}
+  '@posthog/types@1.392.1': {}
 
   '@protobufjs/aspromise@1.1.2': {}
 
@@ -2161,7 +2161,7 @@ snapshots:
       content-type: 2.0.0
       debug: 4.4.3
       http-errors: 2.0.1
-      iconv-lite: 0.7.2
+      iconv-lite: 0.7.3
       on-finished: 2.4.1
       qs: 6.15.3
       raw-body: 3.0.2
@@ -2396,9 +2396,9 @@ snapshots:
     dependencies:
       reusify: 1.1.0
 
-  fdir@6.5.0(picomatch@4.0.5):
+  fdir@6.5.0(picomatch@4.0.4):
     optionalDependencies:
-      picomatch: 4.0.5
+      picomatch: 4.0.4
 
   figures@6.1.0:
     dependencies:
@@ -2464,7 +2464,7 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  hono@4.12.27: {}
+  hono@4.12.28: {}
 
   http-errors@2.0.1:
     dependencies:
@@ -2476,7 +2476,7 @@ snapshots:
 
   human-signals@8.0.1: {}
 
-  iconv-lite@0.7.2:
+  iconv-lite@0.7.3:
     dependencies:
       safer-buffer: 2.1.2
 
@@ -2985,7 +2985,7 @@ snapshots:
     dependencies:
       bytes: 3.1.2
       http-errors: 2.0.1
-      iconv-lite: 0.7.2
+      iconv-lite: 0.7.3
       unpipe: 1.0.0
 
   remark-gfm@4.0.1:
@@ -3155,8 +3155,8 @@ snapshots:
 
   tinyglobby@0.2.17:
     dependencies:
-      fdir: 6.5.0(picomatch@4.0.5)
-      picomatch: 4.0.5
+      fdir: 6.5.0(picomatch@4.0.4)
+      picomatch: 4.0.4
 
   tinyrainbow@3.1.0: {}
 
