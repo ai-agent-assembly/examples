@@ -135,9 +135,12 @@ class BalancedPolicyEngine:
             return {"status": "deny", "reason": reason}
 
         # 1. Network allowlist — deny egress to non-allowlisted hosts.
-        match = re.search(r"https?://[^\s\"']+", input_str)
-        if match:
-            host = _extract_host(match.group(0))
+        # Check EVERY URL in the input, not just the first — see AAASM-4303.
+        # re.search returns only the first match, which allows multi-URL bypass:
+        # an attacker could pass `https://openai.com https://evil.com` and the
+        # policy would only see openai.com.
+        for url in re.findall(r"https?://[^\s\"']+", input_str):
+            host = _extract_host(url)
             if not _host_allowed(host):
                 reason = (
                     f"Tool '{tool_name}' attempted egress to '{host}', which is "
