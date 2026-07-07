@@ -55,14 +55,16 @@ async def test_allowed_tool_runs(governed_tool_class: type[DemoTool]) -> None:
 
 async def test_denied_tool_raises_policy_violation(governed_tool_class: type[DemoTool]) -> None:
     tool = build_tools()["delete_records"]
+    ctx = _tool_context()
     with pytest.raises(PolicyViolationError, match="blocked by governance policy"):
-        await tool.run_async(args={}, tool_context=_tool_context())
+        await tool.run_async(args={}, tool_context=ctx)
 
 
 async def test_pending_tool_raises_policy_violation(governed_tool_class: type[DemoTool]) -> None:
     tool = build_tools()["send_email"]
+    ctx = _tool_context()
     with pytest.raises(PolicyViolationError, match="rejected during approval"):
-        await tool.run_async(args={}, tool_context=_tool_context())
+        await tool.run_async(args={}, tool_context=ctx)
 
 
 def test_init_assembly_sdk_only_requires_no_gateway() -> None:
