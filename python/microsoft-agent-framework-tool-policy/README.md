@@ -23,7 +23,7 @@ Like the rest of this gallery, the example runs two ways:
 |---|---|
 | Python | >= 3.12 |
 | [uv](https://github.com/astral-sh/uv) | latest |
-| Agent Assembly Python SDK | >= 0.0.1b2 |
+| Agent Assembly Python SDK | >= 0.0.1rc3 |
 
 No running Agent Assembly gateway is required for the offline demo.
 
