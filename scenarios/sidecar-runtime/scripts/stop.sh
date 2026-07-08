@@ -4,11 +4,11 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-COMPOSE_DIR="$(dirname "$SCRIPT_DIR")/scenarios/sidecar-runtime"
-
-if [[ -f "$SCRIPT_DIR/../docker-compose.yml" ]]; then
-  COMPOSE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-fi
+COMPOSE_DIR="$(dirname "$SCRIPT_DIR")"
+[ -f "$COMPOSE_DIR/docker-compose.yml" ] || {
+    echo "Error: docker-compose.yml not found under $COMPOSE_DIR" >&2
+    exit 1
+}
 
 echo "Stopping Agent Assembly local runtime..."
 docker compose -f "$COMPOSE_DIR/docker-compose.yml" down --remove-orphans
