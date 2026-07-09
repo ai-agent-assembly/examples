@@ -1,0 +1,49 @@
+name: Example Metadata Drift Check
+
+on:
+  pull_request:
+    paths:
+      - "metadata/sdk-versions.yaml"
+      - "scripts/generate_example_metadata.py"
+      - "python/**/pyproject.toml"
+      - "python/**/README.md"
+      - "node/**/package.json"
+      - "node/**/README.md"
+      - "go/**/go.mod"
+      - "go/**/README.md"
+      - "scenarios/**/pyproject.toml"
+      - "scenarios/**/package.json"
+      - "scenarios/**/README.md"
+      - ".github/workflows/example-metadata-check.yml"
+  push:
+    branches:
+      - master
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  drift-check:
+    name: metadata drift
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6
+        with:
+          python-version: "3.12"
+
+      - name: Regenerate example metadata
+        run: python scripts/generate_example_metadata.py
+
+      - name: Fail if regeneration produced a diff
+        run: |
+          if ! git diff --exit-code; then
+            echo "::error::example metadata is out of sync with metadata/sdk-versions.yaml."
+            echo "::error::Run 'python scripts/generate_example_metadata.py' locally and commit the result."
+            exit 1
+          fi

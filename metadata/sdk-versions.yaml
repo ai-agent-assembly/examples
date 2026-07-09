@@ -1,0 +1,36 @@
+# Shared SDK version pins consumed by scripts/generate_example_metadata.py.
+#
+# This file is the single source of truth for the Agent Assembly SDK versions
+# advertised across every example sub-project in this repo (python/*, node/*,
+# go/*, and scenarios/*).
+#
+# Bump policy:
+#   - Edit this file only on a new SDK release. Update the `version` fields to
+#     the newly released SDK versions.
+#   - Then run `python scripts/generate_example_metadata.py` from the repo root.
+#     The generator rewrites every affected manifest (pyproject.toml,
+#     package.json, go.mod) and every bounded README block.
+#   - CI enforces drift (see `.github/workflows/example-metadata-check.yml`):
+#     any hand-edit of a pin or an SDK version literal in a bounded README block
+#     will fail the drift check.
+#
+# Values here MUST match what is currently pinned in the manifests — this file
+# does not perform version bumps; it captures the current release pins.
+
+python:
+  package: "agent-assembly"
+  version: "0.0.1rc3"
+  install_pip: "pip install agent-assembly=={{version}}"
+  install_uv: "uv add agent-assembly=={{version}}"
+
+node:
+  package: "@agent-assembly/sdk"
+  version: "0.0.1-rc.3"
+  install_pnpm: "pnpm add @agent-assembly/sdk@{{version}}"
+  install_npm: "npm install @agent-assembly/sdk@{{version}}"
+  install_yarn: "yarn add @agent-assembly/sdk@{{version}}"
+
+go:
+  module: "github.com/ai-agent-assembly/go-sdk"
+  version: "v0.0.1-rc.3"
+  install: "go get github.com/ai-agent-assembly/go-sdk@{{version}}"
