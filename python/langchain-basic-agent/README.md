@@ -1,6 +1,6 @@
 # langchain-basic-agent
 
-Demonstrates how to integrate [Agent Assembly](https://github.com/ai-agent-assembly/agent-assembly-examples) with [LangChain](https://python.langchain.com/) to enforce governance policy on tool calls before execution.
+Demonstrates how to integrate [Agent Assembly](https://github.com/ai-agent-assembly/examples) with [LangChain](https://python.langchain.com/) to enforce governance policy on tool calls before execution.
 
 ## What this example demonstrates
 

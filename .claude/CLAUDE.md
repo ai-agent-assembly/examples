@@ -1,4 +1,4 @@
-# CLAUDE.md — agent-assembly-examples
+# CLAUDE.md — examples
 
 Guidance for Claude Code (and humans) working in this repository. This file holds
 **repo-specific** context only; universal engineering policy lives in the global
@@ -104,7 +104,7 @@ Mirror these locally before opening a PR; don't add a `live`-extra install to CI
 - **Default branch is `master`.** A `main` branch also exists but is **stale**
   (`origin/HEAD` may still point at it) — **never** target or merge into `main`.
   All branches and PRs base on `master`.
-- **Canonical remote** points at `ai-agent-assembly/agent-assembly-examples` — here
+- **Canonical remote** points at `ai-agent-assembly/examples` — here
   that is **`origin`** (unlike the core monorepo, where it's `remote`). Confirm with
   `git remote -v`; scope changes against `<canonical>/master`.
 - **npm dependency fixes:** pin with `^` or a precise version (e.g. `^25.9.3`,
@@ -115,7 +115,7 @@ Mirror these locally before opening a PR; don't add a `live`-extra install to CI
 
 ## Project policy
 
-- **JIRA:** project AAASM; set **Component** to `AI-agent-assembly/agent-assembly-examples`;
+- **JIRA:** project AAASM; set **Component** to `ai-agent-assembly/examples`;
   Team (`customfield_10001`) = **Pioneer**. Epic → Story → Subtask (one Subtask ≈
   one commit) + a `Verify …` subtask per Story.
 - **Self-hosted deployment is out of scope** product-wide — don't add

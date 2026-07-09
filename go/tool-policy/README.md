@@ -22,8 +22,8 @@ No live gateway is required. Policy rules are applied by an in-process mock clie
 ## Setup
 
 ```bash
-git clone https://github.com/ai-agent-assembly/agent-assembly-examples.git
-cd agent-assembly-examples/go/tool-policy
+git clone https://github.com/ai-agent-assembly/examples.git
+cd examples/go/tool-policy
 go mod download
 ```
 

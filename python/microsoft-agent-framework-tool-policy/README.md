@@ -1,6 +1,6 @@
 # microsoft-agent-framework-governed-agent
 
-Demonstrates how to integrate [Agent Assembly](https://github.com/ai-agent-assembly/agent-assembly-examples) with [Microsoft Agent Framework](https://github.com/microsoft/agent-framework) to enforce governance policy on tool calls before execution.
+Demonstrates how to integrate [Agent Assembly](https://github.com/ai-agent-assembly/examples) with [Microsoft Agent Framework](https://github.com/microsoft/agent-framework) to enforce governance policy on tool calls before execution.
 
 ## What this example demonstrates
 

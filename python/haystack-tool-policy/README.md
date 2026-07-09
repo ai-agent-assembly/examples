@@ -1,6 +1,6 @@
 # haystack-tool-policy
 
-Demonstrates [Agent Assembly](https://github.com/ai-agent-assembly/agent-assembly-examples) governance over a real [Haystack](https://haystack.deepset.ai/) agent using the SDK's **native Haystack adapter**.
+Demonstrates [Agent Assembly](https://github.com/ai-agent-assembly/examples) governance over a real [Haystack](https://haystack.deepset.ai/) agent using the SDK's **native Haystack adapter**.
 
 Haystack has a native adapter: `HaystackPatch` hooks `haystack.tools.Tool.invoke` — the single execution chokepoint Haystack 2.x uses for every tool, including the agentic `Agent` → `ToolInvoker` tool-call loop. This example governs three real `haystack.tools.Tool` instances by driving them through a genuine `ToolInvoker` (the component a Haystack `Agent` uses to execute a model-chosen tool call), so a denied tool is short-circuited **before its body runs** — real governance, not a no-op.
 

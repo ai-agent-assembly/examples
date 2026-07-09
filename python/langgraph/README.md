@@ -1,6 +1,6 @@
 # langgraph-governed-agent
 
-Demonstrates how to integrate [Agent Assembly](https://github.com/ai-agent-assembly/agent-assembly-examples) with [LangGraph](https://langchain-ai.github.io/langgraph/) to enforce governance policy on the tools a graph's nodes call — before any tool executes.
+Demonstrates how to integrate [Agent Assembly](https://github.com/ai-agent-assembly/examples) with [LangGraph](https://langchain-ai.github.io/langgraph/) to enforce governance policy on the tools a graph's nodes call — before any tool executes.
 
 ## What this example demonstrates
 

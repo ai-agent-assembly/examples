@@ -37,8 +37,8 @@ with an offline mock governance client.
 ## Setup
 
 ```bash
-git clone https://github.com/ai-agent-assembly/agent-assembly-examples.git
-cd agent-assembly-examples/go/cli-runtime-integration
+git clone https://github.com/ai-agent-assembly/examples.git
+cd examples/go/cli-runtime-integration
 go mod download
 ```
 

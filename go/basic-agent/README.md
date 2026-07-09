@@ -24,8 +24,8 @@ in `policy.go` with a transport-backed `GovernanceClient` implementation.
 ## Setup
 
 ```bash
-git clone https://github.com/ai-agent-assembly/agent-assembly-examples.git
-cd agent-assembly-examples/go/basic-agent
+git clone https://github.com/ai-agent-assembly/examples.git
+cd examples/go/basic-agent
 go mod download
 ```
 

@@ -15,7 +15,7 @@ workflows — then go deeper in the docs.
 
 | Resource | Link |
 |---|---|
-| Documentation hub | <https://ai-agent-assembly.github.io/agent-assembly-docs/> |
+| Documentation hub | <https://ai-agent-assembly.github.io/docs/> |
 | Core runtime & CLI | [agent-assembly](https://github.com/ai-agent-assembly/agent-assembly) |
 | Python SDK | [python-sdk](https://github.com/ai-agent-assembly/python-sdk) |
 | Node.js / TypeScript SDK | [node-sdk](https://github.com/ai-agent-assembly/node-sdk) |
@@ -203,7 +203,7 @@ See [`docs/concepts.md`](./docs/concepts.md) for background on how Agent Assembl
 ## Repository layout
 
 ```text
-agent-assembly-examples/
+examples/
   README.md                     ← you are here
   LICENSE                       ← Apache-2.0
   .gitignore

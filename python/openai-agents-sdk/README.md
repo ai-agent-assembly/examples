@@ -1,6 +1,6 @@
 # openai-agents-sdk
 
-Demonstrates how to integrate [Agent Assembly](https://github.com/ai-agent-assembly/agent-assembly-examples) with the [OpenAI Agents SDK](https://openai.github.io/openai-agents-python/) to enforce governance policy — including approval gates — on tool calls before execution.
+Demonstrates how to integrate [Agent Assembly](https://github.com/ai-agent-assembly/examples) with the [OpenAI Agents SDK](https://openai.github.io/openai-agents-python/) to enforce governance policy — including approval gates — on tool calls before execution.
 
 ## What this example demonstrates
 

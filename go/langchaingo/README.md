@@ -28,8 +28,8 @@ in-process mock client, and a `fake.NewFakeLLM` stands in for a real model.
 ## Setup
 
 ```bash
-git clone https://github.com/ai-agent-assembly/agent-assembly-examples.git
-cd agent-assembly-examples/go/langchaingo
+git clone https://github.com/ai-agent-assembly/examples.git
+cd examples/go/langchaingo
 go mod download
 ```
 

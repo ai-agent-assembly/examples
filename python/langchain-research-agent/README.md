@@ -1,7 +1,7 @@
 # langchain-research-agent
 
 A richer ReAct variant of [`langchain-basic-agent`](../langchain-basic-agent). It
-shows how [Agent Assembly](https://github.com/ai-agent-assembly/agent-assembly-examples)
+shows how [Agent Assembly](https://github.com/ai-agent-assembly/examples)
 governs a [LangChain](https://python.langchain.com/) **research agent** that
 reasons through a question using a web-search tool and a calculator tool — under
 a single *balanced* governance policy.

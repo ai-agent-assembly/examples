@@ -1,6 +1,6 @@
 # llamaindex-tool-policy
 
-Demonstrates [Agent Assembly](https://github.com/ai-agent-assembly/agent-assembly-examples) governance for [LlamaIndex](https://docs.llamaindex.ai/) tool calls using the **native LlamaIndex adapter**.
+Demonstrates [Agent Assembly](https://github.com/ai-agent-assembly/examples) governance for [LlamaIndex](https://docs.llamaindex.ai/) tool calls using the **native LlamaIndex adapter**.
 
 LlamaIndex has a native Agent Assembly adapter (`agent_assembly.adapters.llamaindex`). It monkey-patches the concrete `FunctionTool.call` / `acall` execution methods, so once the adapter's hooks are registered, **every** LlamaIndex tool call is governed automatically — the exact method a `FunctionAgent` / `ReActAgent` invokes to run a tool. A denied tool's body never executes; the adapter returns a `ToolOutput` flagged `is_error=True` carrying a `[BLOCKED by governance policy]` message so the agent loop can react instead of crashing.
 

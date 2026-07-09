@@ -1,6 +1,6 @@
 # agno-tool-policy
 
-Demonstrates [Agent Assembly](https://github.com/AI-agent-assembly/agent-assembly-examples) governance of an [Agno](https://docs.agno.com/) (formerly Phidata) agent using Agno's **native Agent Assembly adapter**.
+Demonstrates [Agent Assembly](https://github.com/ai-agent-assembly/examples) governance of an [Agno](https://docs.agno.com/) (formerly Phidata) agent using Agno's **native Agent Assembly adapter**.
 
 Agno runs every function-tool call through a single chokepoint — `agno.tools.function.FunctionCall.execute`. The SDK's Agno adapter patches that method, so every tool an Agno agent invokes passes through policy **before** its body executes: a `deny` short-circuits the tool entirely (its body never runs), an `allow` runs it. This example wires the real adapter (`AgnoPatch`) to a local offline policy and drives genuine Agno `@tool` functions exactly as an Agno `Agent` does, so you can watch the safe tools run and the dangerous one get blocked — with no gateway, API key, or live LLM.
 
