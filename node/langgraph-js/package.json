@@ -1,5 +1,5 @@
 {
-  "name": "@agent-assembly-examples/langgraph-js",
+  "name": "@examples/langgraph-js",
   "version": "0.0.0",
   "private": true,
   "description": "LangGraph.js-style state-machine example with Agent Assembly governance",

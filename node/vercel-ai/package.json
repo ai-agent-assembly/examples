@@ -1,5 +1,5 @@
 {
-  "name": "@agent-assembly-examples/vercel-ai",
+  "name": "@examples/vercel-ai",
   "version": "0.0.0",
   "private": true,
   "description": "Vercel AI SDK example with Agent Assembly tool governance",

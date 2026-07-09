@@ -1,5 +1,5 @@
 {
-  "name": "@agent-assembly-examples/approval-gates",
+  "name": "@examples/approval-gates",
   "version": "0.0.0",
   "private": true,
   "description": "Agent Assembly approval gates scenario — TypeScript implementation",

@@ -1,5 +1,5 @@
 {
-  "name": "@agent-assembly-examples/sidecar-runtime-node-agent",
+  "name": "@examples/sidecar-runtime-node-agent",
   "version": "0.0.1",
   "description": "Agent Assembly sidecar-runtime scenario — Node.js agent example",
   "private": true,

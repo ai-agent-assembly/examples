@@ -1,5 +1,5 @@
 {
-  "name": "@agent-assembly-examples/audit-trace-node",
+  "name": "@examples/audit-trace-node",
   "version": "0.0.1",
   "description": "Agent Assembly audit-trace scenario — Node.js example",
   "private": true,

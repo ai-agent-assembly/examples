@@ -1,5 +1,5 @@
 {
-  "name": "@agent-assembly-examples/budget-limits-node",
+  "name": "@examples/budget-limits-node",
   "version": "0.0.1",
   "description": "Agent Assembly budget-limits scenario — Node.js example",
   "private": true,

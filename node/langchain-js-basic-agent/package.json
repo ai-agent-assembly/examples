@@ -1,5 +1,5 @@
 {
-  "name": "@agent-assembly-examples/langchain-js-basic-agent",
+  "name": "@examples/langchain-js-basic-agent",
   "version": "0.0.0",
   "private": true,
   "description": "LangChain.js-style agent example with Agent Assembly governance",

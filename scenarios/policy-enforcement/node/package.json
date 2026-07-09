@@ -1,5 +1,5 @@
 {
-  "name": "@agent-assembly-examples/policy-enforcement",
+  "name": "@examples/policy-enforcement",
   "version": "0.0.0",
   "private": true,
   "description": "Agent Assembly policy enforcement scenario — TypeScript implementation",
