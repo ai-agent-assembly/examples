@@ -276,7 +276,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "agent-assembly", specifier = ">=0.0.1rc3,<0.1.0" },
+    { name = "agent-assembly", specifier = ">=0.0.1rc3" },
     { name = "haystack-ai", specifier = ">=2.0.0,<3.0" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0.0" },
     { name = "pytest-mock", marker = "extra == 'dev'", specifier = ">=3.14.0" },
