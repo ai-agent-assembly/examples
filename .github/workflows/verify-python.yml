@@ -270,3 +270,69 @@ jobs:
 
       - name: Run smoke tests
         run: uv run pytest tests/ -v
+
+  autogen-tool-policy:
+    name: autogen-tool-policy
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: python/autogen-tool-policy
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+
+      - uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990  # v8.3.2
+        with:
+          version: "latest"
+
+      - name: Install dependencies
+        run: uv sync --extra dev
+
+      - name: Run smoke tests
+        run: uv run pytest tests/ -v
+
+      - name: Run offline demo
+        run: uv run python src/main.py
+
+  semantic-kernel-tool-policy:
+    name: semantic-kernel-tool-policy
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: python/semantic-kernel-tool-policy
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+
+      - uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990  # v8.3.2
+        with:
+          version: "latest"
+
+      - name: Install dependencies
+        run: uv sync --extra dev
+
+      - name: Run smoke tests
+        run: uv run pytest tests/ -v
+
+      - name: Run offline demo
+        run: uv run python src/main.py
+
+  strands-agents-tool-policy:
+    name: strands-agents-tool-policy
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: python/strands-agents-tool-policy
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+
+      - uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990  # v8.3.2
+        with:
+          version: "latest"
+
+      - name: Install dependencies
+        run: uv sync --extra dev
+
+      - name: Run smoke tests
+        run: uv run pytest tests/ -v
+
+      - name: Run offline demo
+        run: uv run python src/main.py
