@@ -98,7 +98,7 @@ AGENT_ASSEMBLY_API_KEY=your-key \
 uv run python src/main.py
 ```
 
-When an `OPENAI_API_KEY` is set, you can extend `main.py` to create a real `openai.agents.Agent` with your `FunctionTool` instances. Agent Assembly's `OpenAIAgentsPatch` intercepts every tool call automatically once `init_assembly()` has run.
+When an `OPENAI_API_KEY` is set, you can extend `main.py` to create a real `agents.Agent` with your `FunctionTool` instances. Agent Assembly's `OpenAIAgentsPatch` intercepts every tool call automatically once `init_assembly()` has run.
 
 ## Troubleshooting
 
