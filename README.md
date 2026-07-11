@@ -88,6 +88,9 @@ below is the shared cross-language view.
 | [`python/smolagents-tool-policy/`](./python/smolagents-tool-policy/) | Smolagents | Govern real `smolagents.Tool` calls via `Tool.__call__`, blocking a destructive tool offline (no model creds) |
 | [`python/agno-tool-policy/`](./python/agno-tool-policy/) | Agno | Govern real Agno `FunctionCall.execute` tool calls (allow / deny / pending); offline, no model creds |
 | [`python/microsoft-agent-framework-tool-policy/`](./python/microsoft-agent-framework-tool-policy/) | Microsoft Agent Framework | Govern `agent_framework.FunctionTool.invoke` (allow / deny / pending); offline mock + live paths |
+| [`python/autogen-tool-policy/`](./python/autogen-tool-policy/) | AutoGen / ag2 | Govern real `autogen_core.tools.FunctionTool.run_json` calls, blocking a destructive tool offline (no model creds) |
+| [`python/semantic-kernel-tool-policy/`](./python/semantic-kernel-tool-policy/) | Semantic Kernel | Govern real Semantic Kernel `Kernel.invoke` calls, blocking a destructive tool offline (no model creds); distinct from the Microsoft Agent Framework |
+| [`python/strands-agents-tool-policy/`](./python/strands-agents-tool-policy/) | Strands Agents | Govern real `@strands.tool` invocations, blocking a destructive tool offline (no model creds) |
 
 ### Node.js / TypeScript
 
