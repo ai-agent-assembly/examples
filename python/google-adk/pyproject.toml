@@ -5,14 +5,14 @@ description = "Agent Assembly governance demo with Google ADK"
 requires-python = ">=3.12"
 dependencies = [
     "agent-assembly==0.0.1rc3",
-    "google-adk>=2.2.0",
+    "google-adk>=2.4.0",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=8.0.0",
-    "pytest-asyncio>=0.24.0",
-    "pytest-mock>=3.14.0",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "pytest-mock>=3.15.1",
 ]
 
 [tool.pytest.ini_options]

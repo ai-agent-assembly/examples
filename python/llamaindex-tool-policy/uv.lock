@@ -744,9 +744,9 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "agent-assembly", specifier = "==0.0.1rc3" },
-    { name = "llama-index-core", specifier = ">=0.14.22" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0.0" },
-    { name = "pytest-mock", marker = "extra == 'dev'", specifier = ">=3.14.0" },
+    { name = "llama-index-core", specifier = ">=0.14.23" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=9.1.1" },
+    { name = "pytest-mock", marker = "extra == 'dev'", specifier = ">=3.15.1" },
 ]
 provides-extras = ["dev"]
 

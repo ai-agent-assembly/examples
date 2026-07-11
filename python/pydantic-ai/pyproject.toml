@@ -10,14 +10,14 @@ dependencies = [
     # as `FunctionToolset`) on pydantic-ai >=0.3.0, and falls back to the
     # internal `Tool._run` on <0.3.0. No upper pin is needed; governance
     # attaches across the 0.3.x–1.x line.
-    "pydantic-ai>=0.3.0",
+    "pydantic-ai>=2.9.0",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=8.0.0",
-    "pytest-asyncio>=0.24.0",
-    "pytest-mock>=3.14.0",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "pytest-mock>=3.15.1",
 ]
 
 [tool.pytest.ini_options]

@@ -24,11 +24,11 @@ dependencies = [
 # does not allow pre-releases (uv) needs `--prerelease=allow`:
 #     uv sync --extra live --prerelease=allow
 live = [
-    "agent-framework>=1.9,<2",
+    "agent-framework>=1.11.0,<2",
 ]
 dev = [
-    "pytest>=8.0.0",
-    "pytest-asyncio>=0.24.0",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
 ]
 
 [tool.pytest.ini_options]

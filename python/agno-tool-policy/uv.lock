@@ -59,8 +59,8 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "agent-assembly", specifier = "==0.0.1rc3" },
-    { name = "agno", specifier = ">=2.0.0" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0.0" },
+    { name = "agno", specifier = ">=2.7.2" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=9.1.1" },
 ]
 provides-extras = ["dev"]
 

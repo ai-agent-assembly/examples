@@ -1786,9 +1786,9 @@ live = [
 [package.metadata]
 requires-dist = [
     { name = "agent-assembly", specifier = "==0.0.1rc3" },
-    { name = "agent-framework", marker = "extra == 'live'", specifier = ">=1.9,<2" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0.0" },
-    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.24.0" },
+    { name = "agent-framework", marker = "extra == 'live'", specifier = ">=1.11.0,<2" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=9.1.1" },
+    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=1.4.0" },
 ]
 provides-extras = ["live", "dev"]
 

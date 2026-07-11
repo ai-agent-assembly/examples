@@ -11,11 +11,11 @@ dependencies = [
 # The live integration drives a real CrewAI crew. The --mock demo (what CI runs)
 # needs none of this — it replays the crew's delegation trajectory offline.
 live = [
-    "crewai>=1.14.7",
+    "crewai>=1.15.2",
 ]
 dev = [
-    "pytest>=8.0.0",
-    "pytest-mock>=3.14.0",
+    "pytest>=9.1.1",
+    "pytest-mock>=3.15.1",
 ]
 
 [tool.pytest.ini_options]
