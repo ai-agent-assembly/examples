@@ -1,0 +1,36 @@
+# Live-core registration smoke — Go
+
+A minimal **real-transport** driver for the scheduled `verify-live.yml` lane
+(AAASM-4475). It is the Go counterpart of this scenario's `python-agent/`.
+
+Unlike `go/basic-agent` and `go/tool-policy` (which wrap tools with an offline
+`mockClient` and never call `assembly.Init`), this driver calls the real
+`assembly.Init` — booting/reaching a running gateway and registering this agent
+over gRPC — then runs one governed call through `a.WrapTools`. There is no mock
+client by design: this lane exists to exercise the registration path that
+AAASM-4469 (Go `Init()` unconditionally failing) / AAASM-4470 showed the mock
+lanes (`verify-go.yml`) never touch.
+
+## Run it (needs a real gateway)
+
+```bash
+export AA_GATEWAY_URL=http://127.0.0.1:50051   # a running aasm gateway
+export AA_AGENT_ID=live-smoke-go
+go run .
+```
+
+Then confirm registration landed:
+
+```bash
+curl -fsS http://127.0.0.1:7700/api/v1/agents | grep live-smoke-go
+```
+
+## Status — rc-gated
+
+This driver cannot yet complete end-to-end: it depends on the rc-pending
+SDK/transport fixes (AAASM-4447, AAASM-4469) **and** a published
+`aasm start --mode local` gateway/API surface (AAASM-4449 — the release pipeline
+does not yet ship `aa-api-server`, which serves `/api/v1/*`). Until those land,
+the `verify-live.yml` job that drives this is quarantined `continue-on-error:
+true`. See the workflow header and this repo's `.claude/CLAUDE.md` (mock-vs-live
+lanes) for the full picture.
