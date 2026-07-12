@@ -1,0 +1,186 @@
+# Verify All Samples — scheduled, repo-wide, discovery-driven sweep (AAASM-4458).
+#
+# WHY THIS EXISTS
+# ---------------
+# AAASM-4451 (a quick-start sample that pinned a langchain version whose API had
+# since diverged from what the sample called) was caught only because a human
+# happened to run that one sample end-to-end. The per-PR mock lanes
+# (verify-python/node/go/scenarios) each enumerate their examples with a
+# HARDCODED job list, and only trigger on a change under their own path prefix.
+# That leaves two gaps this lane closes:
+#   1. A sample nobody remembered to add to the hardcoded list is never run.
+#   2. A sample breaks not because it changed, but because a dependency it pins
+#      shipped a breaking release — no PR touches its path, so nothing re-runs it.
+#
+# This lane runs on a SCHEDULE (weekly cron), discovers EVERY sample in the repo
+# dynamically via scripts/discover_samples.py, and executes each one. A newly
+# added example is covered the moment it lands — no workflow edit required — so
+# the AAASM-4451 class of drift cannot silently re-accumulate.
+#
+# MOCK / OFFLINE ONLY — not the live lane
+# ---------------------------------------
+# Every job here runs the example's offline `--mock`/stub path with the `dev`
+# extra only (never `live`): it proves the governance wiring and that the sample
+# still imports and executes against its own pinned deps. It deliberately does
+# NOT start a real gateway and excludes scenarios/live-core-enforcement — real
+# transport is the job of the scheduled verify-live.yml lane (AAASM-4475), which
+# this must not duplicate.
+#
+# It also runs on pull_request when this workflow or the discovery script itself
+# changes, so a PR editing the sweep proves the sweep still works end-to-end.
+
+name: Verify All Samples (scheduled repo-wide sweep)
+
+on:
+  schedule:
+    # Weekly, Monday 05:00 UTC — an hour before the daily verify-live cron, so
+    # the two scheduled lanes don't contend for runners.
+    - cron: "0 5 * * 1"
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/workflows/verify-all-samples.yml"
+      - "scripts/discover_samples.py"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # ── Discover every sample and emit one dynamic matrix per language ────────
+  discover:
+    name: Discover samples
+    runs-on: ubuntu-latest
+    outputs:
+      python: ${{ steps.discover.outputs.python }}
+      node: ${{ steps.discover.outputs.node }}
+      go: ${{ steps.discover.outputs.go }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6
+        with:
+          python-version: "3.12"
+
+      - id: discover
+        name: Enumerate runnable samples
+        run: python scripts/discover_samples.py --github-output
+
+  # ── Python samples (uv-pytest / uv-main / py-script) ──────────────────────
+  python:
+    name: "py: ${{ matrix.sample.name }}"
+    needs: discover
+    if: needs.discover.outputs.python != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        sample: ${{ fromJSON(needs.discover.outputs.python) }}
+    defaults:
+      run:
+        working-directory: ${{ matrix.sample.path }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6
+        with:
+          python-version: "3.12"
+
+      - uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990  # v8.3.2
+        with:
+          version: "latest"
+
+      - name: Execute sample (offline / mock, dev extra only)
+        env:
+          RUNNER: ${{ matrix.sample.runner }}
+          ENTRY: ${{ matrix.sample.entry }}
+        run: |
+          set -euo pipefail
+          case "$RUNNER" in
+            uv-pytest)
+              uv sync --extra dev
+              uv run pytest tests/ -v
+              ;;
+            uv-main)
+              uv sync --extra dev
+              uv run python "$ENTRY" --mock
+              ;;
+            py-script)
+              python "$ENTRY"
+              ;;
+            *)
+              echo "::error::unknown python runner: $RUNNER"
+              exit 1
+              ;;
+          esac
+
+  # ── Node samples (pnpm-test / node-script) ────────────────────────────────
+  node:
+    name: "node: ${{ matrix.sample.name }}"
+    needs: discover
+    if: needs.discover.outputs.node != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        sample: ${{ fromJSON(needs.discover.outputs.node) }}
+    defaults:
+      run:
+        working-directory: ${{ matrix.sample.path }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271  # v6
+        with:
+          version: 10
+
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e  # v6
+        with:
+          node-version: "20"
+
+      - name: Execute sample (offline / mock)
+        env:
+          RUNNER: ${{ matrix.sample.runner }}
+          ENTRY: ${{ matrix.sample.entry }}
+        run: |
+          set -euo pipefail
+          case "$RUNNER" in
+            pnpm-test)
+              pnpm install
+              pnpm test
+              ;;
+            node-script)
+              node "$ENTRY"
+              ;;
+            *)
+              echo "::error::unknown node runner: $RUNNER"
+              exit 1
+              ;;
+          esac
+
+  # ── Go samples (go-test) ──────────────────────────────────────────────────
+  go:
+    name: "go: ${{ matrix.sample.name }}"
+    needs: discover
+    if: needs.discover.outputs.go != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        sample: ${{ fromJSON(needs.discover.outputs.go) }}
+    defaults:
+      run:
+        working-directory: ${{ matrix.sample.path }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16  # v6
+        with:
+          go-version: "1.26"
+          cache-dependency-path: ${{ matrix.sample.path }}/go.sum
+
+      - name: Execute sample
+        run: go test ./...
