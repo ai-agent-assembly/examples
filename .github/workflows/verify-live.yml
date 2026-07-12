@@ -1,0 +1,163 @@
+# Verify Live — real-transport smoke lane (AAASM-4475 SCAFFOLD).
+#
+# WHY THIS EXISTS
+# ---------------
+# Every other verify-*.yml lane in this repo is architecturally mock-only: each
+# example answers its own governance decision with an in-process stub before any
+# real gateway/native-binding/gRPC transport is ever reached. That is legitimate
+# for teaching policy semantics cheaply, but it means CI can be green while the
+# SDK's real transport is broken — exactly how the AAASM-4445 bug batch
+# (AAASM-4446/4447/4467/4468/4469/4470) shipped undetected.
+#
+# This workflow is the missing counterpart: one *scheduled* lane per language
+# that starts a REAL `aasm start --mode local` gateway, runs a real (non-mock)
+# SDK driver against it — init_assembly / initAssembly / assembly.Init — and
+# asserts the agent becomes visible in the gateway's /api/v1/agents REST surface.
+# It does NOT replace the mock lanes; verify-python/node/go/scenarios remain the
+# required per-PR gate and stay green on their own.
+#
+# QUARANTINED — WHY THE JOBS ARE continue-on-error: true
+# ------------------------------------------------------
+# The real assertion cannot pass yet. It is rc-gated on BOTH:
+#   * rc-pending SDK/transport fixes — AAASM-4447 (core REST/gRPC protocol gap),
+#     AAASM-4467 (Node native binding never published), AAASM-4468 (Node no-op
+#     register()), AAASM-4469 (Go Init() unconditionally failing), and the
+#     Python cp313 wheel / native registration gap (AAASM-4446); AND
+#   * a published gateway/API surface — AAASM-4449: the agent-assembly release
+#     pipeline does not yet ship `aa-api-server`, the process that serves
+#     /api/v1/* (including /api/v1/agents). Until it is published, `aasm start
+#     --mode local` cannot bring up the REST surface this lane asserts against.
+#
+# This repo has no `rc_pending` pytest mechanism, so the quarantine is expressed
+# at the workflow level: each live job is `continue-on-error: true`. When the
+# blocking tickets land, drop `continue-on-error` (and delete this note) so the
+# lane becomes a hard, red-on-regression gate — and update `.claude/CLAUDE.md`.
+#
+# Related: scenarios/live-core-enforcement's `live-core-enforcement-live` job
+# (in verify-scenarios.yml) stays workflow_dispatch-only for a *distinct* reason
+# — it needs the unpublished `ghcr.io/ai-agent-assembly/aa-gateway` container
+# image. This lane deliberately uses the `aasm start --mode local` binary path
+# instead, so it does not depend on that image.
+
+name: Verify Live (real transport)
+
+on:
+  schedule:
+    # Daily at 06:00 UTC — routine, unattended, not manual-dispatch-only.
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # aa-api-server serves the /api/v1/* REST surface here (see AAASM-4449).
+  AA_API_BASE: "http://127.0.0.1:7700"
+  # The gateway gRPC endpoint the SDKs register against.
+  AA_GATEWAY_URL: "http://127.0.0.1:50051"
+
+jobs:
+  # ── Python: real init_assembly against a live gateway ────────────────────
+  live-python:
+    name: "live: python (real init_assembly)"
+    runs-on: ubuntu-latest
+    # QUARANTINED: rc-gated on AAASM-4446/4447 + AAASM-4449 (see file header).
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6
+        with:
+          python-version: "3.13"   # cp313 wheel gap (AAASM-4446) is part of what this lane must catch
+
+      - name: Install the real published SDK (no shim)
+        run: pip install --pre "agent-assembly>=0.0.1rc3"
+
+      - name: Install and start the real aasm gateway
+        run: bash .github/scripts/start-aasm.sh
+
+      - name: Run the real-transport agent (mock disabled)
+        env:
+          AA_AGENT_ID: "live-smoke-python"
+        run: python scenarios/live-core-enforcement/python-agent/agent.py
+
+      - name: Assert the agent registered (visible in /api/v1/agents)
+        run: bash .github/scripts/assert-agent.sh live-smoke-python
+
+      - name: Stop the gateway
+        if: always()
+        run: bash .github/scripts/stop-aasm.sh || true
+
+  # ── Node: real initAssembly against a live gateway ───────────────────────
+  live-node:
+    name: "live: node (real initAssembly)"
+    runs-on: ubuntu-latest
+    # QUARANTINED: rc-gated on AAASM-4447/4467/4468 + AAASM-4449 (see file header).
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271  # v6
+        with:
+          version: 10
+
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e  # v6
+        with:
+          node-version: "20"
+
+      - name: Install the real published SDK (no stub)
+        working-directory: scenarios/live-core-enforcement/node-agent
+        run: pnpm install
+
+      - name: Install and start the real aasm gateway
+        run: bash .github/scripts/start-aasm.sh
+
+      - name: Run the real-transport agent (mock disabled)
+        working-directory: scenarios/live-core-enforcement/node-agent
+        env:
+          AA_AGENT_ID: "live-smoke-node"
+        run: node agent.mjs
+
+      - name: Assert the agent registered (visible in /api/v1/agents)
+        run: bash .github/scripts/assert-agent.sh live-smoke-node
+
+      - name: Stop the gateway
+        if: always()
+        run: bash .github/scripts/stop-aasm.sh || true
+
+  # ── Go: real assembly.Init against a live gateway ────────────────────────
+  live-go:
+    name: "live: go (real assembly.Init)"
+    runs-on: ubuntu-latest
+    # QUARANTINED: rc-gated on AAASM-4447/4469 + AAASM-4449 (see file header).
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16  # v6
+        with:
+          go-version: "1.26"
+
+      - name: Build the real-transport driver (uses the real go-sdk, no mock)
+        working-directory: scenarios/live-core-enforcement/go-agent
+        run: go build ./...
+
+      - name: Install and start the real aasm gateway
+        run: bash .github/scripts/start-aasm.sh
+
+      - name: Run the real-transport agent (mock disabled)
+        working-directory: scenarios/live-core-enforcement/go-agent
+        env:
+          AA_AGENT_ID: "live-smoke-go"
+        run: go run .
+
+      - name: Assert the agent registered (visible in /api/v1/agents)
+        run: bash .github/scripts/assert-agent.sh live-smoke-go
+
+      - name: Stop the gateway
+        if: always()
+        run: bash .github/scripts/stop-aasm.sh || true

@@ -99,6 +99,56 @@ path — install with the `dev` extra only, never `live`. `verify-scenarios` has
 preflight that detects which scenario directories are present and skips the rest.
 Mirror these locally before opening a PR; don't add a `live`-extra install to CI.
 
+## Mock lanes vs the live lane (the two halves of the CI story)
+
+The `mock vs live` distinction above is about how an *example runs*; this is
+about which *CI lanes* run, and why both are needed. They are complementary —
+neither is sufficient alone.
+
+- **Mock lanes — `verify-python.yml`, `verify-node.yml`, `verify-go.yml`,
+  `verify-scenarios.yml`.** The per-PR required gate. They install the real
+  published SDK but exercise each example's **offline `--mock`/stub path** — the
+  governance decision is answered in-process before any real gateway, native
+  binding, or gRPC transport is reached. They prove the governance *wiring and
+  policy semantics* are correct, cheaply and deterministically. What they
+  **cannot** catch, by construction, is a broken real transport: the mock
+  answers first, so the SDK's actual network/native layer is never hit. That
+  blind spot is how the AAASM-4445 bug batch shipped with this repo's CI green.
+
+- **Live lane — `verify-live.yml`.** A **scheduled** (daily cron +
+  `workflow_dispatch`, not manual-only) lane, one job per language, that starts a
+  real `aasm start --mode local` gateway, runs a real (non-mock) driver against
+  it — `init_assembly` / `initAssembly` / `assembly.Init` — and asserts the agent
+  becomes visible in the gateway's `/api/v1/agents`. It exists specifically to
+  catch the class of bug (AAASM-4446/4447/4467/4468/4469/4470) the mock lanes are
+  structurally blind to. The drivers live at
+  `scenarios/live-core-enforcement/{python,node,go}-agent/` (the Python one is the
+  scenario's existing deny-flow agent; the Node/Go ones are minimal
+  register-and-assert drivers). Helper scripts:
+  `.github/scripts/{start-aasm,assert-agent,stop-aasm}.sh`.
+
+- **The live real-assertion is currently rc-gated (quarantined).** Its jobs are
+  `continue-on-error: true` — this repo has no `rc_pending` pytest mechanism, so
+  the quarantine is expressed at the workflow level (with a header comment naming
+  the blockers). It cannot pass until the rc-pending SDK/transport fixes land
+  (AAASM-4447 core protocol gap, AAASM-4446 Python cp313/native, AAASM-4467/4468
+  Node, AAASM-4469 Go) **and** the agent-assembly release pipeline publishes
+  `aa-api-server`, which serves `/api/v1/*` (AAASM-4449). When those land, drop
+  `continue-on-error` so the lane becomes a hard, red-on-regression gate — and
+  update this section. Per the Verification policy above, the quarantine names
+  open tickets and must never be silently converted into a permanent skip.
+
+- **Why `scenarios/live-core-enforcement`'s `live-core-enforcement-live` job
+  stays `workflow_dispatch`-only** (in `verify-scenarios.yml`): a *distinct*
+  blocker — it brings the stack up via `docker compose` using the
+  `ghcr.io/ai-agent-assembly/aa-gateway` **container image**, which is not
+  published (only `aa-runtime` + SDK base images are). That container-image gap
+  appears untracked (AAASM-3791 fixed only the scenario's `start.sh` bug; the
+  distinct `aa-api-server` *binary* gap is AAASM-4449) and warrants a follow-up
+  ticket against agent-assembly's image-publishing pipeline. `verify-live.yml`
+  sidesteps it by using the `aasm start --mode local` binary path instead of the
+  container image.
+
 ## Repo-specific gotchas
 
 - **Default branch is `master`.** A `main` branch also exists but is **stale**

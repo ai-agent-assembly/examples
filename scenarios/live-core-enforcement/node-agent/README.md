@@ -1,0 +1,38 @@
+# Live-core registration smoke — Node
+
+A minimal **real-transport** driver for the scheduled `verify-live.yml` lane
+(AAASM-4475). It is the Node counterpart of this scenario's `python-agent/`.
+
+Unlike every example under `node/`, this driver does **not** wire an in-process
+`createPolicyGatewayClient` stub. It imports the real `initAssembly` from
+`@agent-assembly/sdk`, registers against a running gateway, and makes one
+governed call over the SDK's native client. The absence of any offline fallback
+is deliberate: this lane exists to exercise the native-binding + gRPC
+registration path that the mock lanes (`verify-node.yml`) can never reach — the
+class of bug found in AAASM-4467 (native binding never published) and
+AAASM-4468 (no-op `register()`).
+
+## Run it (needs a real gateway)
+
+```bash
+pnpm install
+export AA_GATEWAY_URL=http://127.0.0.1:50051   # a running aasm gateway
+export AA_AGENT_ID=live-smoke-node
+pnpm start
+```
+
+Then confirm registration landed:
+
+```bash
+curl -fsS http://127.0.0.1:7700/api/v1/agents | grep live-smoke-node
+```
+
+## Status — rc-gated
+
+This driver cannot yet complete end-to-end: it depends on the rc-pending
+SDK/transport fixes (AAASM-4447, AAASM-4467, AAASM-4468) **and** a published
+`aasm start --mode local` gateway/API surface (AAASM-4449 — the release pipeline
+does not yet ship `aa-api-server`, which serves `/api/v1/*`). Until those land,
+the `verify-live.yml` job that drives this is quarantined `continue-on-error:
+true`. See the workflow header and this repo's `.claude/CLAUDE.md` (mock-vs-live
+lanes) for the full picture.

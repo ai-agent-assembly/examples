@@ -1,0 +1,16 @@
+{
+  "name": "@examples/live-core-node-agent",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Node real-transport registration smoke driven by verify-live.yml — no mock stub",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node agent.mjs"
+  },
+  "dependencies": {
+    "@agent-assembly/sdk": "0.0.1-rc.3"
+  }
+}
