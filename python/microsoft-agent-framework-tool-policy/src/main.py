@@ -102,6 +102,7 @@ async def _run_demo(*, mock: bool) -> None:
         f"Initializing Agent Assembly (gateway: {gateway_url}, sdk-only mode, {mode_label})..."
     )
 
+    # region: quickstart
     policy = LocalPolicyEngine()
 
     # Live path: install the governance hooks BEFORE init_assembly. The adapter
@@ -122,6 +123,7 @@ async def _run_demo(*, mock: bool) -> None:
             agent_id="microsoft-agent-framework-demo-agent",
             mode="sdk-only",
         ) as ctx:
+            # endregion
             print(f"  Agent:    {ctx.client.agent_id}")
             print(f"  Gateway:  {ctx.client.gateway_url}")
             print(f"  Mode:     {ctx.network_mode} (offline demo)")
