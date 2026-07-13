@@ -19,18 +19,18 @@
 
 python:
   package: "agent-assembly"
-  version: "0.0.1rc3"
+  version: "0.0.1rc4"
   install_pip: "pip install agent-assembly=={{version}}"
   install_uv: "uv add agent-assembly=={{version}}"
 
 node:
   package: "@agent-assembly/sdk"
-  version: "0.0.1-rc.3"
+  version: "0.0.1-rc.4"
   install_pnpm: "pnpm add @agent-assembly/sdk@{{version}}"
   install_npm: "npm install @agent-assembly/sdk@{{version}}"
   install_yarn: "yarn add @agent-assembly/sdk@{{version}}"
 
 go:
   module: "github.com/ai-agent-assembly/go-sdk"
-  version: "v0.0.1-rc.3"
+  version: "v0.0.1-rc.4"
   install: "go get github.com/ai-agent-assembly/go-sdk@{{version}}"
