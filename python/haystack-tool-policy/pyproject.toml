@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Agent Assembly governance demo: a real Haystack agent governed via the native adapter"
 requires-python = ">=3.12"
 dependencies = [
-    "agent-assembly>=0.0.1rc3",
+    "agent-assembly>=0.0.1rc4",
     # Haystack 2.x ships the `Tool` / `ToolInvoker` API the SDK's native adapter
     # hooks (haystack.tools.Tool.invoke). 1.x predates it and is out of scope.
     "haystack-ai>=2.31.0,<3.0",

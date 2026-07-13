@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Agent Assembly governance demo with Microsoft Semantic Kernel"
 requires-python = ">=3.12"
 dependencies = [
-    "agent-assembly==0.0.1rc3",
+    "agent-assembly==0.0.1rc4",
     # Semantic Kernel has no native Agent Assembly adapter (it is distinct from
     # the Microsoft Agent Framework, which does), so this example governs its
     # real `KernelFunction` calls the framework-agnostic way (the same path the

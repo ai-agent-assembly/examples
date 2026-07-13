@@ -5,12 +5,12 @@
 <!-- Edit metadata/sdk-versions.yaml and re-run the generator. -->
 | Requirement | Version |
 |---|---|
-| Agent Assembly Go SDK (`github.com/ai-agent-assembly/go-sdk`) | v0.0.1-rc.3 |
+| Agent Assembly Go SDK (`github.com/ai-agent-assembly/go-sdk`) | v0.0.1-rc.4 |
 
 Install:
 
 ```bash
-go get github.com/ai-agent-assembly/go-sdk@v0.0.1-rc.3
+go get github.com/ai-agent-assembly/go-sdk@v0.0.1-rc.4
 ```
 <!-- END GENERATED: sdk-install -->
 

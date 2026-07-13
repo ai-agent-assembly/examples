@@ -5,14 +5,14 @@
 <!-- Edit metadata/sdk-versions.yaml and re-run the generator. -->
 | Requirement | Version |
 |---|---|
-| Agent Assembly Python SDK (agent-assembly) | >= 0.0.1rc3 |
+| Agent Assembly Python SDK (agent-assembly) | >= 0.0.1rc4 |
 
 Install:
 
 ```bash
-uv add agent-assembly==0.0.1rc3
+uv add agent-assembly==0.0.1rc4
 # or
-pip install agent-assembly==0.0.1rc3
+pip install agent-assembly==0.0.1rc4
 ```
 <!-- END GENERATED: sdk-install -->
 

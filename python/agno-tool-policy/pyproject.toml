@@ -6,7 +6,7 @@ requires-python = ">=3.12"
 dependencies = [
     # Requires the agent-assembly release that ships the native Agno adapter
     # (agent_assembly.adapters.agno, AAASM-3537, first published on PyPI in 0.0.1b5).
-    "agent-assembly==0.0.1rc3",
+    "agent-assembly==0.0.1rc4",
     "agno>=2.7.2",
 ]
 
