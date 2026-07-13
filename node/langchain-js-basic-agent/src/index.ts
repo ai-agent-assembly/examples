@@ -5,6 +5,7 @@ import { TOOLS } from "./tools.js";
 async function main(): Promise<void> {
   console.log("=== LangChain.js-style Agent Assembly Example ===\n");
 
+  // region: quickstart
   const tools = withAssembly(
     {
       get_weather: {
@@ -16,6 +17,7 @@ async function main(): Promise<void> {
     },
     { gatewayClient: createPolicyGatewayClient(), agentId: "langchain-js-example-agent" }
   );
+  // endregion
 
   console.log("Running allowed tool: get_weather");
   console.log(`  [ALLOW] ${await tools.get_weather.execute({ location: "Taipei" })}`);
