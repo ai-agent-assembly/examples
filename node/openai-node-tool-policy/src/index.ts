@@ -7,6 +7,7 @@ async function main(): Promise<void> {
   console.log("Available tools:", TOOL_DEFINITIONS.map((t) => t.function.name).join(", "));
   console.log();
 
+  // region: quickstart
   const tools = withAssembly(
     {
       search_web: {
@@ -23,6 +24,7 @@ async function main(): Promise<void> {
     },
     { gatewayClient: createPolicyGatewayClient(), agentId: "openai-node-example-agent" }
   );
+  // endregion
 
   console.log("Simulating OpenAI tool call: search_web");
   console.log(`  [ALLOW] ${await tools.search_web.execute({ query: "Agent Assembly governance" })}`);
