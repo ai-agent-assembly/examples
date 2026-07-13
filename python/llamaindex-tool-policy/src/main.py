@@ -66,6 +66,7 @@ def main() -> None:
 
     print(f"Initializing Agent Assembly (gateway: {gateway_url}, sdk-only mode)...")
 
+    # region: quickstart
     with init_assembly(
         gateway_url=gateway_url,
         api_key=api_key,
@@ -95,6 +96,7 @@ def main() -> None:
         LlamaIndexPatch(callback_handler=None).revert()
         adapter = LlamaIndexAdapter()
         adapter.register_hooks(LocalPolicyEngine())
+        # endregion
         print("  FunctionTool.call / acall are now governed by Agent Assembly.")
         print()
 
