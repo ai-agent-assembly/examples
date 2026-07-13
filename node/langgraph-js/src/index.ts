@@ -8,6 +8,7 @@ interface GraphState {
   log: string[];
 }
 
+// region: quickstart
 /**
  * Build governed tools once, then call them from inside graph nodes.
  * withAssembly enforces the local policy before each tool runs.
@@ -25,6 +26,7 @@ function buildGovernedTools() {
     { gatewayClient: createPolicyGatewayClient(), agentId: "langgraph-js-example-agent" }
   );
 }
+// endregion
 
 async function main(): Promise<void> {
   console.log("=== LangGraph.js-style Graph — Agent Assembly Governance Example ===\n");
