@@ -62,6 +62,7 @@ async def _run_demo() -> None:
 
     print(f"Initializing Agent Assembly (gateway: {gateway_url}, sdk-only mode)...")
 
+    # region: quickstart
     # Govern the concrete demo tool class BEFORE init_assembly so the offline
     # LocalPolicyEngine stays wired as the interceptor (the patch is idempotent).
     govern_tool_class(DemoTool, LocalPolicyEngine())
@@ -73,6 +74,7 @@ async def _run_demo() -> None:
             agent_id="google-adk-demo-agent",
             mode="sdk-only",
         ) as ctx:
+            # endregion
             print(f"  Agent:    {ctx.client.agent_id}")
             print(f"  Gateway:  {ctx.client.gateway_url}")
             print(f"  Mode:     {ctx.network_mode} (offline demo)")
