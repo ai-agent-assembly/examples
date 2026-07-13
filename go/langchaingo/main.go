@@ -35,6 +35,7 @@ func main() {
 	}
 	fmt.Printf("[llm] plan: %s\n\n", plan)
 
+	// region: quickstart
 	// Wrap the LangChainGo tools with Agent Assembly governance. The wrapped
 	// values still satisfy langchaingo's tools.Tool, so they can be handed
 	// straight to a LangChainGo agent/executor.
@@ -42,6 +43,7 @@ func main() {
 		[]assembly.Tool{&searchTool{}, &sendEmailTool{}},
 		&policyClient{},
 	)
+	// endregion
 
 	// The agent attempts both tool calls from its plan. Governance allows the
 	// safe one and blocks the side-effecting one.
