@@ -4,13 +4,19 @@ on:
   pull_request:
     paths:
       - "metadata/sdk-versions.yaml"
+      - "metadata/framework-labels.json"
       - "scripts/generate_example_metadata.py"
+      - "scripts/extract_snippets.py"
       - "python/**/pyproject.toml"
       - "python/**/README.md"
+      - "python/**/src/main.py"
       - "node/**/package.json"
       - "node/**/README.md"
+      - "node/**/src/index.ts"
       - "go/**/go.mod"
       - "go/**/README.md"
+      - "go/**/main.go"
+      - "snippets/**"
       - "scenarios/**/pyproject.toml"
       - "scenarios/**/package.json"
       - "scenarios/**/README.md"
@@ -40,10 +46,17 @@ jobs:
       - name: Regenerate example metadata
         run: python scripts/generate_example_metadata.py
 
+      - name: Regenerate quick-start snippets
+        run: python scripts/extract_snippets.py
+
       - name: Fail if regeneration produced a diff
         run: |
           if ! git diff --exit-code; then
-            echo "::error::example metadata is out of sync with metadata/sdk-versions.yaml."
-            echo "::error::Run 'python scripts/generate_example_metadata.py' locally and commit the result."
+            echo "::error::Generated example metadata or quick-start snippets are out of sync."
+            echo "::error::Metadata source: metadata/sdk-versions.yaml -> scripts/generate_example_metadata.py"
+            echo "::error::Snippet source: region: quickstart markers -> scripts/extract_snippets.py"
+            echo "::error::Run both generators locally and commit the result:"
+            echo "::error::  python scripts/generate_example_metadata.py"
+            echo "::error::  python scripts/extract_snippets.py"
             exit 1
           fi
