@@ -43,10 +43,9 @@ async def test_summarize_docs_is_allowed(policy: LocalPolicyEngine) -> None:
 async def test_execute_sql_is_denied(policy: LocalPolicyEngine) -> None:
     kernel = build_kernel()
     fn = kernel.get_function(PLUGIN_NAME, "execute_sql")
+    args = KernelArguments(sql="SELECT * FROM secrets")
     with pytest.raises(ToolExecutionBlockedError, match="deny_arbitrary_execution"):
-        await governed_invoke(
-            kernel, fn, KernelArguments(sql="SELECT * FROM secrets"), policy
-        )
+        await governed_invoke(kernel, fn, args, policy)
 
 
 async def test_denied_tool_body_does_not_run(policy: LocalPolicyEngine) -> None:
@@ -54,8 +53,9 @@ async def test_denied_tool_body_does_not_run(policy: LocalPolicyEngine) -> None:
     # SQL_EXECUTIONS would record the statement.
     kernel = build_kernel()
     fn = kernel.get_function(PLUGIN_NAME, "execute_sql")
+    args = KernelArguments(sql="DROP TABLE users")
     with pytest.raises(ToolExecutionBlockedError):
-        await governed_invoke(kernel, fn, KernelArguments(sql="DROP TABLE users"), policy)
+        await governed_invoke(kernel, fn, args, policy)
     assert SQL_EXECUTIONS == [], "denied tool body executed — governance is a no-op"
 
 
