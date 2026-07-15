@@ -12,8 +12,8 @@ importers:
   .:
     dependencies:
       '@agent-assembly/sdk':
-        specifier: 0.0.1-rc.4
-        version: 0.0.1-rc.4(@mastra/core@1.50.1(@bufbuild/protobuf@2.12.1)(@grpc/grpc-js@1.14.4)(express@5.2.1)(zod@4.4.3))
+        specifier: 0.0.1-rc.5
+        version: 0.0.1-rc.5(@mastra/core@1.50.1(@bufbuild/protobuf@2.12.1)(@grpc/grpc-js@1.14.4)(express@5.2.1)(zod@4.4.3))
       '@mastra/core':
         specifier: ^1.50.1
         version: 1.50.1(@bufbuild/protobuf@2.12.1)(@grpc/grpc-js@1.14.4)(express@5.2.1)(zod@4.4.3)
@@ -51,32 +51,32 @@ packages:
       express:
         optional: true
 
-  '@agent-assembly/runtime-darwin-arm64@0.0.1-rc.4':
-    resolution: {integrity: sha512-OYDY0P79913geTH3s7BIM9yJQQ50WQxuiiBaj0bWoL++2LnhqQr5Pex3O/5ss9mo1WcNXq7zxWJNaHqr7VDxBw==}
+  '@agent-assembly/runtime-darwin-arm64@0.0.1-rc.5':
+    resolution: {integrity: sha512-myahfridCDSWHgnxz954GMVYSk5ZveuaIF+KCnSTfMeC33TZidVthosHKZqufomOEhgyYmKP0e7dBnyJznr8jQ==}
     cpu: [arm64]
     os: [darwin]
     hasBin: true
 
-  '@agent-assembly/runtime-darwin-x64@0.0.1-rc.4':
-    resolution: {integrity: sha512-5OM8/C016t97TlF+gQTPyrNwC9XRjOkx9kRtYZbeF63aXL3Jjhv4nBKqJaK+2fUxHn0ePERlCqTGjXoN7jWPDw==}
+  '@agent-assembly/runtime-darwin-x64@0.0.1-rc.5':
+    resolution: {integrity: sha512-rtLpzDO1ovOBP+VCN3EdvVvMsv9P7SDpnR7LyiUi2aDEahz9RRSp4ZW98DsREFUWwUwNglyP0EZE6/fmCdYN4w==}
     cpu: [x64]
     os: [darwin]
     hasBin: true
 
-  '@agent-assembly/runtime-linux-arm64@0.0.1-rc.4':
-    resolution: {integrity: sha512-XkSCMZDCfou5qikxkUsXQKy24kOO4rCJ40EbsSaNUTyUdmbSD5aJDg4OmU9js9JT+SstbqSYKGk2Szb2Kk1QZw==}
+  '@agent-assembly/runtime-linux-arm64@0.0.1-rc.5':
+    resolution: {integrity: sha512-XxnjuxYw58gpCPQtk0m4C3k3YYDEPaWdMmW4ebmGTtq0J7TZuVYwy3jNlrYbKwTL1PTx8N3ejjpxu1M62gC+ig==}
     cpu: [arm64]
     os: [linux]
     hasBin: true
 
-  '@agent-assembly/runtime-linux-x64@0.0.1-rc.4':
-    resolution: {integrity: sha512-uyzvVkfOqjA8dkTfeNRRnTWnQbsbQRbGUEzQLpld8wlc71Na0BUY02cXHhTOfNRPTL5M5RwQ427wdspSH/kX2g==}
+  '@agent-assembly/runtime-linux-x64@0.0.1-rc.5':
+    resolution: {integrity: sha512-12VdNLXUsUjvXSZ0nxtgPd3AjnW6lufeDJpquXi6q/F7w/qLn6w/Wyp8Adw1jLR1GmhRbWDauUvodnwg8fPCjQ==}
     cpu: [x64]
     os: [linux]
     hasBin: true
 
-  '@agent-assembly/sdk@0.0.1-rc.4':
-    resolution: {integrity: sha512-suz+zNGiw5EcvXHe/C9qhyt/10k3wYrKZRmzBsWtCHC5SHR/7K7KH0pFMJSRYZCER26sOc1X4QVc90njOCG9pA==}
+  '@agent-assembly/sdk@0.0.1-rc.5':
+    resolution: {integrity: sha512-KbLgKcM6BkABr2ihAKqcoz18UHQVpFKVfeJMY2mDVv5VQ5i4FpZWCV+KLwYlNoaqDS0lusYQbz4mVqfvWaCcFQ==}
     engines: {node: '>=18.18.0', pnpm: '>=10'}
     peerDependencies:
       '@langchain/core': '>=0.3.0'
@@ -442,36 +442,42 @@ packages:
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [linux]
+    libc: [glibc]
 
   '@rolldown/binding-linux-arm64-musl@1.0.3':
     resolution: {integrity: sha512-VWkUHwWriDciit80wleYwKILoR/KMvxh/IdwS/paX+ZgpuRpCrKLUdadJbc0NpBEiyhpYawsJ73j9aCvOH+f7Q==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [linux]
+    libc: [musl]
 
   '@rolldown/binding-linux-ppc64-gnu@1.0.3':
     resolution: {integrity: sha512-5f1laC0SlIR0yDbFCd8acUhvJIag6N3zC5P7oUPN6wX0aOma+uKJ0wBDH5aq7I1PVI2ttTlhJwzwRIBnLiSGEg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [ppc64]
     os: [linux]
+    libc: [glibc]
 
   '@rolldown/binding-linux-s390x-gnu@1.0.3':
     resolution: {integrity: sha512-Iq4ko0r4XsgbrF/LunNgHtAGLRRVE2kXonAXQ/MV0mC6jQpMOhW1SvtZja2EhC/kd05++bP78dsqBeIQyYJ6Yg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [s390x]
     os: [linux]
+    libc: [glibc]
 
   '@rolldown/binding-linux-x64-gnu@1.0.3':
     resolution: {integrity: sha512-B8m6tD5+/N5FeNQFbKlLA/2yVq9ycQP1SeedyEYYKWBNR3ZQbkvIUcNnDNM03lO1l5F2roiiFJGgvoLLyZXtSg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@rolldown/binding-linux-x64-musl@1.0.3':
     resolution: {integrity: sha512-pSdpdUJHkuCxun9LE7jvgUB9qsRgaiyNNCX7m/AvHTcq67AiT/Yhoxvw5zPfhrM8k/BfP8ce/hMOpthKDpEUow==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [linux]
+    libc: [musl]
 
   '@rolldown/binding-openharmony-arm64@1.0.3':
     resolution: {integrity: sha512-OXXS3RKJgX2uLwM+gYyuH5omcH8fL1LJs96pZGgtetVCahON57+d4SJHzTgZiOjxgGkSnpXpOsWuPDGAKAigEg==}
@@ -1129,24 +1135,28 @@ packages:
     engines: {node: '>= 12.0.0'}
     cpu: [arm64]
     os: [linux]
+    libc: [glibc]
 
   lightningcss-linux-arm64-musl@1.32.0:
     resolution: {integrity: sha512-UpQkoenr4UJEzgVIYpI80lDFvRmPVg6oqboNHfoH4CQIfNA+HOrZ7Mo7KZP02dC6LjghPQJeBsvXhJod/wnIBg==}
     engines: {node: '>= 12.0.0'}
     cpu: [arm64]
     os: [linux]
+    libc: [musl]
 
   lightningcss-linux-x64-gnu@1.32.0:
     resolution: {integrity: sha512-V7Qr52IhZmdKPVr+Vtw8o+WLsQJYCTd8loIfpDaMRWGUZfBOYEJeyJIkqGIDMZPwPx24pUMfwSxxI8phr/MbOA==}
     engines: {node: '>= 12.0.0'}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   lightningcss-linux-x64-musl@1.32.0:
     resolution: {integrity: sha512-bYcLp+Vb0awsiXg/80uCRezCYHNg1/l3mt0gzHnWV9XP1W5sKa5/TCdGWaR/zBM2PeF/HbsQv/j2URNOiVuxWg==}
     engines: {node: '>= 12.0.0'}
     cpu: [x64]
     os: [linux]
+    libc: [musl]
 
   lightningcss-win32-arm64-msvc@1.32.0:
     resolution: {integrity: sha512-8SbC8BR40pS6baCM8sbtYDSwEVQd4JlFTOlaD3gWGHfThTcABnNDBda6eTZeqbofalIJhFx0qKzgHJmcPTnGdw==}
@@ -1792,27 +1802,27 @@ snapshots:
       '@grpc/grpc-js': 1.14.4
       express: 5.2.1
 
-  '@agent-assembly/runtime-darwin-arm64@0.0.1-rc.4':
+  '@agent-assembly/runtime-darwin-arm64@0.0.1-rc.5':
     optional: true
 
-  '@agent-assembly/runtime-darwin-x64@0.0.1-rc.4':
+  '@agent-assembly/runtime-darwin-x64@0.0.1-rc.5':
     optional: true
 
-  '@agent-assembly/runtime-linux-arm64@0.0.1-rc.4':
+  '@agent-assembly/runtime-linux-arm64@0.0.1-rc.5':
     optional: true
 
-  '@agent-assembly/runtime-linux-x64@0.0.1-rc.4':
+  '@agent-assembly/runtime-linux-x64@0.0.1-rc.5':
     optional: true
 
-  '@agent-assembly/sdk@0.0.1-rc.4(@mastra/core@1.50.1(@bufbuild/protobuf@2.12.1)(@grpc/grpc-js@1.14.4)(express@5.2.1)(zod@4.4.3))':
+  '@agent-assembly/sdk@0.0.1-rc.5(@mastra/core@1.50.1(@bufbuild/protobuf@2.12.1)(@grpc/grpc-js@1.14.4)(express@5.2.1)(zod@4.4.3))':
     dependencies:
       '@bufbuild/protobuf': 2.12.1
       '@grpc/grpc-js': 1.14.4
     optionalDependencies:
-      '@agent-assembly/runtime-darwin-arm64': 0.0.1-rc.4
-      '@agent-assembly/runtime-darwin-x64': 0.0.1-rc.4
-      '@agent-assembly/runtime-linux-arm64': 0.0.1-rc.4
-      '@agent-assembly/runtime-linux-x64': 0.0.1-rc.4
+      '@agent-assembly/runtime-darwin-arm64': 0.0.1-rc.5
+      '@agent-assembly/runtime-darwin-x64': 0.0.1-rc.5
+      '@agent-assembly/runtime-linux-arm64': 0.0.1-rc.5
+      '@agent-assembly/runtime-linux-x64': 0.0.1-rc.5
       '@mastra/core': 1.50.1(@bufbuild/protobuf@2.12.1)(@grpc/grpc-js@1.14.4)(express@5.2.1)(zod@4.4.3)
 
   '@ai-sdk/provider-utils@2.2.8(zod@4.4.3)':
