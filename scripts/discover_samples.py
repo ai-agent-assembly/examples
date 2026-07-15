@@ -68,7 +68,15 @@ _SKIP_PARTS = frozenset(
 _EXCLUDE_PREFIXES = ("scenarios/live-core-enforcement",)
 
 # Marker files that identify a sample root, in classification precedence order.
-_MARKERS = ("pyproject.toml", "go.mod", "package.json", "agent.py", "agent.js")
+_PYPROJECT_TOML = "pyproject.toml"
+_GO_MOD = "go.mod"
+_PACKAGE_JSON = "package.json"
+_AGENT_PY = "agent.py"
+_AGENT_JS = "agent.js"
+_MARKERS = (_PYPROJECT_TOML, _GO_MOD, _PACKAGE_JSON, _AGENT_PY, _AGENT_JS)
+
+# Build manifests own their whole subtree (see ``_manifest_roots``).
+_MANIFEST_MARKERS = (_PYPROJECT_TOML, _GO_MOD, _PACKAGE_JSON)
 
 
 def _load_scripts(package_json: Path) -> dict[str, str]:
@@ -87,27 +95,29 @@ def classify(directory: Path) -> tuple[str, str, str] | None:
     does not need one). Precedence follows ``_MARKERS``.
     """
 
-    if (directory / "pyproject.toml").is_file():
+    if (directory / _PYPROJECT_TOML).is_file():
         if (directory / "tests").is_dir():
             return ("python", "uv-pytest", "")
         return ("python", "uv-main", "src/main.py")
-    if (directory / "go.mod").is_file():
+    if (directory / _GO_MOD).is_file():
         return ("go", "go-test", "")
-    if (directory / "package.json").is_file():
-        scripts = _load_scripts(directory / "package.json")
+    if (directory / _PACKAGE_JSON).is_file():
+        scripts = _load_scripts(directory / _PACKAGE_JSON)
         if "test" in scripts:
             return ("node", "pnpm-test", "")
-        if (directory / "agent.js").is_file():
-            return ("node", "node-script", "agent.js")
+        if (directory / _AGENT_JS).is_file():
+            return ("node", "node-script", _AGENT_JS)
         return None
-    if (directory / "agent.py").is_file():
-        return ("python", "py-script", "agent.py")
-    if (directory / "agent.js").is_file():
-        return ("node", "node-script", "agent.js")
+    if (directory / _AGENT_PY).is_file():
+        return ("python", "py-script", _AGENT_PY)
+    if (directory / _AGENT_JS).is_file():
+        return ("node", "node-script", _AGENT_JS)
     return None
 
 
-def discover(repo_root: Path) -> dict[str, list[dict[str, str]]]:
+def _gather_candidate_roots(repo_root: Path) -> set[Path]:
+    """Directories holding a marker file, minus vendored/build/cache subtrees."""
+
     candidates: set[Path] = set()
     for marker in _MARKERS:
         for found in repo_root.rglob(marker):
@@ -116,35 +126,54 @@ def discover(repo_root: Path) -> dict[str, list[dict[str, str]]]:
             if any(part in _SKIP_PARTS for part in rel_parts):
                 continue
             candidates.add(parent)
+    return candidates
 
-    # A sample rooted by a build manifest owns its whole subtree. Drop any
-    # candidate nested under one so an example's internal module (e.g.
-    # ``python/pydantic-ai/src/agent.py``) is never mistaken for its own sample.
-    manifest_roots = {
+
+def _manifest_roots(candidates: set[Path]) -> set[Path]:
+    """Candidates rooted by a build manifest.
+
+    Such a directory owns its whole subtree, so a candidate nested under one is
+    dropped later — an example's internal module (e.g.
+    ``python/pydantic-ai/src/agent.py``) is never mistaken for its own sample.
+    """
+
+    return {
         directory
         for directory in candidates
-        if any(
-            (directory / m).is_file()
-            for m in ("pyproject.toml", "go.mod", "package.json")
-        )
+        if any((directory / m).is_file() for m in _MANIFEST_MARKERS)
     }
+
+
+def _matrix_entry(
+    directory: Path, repo_root: Path, manifest_roots: set[Path]
+) -> tuple[str, dict[str, str]] | None:
+    """Return ``(lang, matrix_entry)`` for a sample dir, or ``None`` to skip it."""
+
+    rel = directory.relative_to(repo_root).as_posix()
+    if rel == ".":
+        return None
+    if any(rel == p or rel.startswith(p + "/") for p in _EXCLUDE_PREFIXES):
+        return None
+    if any(root in directory.parents for root in manifest_roots):
+        return None
+    result = classify(directory)
+    if result is None:
+        return None
+    lang, runner, entry = result
+    return lang, {"name": rel, "path": rel, "runner": runner, "entry": entry}
+
+
+def discover(repo_root: Path) -> dict[str, list[dict[str, str]]]:
+    candidates = _gather_candidate_roots(repo_root)
+    manifest_roots = _manifest_roots(candidates)
 
     buckets: dict[str, list[dict[str, str]]] = {"python": [], "node": [], "go": []}
     for directory in sorted(candidates):
-        rel = directory.relative_to(repo_root).as_posix()
-        if rel == ".":
+        entry = _matrix_entry(directory, repo_root, manifest_roots)
+        if entry is None:
             continue
-        if any(rel == p or rel.startswith(p + "/") for p in _EXCLUDE_PREFIXES):
-            continue
-        if any(root in directory.parents for root in manifest_roots):
-            continue
-        result = classify(directory)
-        if result is None:
-            continue
-        lang, runner, entry = result
-        buckets[lang].append(
-            {"name": rel, "path": rel, "runner": runner, "entry": entry}
-        )
+        lang, matrix_entry = entry
+        buckets[lang].append(matrix_entry)
     return buckets
 
 
