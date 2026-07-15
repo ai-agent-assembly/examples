@@ -7,7 +7,7 @@ dependencies = [
     # Floor bumped to the release that ships the native LlamaIndex adapter
     # (agent_assembly.adapters.llamaindex, AAASM-3536). Earlier SDK releases
     # lack it, so this example's CI is release-gated on that publish.
-    "agent-assembly==0.0.1rc4",
+    "agent-assembly==0.0.1rc5",
     "llama-index-core>=0.14.23",
 ]
 

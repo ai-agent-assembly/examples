@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Agent Assembly governance demo with plain Python tools — no framework required"
 requires-python = ">=3.12"
 dependencies = [
-    "agent-assembly>=0.0.1rc4",
+    "agent-assembly>=0.0.1rc5",
 ]
 
 [project.optional-dependencies]

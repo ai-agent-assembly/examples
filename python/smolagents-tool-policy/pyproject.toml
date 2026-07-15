@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Agent Assembly governance demo with Smolagents (Hugging Face)"
 requires-python = ">=3.12"
 dependencies = [
-    "agent-assembly==0.0.1rc4",
+    "agent-assembly==0.0.1rc5",
     # smolagents is light (no chromadb-style native tree), so it stays in the base
     # deps: the demo governs *real* smolagents.Tool instances through the SDK's
     # native adapter, both offline and live. Pinned <2.0 to the 1.x line whose

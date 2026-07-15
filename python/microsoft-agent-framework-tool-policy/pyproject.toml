@@ -7,7 +7,7 @@ dependencies = [
     # Pinned exactly: the only newer release, 0.0.2, was yanked upstream
     # ("have wrong to release"). 0.0.1rc3 remains the latest installable
     # version on PyPI. Re-evaluate once a non-yanked 0.0.2+ is published.
-    "agent-assembly==0.0.1rc4",
+    "agent-assembly==0.0.1rc5",
 ]
 
 [project.optional-dependencies]

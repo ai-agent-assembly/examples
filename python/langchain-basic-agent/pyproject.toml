@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Agent Assembly governance demo with LangChain"
 requires-python = ">=3.12"
 dependencies = [
-    "agent-assembly>=0.0.1rc4",
+    "agent-assembly>=0.0.1rc5",
     "langchain-core>=1.4.9",
     "langsmith>=0.10.2",  # GHSA-f4xh-w4cj-qxq8: Arbitrary server-side file read
 ]
