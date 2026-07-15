@@ -69,6 +69,35 @@ class SdkVersions:
     go: GoSdk
 
 
+def _parse_top_level(
+    line: str, raw_line: str, out: dict[str, dict[str, str]]
+) -> str:
+    """Register a top-level key and return it as the new current section."""
+
+    key, sep, _ = line.partition(":")
+    if not sep:
+        raise ValueError(f"Malformed top-level line: {raw_line!r}")
+    current = key.strip()
+    out[current] = {}
+    return current
+
+
+def _parse_child(
+    line: str, raw_line: str, current: str | None, out: dict[str, dict[str, str]]
+) -> None:
+    """Store an indented ``key: "value"`` pair under the current section."""
+
+    if current is None:
+        raise ValueError(f"Indented line before any top-level key: {raw_line!r}")
+    key, sep, value = line.strip().partition(":")
+    if not sep:
+        raise ValueError(f"Malformed indented line: {raw_line!r}")
+    value = value.strip()
+    if value.startswith('"') and value.endswith('"'):
+        value = value[1:-1]
+    out[current][key.strip()] = value
+
+
 def _parse_flat_yaml(text: str) -> dict[str, dict[str, str]]:
     """Parse the narrow YAML dialect used by ``metadata/sdk-versions.yaml``.
 
@@ -83,22 +112,9 @@ def _parse_flat_yaml(text: str) -> dict[str, dict[str, str]]:
         if not line or line.lstrip().startswith("#"):
             continue
         if not line.startswith(" "):
-            key, sep, _ = line.partition(":")
-            if not sep:
-                raise ValueError(f"Malformed top-level line: {raw_line!r}")
-            current = key.strip()
-            out[current] = {}
-            continue
-        if current is None:
-            raise ValueError(f"Indented line before any top-level key: {raw_line!r}")
-        stripped = line.strip()
-        key, sep, value = stripped.partition(":")
-        if not sep:
-            raise ValueError(f"Malformed indented line: {raw_line!r}")
-        value = value.strip()
-        if value.startswith('"') and value.endswith('"'):
-            value = value[1:-1]
-        out[current][key.strip()] = value
+            current = _parse_top_level(line, raw_line, out)
+        else:
+            _parse_child(line, raw_line, current, out)
     return out
 
 
@@ -213,9 +229,12 @@ def rewrite_node_manifest(path: Path, sdk: NodeSdk) -> bool:
 # or, inside a require ( ... ) block:
 #   \tgithub.com/ai-agent-assembly/go-sdk v0.0.1-rc.3
 # The regex captures the prefix (indent + optional "require ") so we preserve
-# whichever form the surrounding file uses.
+# whichever form the surrounding file uses. The tail requires whitespace before a
+# ``// comment`` so the version token ``\S+`` has an unambiguous, non-whitespace
+# boundary — otherwise the engine could backtrack ``\S+`` into the ``//``,
+# non-linear behavior static analysis flags as a ReDoS risk.
 _GO_PIN_RE = re.compile(
-    r'''^(?P<prefix>\s*(?:require\s+)?)github\.com/ai-agent-assembly/go-sdk\s+\S+(?P<tail>\s*(?://.*)?)$''',
+    r'''^(?P<prefix>\s*(?:require\s+)?)github\.com/ai-agent-assembly/go-sdk\s+\S+(?P<tail>(?:\s+//.*)?\s*)$''',
     re.MULTILINE,
 )
 
@@ -351,6 +370,10 @@ def rewrite_go_readme(path: Path, sdk: GoSdk) -> bool:
 # ---------------------------------------------------------------------------
 
 
+_PYPROJECT_TOML = "pyproject.toml"
+_README = "README.md"
+
+
 def _python_subprojects(repo_root: Path) -> list[Path]:
     """Return every directory that holds a python `pyproject.toml` in scope."""
 
@@ -358,13 +381,13 @@ def _python_subprojects(repo_root: Path) -> list[Path]:
     py_dir = repo_root / "python"
     if py_dir.is_dir():
         for sub in sorted(py_dir.iterdir()):
-            if (sub / "pyproject.toml").is_file():
+            if (sub / _PYPROJECT_TOML).is_file():
                 out.append(sub)
     scenarios_dir = repo_root / "scenarios"
     if scenarios_dir.is_dir():
         for scen in sorted(scenarios_dir.iterdir()):
             inner = scen / "python"
-            if (inner / "pyproject.toml").is_file():
+            if (inner / _PYPROJECT_TOML).is_file():
                 out.append(inner)
     return out
 
@@ -412,10 +435,10 @@ def process_python(repo_root: Path, versions: SdkVersions) -> list[Path]:
 
     changed: list[Path] = []
     for subproject in _python_subprojects(repo_root):
-        manifest = subproject / "pyproject.toml"
+        manifest = subproject / _PYPROJECT_TOML
         if rewrite_python_manifest(manifest, versions.python):
             changed.append(manifest)
-        readme = subproject / "README.md"
+        readme = subproject / _README
         if readme.is_file() and rewrite_python_readme(readme, versions.python):
             changed.append(readme)
     return changed
@@ -432,7 +455,7 @@ def process_node(repo_root: Path, versions: SdkVersions) -> list[Path]:
         manifest = subproject / "package.json"
         if rewrite_node_manifest(manifest, versions.node):
             changed.append(manifest)
-        readme = subproject / "README.md"
+        readme = subproject / _README
         if readme.is_file() and rewrite_node_readme(readme, versions.node):
             changed.append(readme)
     return changed
@@ -451,10 +474,10 @@ def process_go(repo_root: Path, versions: SdkVersions) -> list[Path]:
         manifest = subproject / "go.mod"
         if rewrite_go_manifest(manifest, versions.go):
             changed.append(manifest)
-        readme = subproject / "README.md"
+        readme = subproject / _README
         if readme.is_file() and rewrite_go_readme(readme, versions.go):
             changed.append(readme)
-    top_level_readme = repo_root / "go" / "README.md"
+    top_level_readme = repo_root / "go" / _README
     if top_level_readme.is_file() and rewrite_go_readme(
         top_level_readme, versions.go
     ):
