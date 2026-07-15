@@ -18,15 +18,24 @@ Which language are you using?
 
 > See [`python/README.md`](../python/README.md) for the full index.
 
-| I want to…                                     | Example sub-project (coming soon)              |
+| I want to…                                     | Example sub-project                            |
 |------------------------------------------------|------------------------------------------------|
 | Wire Agent Assembly into a LangChain agent     | `python/langchain-basic-agent/`               |
+| Run a LangChain ReAct research agent           | `python/langchain-research-agent/`            |
 | Use the OpenAI Agents SDK                      | `python/openai-agents-sdk/`                   |
 | Apply tool-level policies with LlamaIndex      | `python/llamaindex-tool-policy/`              |
 | Write a custom tool wrapper with SDK           | `python/custom-tool-policy/`                  |
 | Govern nodes of a LangGraph `StateGraph`       | `python/langgraph/`                           |
 | Govern Pydantic AI tool calls (offline `TestModel`) | `python/pydantic-ai/`                    |
 | Govern a Google ADK agent (scripted, no live LLM)¹ | `python/google-adk/`                      |
+| Govern a CrewAI multi-agent research crew      | `python/crewai-research-crew/`                |
+| Govern an AutoGen (`autogen-core`) agent       | `python/autogen-tool-policy/`                 |
+| Apply tool policies with the native Agno adapter | `python/agno-tool-policy/`                  |
+| Govern a Haystack agent via the native adapter | `python/haystack-tool-policy/`                |
+| Govern Microsoft Agent Framework tool calls    | `python/microsoft-agent-framework-tool-policy/` |
+| Govern Microsoft Semantic Kernel tool calls    | `python/semantic-kernel-tool-policy/`         |
+| Govern Smolagents (Hugging Face) tool calls    | `python/smolagents-tool-policy/`              |
+| Govern Strands Agents (AWS) tool calls         | `python/strands-agents-tool-policy/`          |
 
 ¹ The `google-adk` example replays a **scripted tool trajectory** with no live
 LLM — Google ADK normally drives its loop against a cloud model (Gemini /
