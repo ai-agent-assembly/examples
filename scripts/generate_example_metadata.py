@@ -366,6 +366,61 @@ def rewrite_go_readme(path: Path, sdk: GoSdk) -> bool:
 
 
 # ---------------------------------------------------------------------------
+# Hand-written "Prerequisites" table row
+# ---------------------------------------------------------------------------
+#
+# Many READMEs carry, in their prose ``## Prerequisites`` table, a row of the
+# form ``| Agent Assembly <Lang> SDK | <version> |`` that sits *outside* the
+# generated sdk-install block. Left to hand-maintenance it drifts from the SoT
+# (AAASM-4703): the generated block advertised rc.5 while these rows still said
+# rc.3 / an old beta. The generator now owns the version literal in that row too
+# so the two can never disagree again.
+#
+# The label cell is matched *exactly* (``Agent Assembly <Lang> SDK`` with no
+# trailing parenthetical), which is precisely what distinguishes this prose row
+# from the generated block's row (``... SDK (<package>) | ...``) — so this pass
+# never touches the generated block.
+
+
+# A PEP 440 / SemVer-ish pre-release version literal, covering the shapes used
+# across these examples: ``0.0.1rc5`` (python), ``v0.0.1-rc.5`` (go), and any
+# alpha/beta/rc pre-release suffix. Only the version token is rewritten, so an
+# operator prefix (``>= ``) and any trailing note (``(with the LlamaIndex
+# adapter)``) are preserved verbatim.
+_VERSION_TOKEN_RE = re.compile(
+    r"v?\d+\.\d+\.\d+(?:[-.]?(?:rc|beta|alpha|b|a)\.?\d+)?"
+)
+
+
+def _prereq_row_re(label: str) -> re.Pattern[str]:
+    return re.compile(
+        r"^(?P<pre>\|[ \t]*Agent Assembly "
+        + re.escape(label)
+        + r" SDK[ \t]*\|[ \t]*)(?P<val>[^|]*?)(?P<post>[ \t]*\|[ \t]*)$",
+        re.MULTILINE,
+    )
+
+
+def rewrite_prereq_row(path: Path, label: str, version: str) -> bool:
+    """Align the ``Agent Assembly <label> SDK`` Prerequisites row with the SoT.
+
+    Rewrites only the version token inside the row's value cell; the comparison
+    operator and any trailing note are left untouched. A no-op for READMEs that
+    do not carry the row.
+    """
+
+    text = path.read_text(encoding="utf-8")
+    row_re = _prereq_row_re(label)
+
+    def _sub(match: re.Match[str]) -> str:
+        new_val = _VERSION_TOKEN_RE.sub(version, match.group("val"), count=1)
+        return f"{match.group('pre')}{new_val}{match.group('post')}"
+
+    new_text = row_re.sub(_sub, text)
+    return _write_if_changed(path, new_text)
+
+
+# ---------------------------------------------------------------------------
 # Directory walkers
 # ---------------------------------------------------------------------------
 
@@ -502,6 +557,59 @@ def process_go(repo_root: Path, versions: SdkVersions) -> list[Path]:
     return changed
 
 
+# Bounded set of README locations that may carry a prose ``## Prerequisites``
+# table: the per-example READMEs, the language landing pages, and the scenario
+# READMEs (both scenario-level and per-agent). Kept as explicit globs rather
+# than a recursive ``**/README.md`` walk so a local ``node_modules`` / build
+# tree can never leak into the generator's scope.
+_README_GLOBS = (
+    "README.md",
+    "python/README.md",
+    "node/README.md",
+    "go/README.md",
+    "python/*/README.md",
+    "node/*/README.md",
+    "go/*/README.md",
+    "scenarios/*/README.md",
+    "scenarios/*/*/README.md",
+)
+
+
+def _prereq_readmes(repo_root: Path) -> list[Path]:
+    seen: set[Path] = set()
+    out: list[Path] = []
+    for pattern in _README_GLOBS:
+        for path in sorted(repo_root.glob(pattern)):
+            if path.is_file() and path not in seen:
+                seen.add(path)
+                out.append(path)
+    return out
+
+
+def process_prereq_rows(repo_root: Path, versions: SdkVersions) -> list[Path]:
+    """Align every hand-written ``Agent Assembly <Lang> SDK`` prereq row.
+
+    Label-driven (not directory-driven): a README's row is rewritten for
+    whichever language label it carries, so the version can never disagree with
+    the generated sdk-install block. Returns the list of files rewritten.
+    """
+
+    labels = (
+        ("Python", versions.python.version),
+        ("Node.js", versions.node.version),
+        ("Go", versions.go.version),
+    )
+    changed: list[Path] = []
+    for readme in _prereq_readmes(repo_root):
+        touched = False
+        for label, version in labels:
+            if rewrite_prereq_row(readme, label, version):
+                touched = True
+        if touched:
+            changed.append(readme)
+    return changed
+
+
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
@@ -527,6 +635,7 @@ def main(argv: list[str] | None = None) -> int:
     changed.extend(process_python(args.repo_root, versions))
     changed.extend(process_node(args.repo_root, versions))
     changed.extend(process_go(args.repo_root, versions))
+    changed.extend(process_prereq_rows(args.repo_root, versions))
 
     if changed:
         print(f"Rewrote {len(changed)} file(s):")
