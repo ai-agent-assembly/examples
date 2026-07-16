@@ -420,6 +420,41 @@ def rewrite_prereq_row(path: Path, label: str, version: str) -> bool:
     return _write_if_changed(path, new_text)
 
 
+# Some landing-page READMEs state the same requirement as a Markdown *bullet*
+# instead of a table row — ``go/README.md`` carries ``- Agent Assembly Go SDK
+# <version>`` under ``## Prerequisites`` (AAASM-4717). The bullet is anchored to
+# a list marker (``-``/``*``), so it can never collide with the table row (which
+# starts with ``|``) nor with the generated sdk-install block. Only the first
+# version token in the value is rewritten, so a trailing note is preserved
+# verbatim, exactly like the table-row pass.
+def _prereq_bullet_re(label: str) -> re.Pattern[str]:
+    return re.compile(
+        r"^(?P<pre>[ \t]*[-*][ \t]+Agent Assembly "
+        + re.escape(label)
+        + r" SDK[ \t]+)(?P<val>.*)$",
+        re.MULTILINE,
+    )
+
+
+def rewrite_prereq_bullet(path: Path, label: str, version: str) -> bool:
+    """Align a bullet-form ``- Agent Assembly <label> SDK <version>`` line.
+
+    The list-item sibling of ``rewrite_prereq_row``. A no-op for READMEs that
+    state the requirement as a table row or omit it entirely; when the bullet is
+    present only its first version token is aligned with the SoT.
+    """
+
+    text = path.read_text(encoding="utf-8")
+    bullet_re = _prereq_bullet_re(label)
+
+    def _sub(match: re.Match[str]) -> str:
+        new_val = _VERSION_TOKEN_RE.sub(version, match.group("val"), count=1)
+        return f"{match.group('pre')}{new_val}"
+
+    new_text = bullet_re.sub(_sub, text)
+    return _write_if_changed(path, new_text)
+
+
 # ---------------------------------------------------------------------------
 # Directory walkers
 # ---------------------------------------------------------------------------
@@ -604,6 +639,8 @@ def process_prereq_rows(repo_root: Path, versions: SdkVersions) -> list[Path]:
         touched = False
         for label, version in labels:
             if rewrite_prereq_row(readme, label, version):
+                touched = True
+            if rewrite_prereq_bullet(readme, label, version):
                 touched = True
         if touched:
             changed.append(readme)
