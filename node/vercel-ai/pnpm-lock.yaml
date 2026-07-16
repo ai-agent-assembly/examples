@@ -10,10 +10,10 @@ importers:
     dependencies:
       '@agent-assembly/sdk':
         specifier: 0.0.1-rc.5
-        version: 0.0.1-rc.5(ai@7.0.28(zod@4.4.3))
+        version: 0.0.1-rc.5(ai@7.0.29(zod@4.4.3))
       ai:
-        specifier: ^7.0.28
-        version: 7.0.28(zod@4.4.3)
+        specifier: ^7.0.29
+        version: 7.0.29(zod@4.4.3)
       zod:
         specifier: ^4.4.3
         version: 4.4.3
@@ -78,8 +78,8 @@ packages:
       ai:
         optional: true
 
-  '@ai-sdk/gateway@4.0.20':
-    resolution: {integrity: sha512-m3PdYs0yqSxswsrEhVj64wDLgFs35Zxl8liLNuWGzE7bwBLF6Mhu0E5rPpDNJbIjyQpA4aMKOOWBfjERw2zvPw==}
+  '@ai-sdk/gateway@4.0.21':
+    resolution: {integrity: sha512-GafyeyHFDKJjdtbyhCQ0aC2FORdyE56IxK45EZ1JLO1iVdg8XqEU3bwnRzI0+5S1XHV7W2qQsxkZnGYPbsFiXA==}
     engines: {node: '>=22'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -583,8 +583,8 @@ packages:
   '@workflow/serde@4.1.0':
     resolution: {integrity: sha512-pav4F2BoirECWR7Nf1TKt+2eETcBj7jj4cBefQ8VXQCA6NPkaKeLfj/zMgi+3zYV5ZIBT4GuUiphsj0/b9hPQQ==}
 
-  ai@7.0.28:
-    resolution: {integrity: sha512-RtynA4e6rWH2YiMX0OJz2h2i+sdJgiItuwqmstYZAiTZ0ZkZzQ8s4KVh7tQfZuDCfzIhRTg+q1h1xirT8AClkw==}
+  ai@7.0.29:
+    resolution: {integrity: sha512-q+A+skhl6SyjWliU6W7zNYgDUrEk5SbNrCc5vt4S9n6+n6e7jSorDmu51hlhjDOsS7VwzWGCgbWFvvT3iomtvg==}
     engines: {node: '>=22'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -963,7 +963,7 @@ snapshots:
   '@agent-assembly/runtime-linux-x64@0.0.1-rc.5':
     optional: true
 
-  '@agent-assembly/sdk@0.0.1-rc.5(ai@7.0.28(zod@4.4.3))':
+  '@agent-assembly/sdk@0.0.1-rc.5(ai@7.0.29(zod@4.4.3))':
     dependencies:
       '@bufbuild/protobuf': 2.12.1
       '@grpc/grpc-js': 1.14.4
@@ -972,9 +972,9 @@ snapshots:
       '@agent-assembly/runtime-darwin-x64': 0.0.1-rc.5
       '@agent-assembly/runtime-linux-arm64': 0.0.1-rc.5
       '@agent-assembly/runtime-linux-x64': 0.0.1-rc.5
-      ai: 7.0.28(zod@4.4.3)
+      ai: 7.0.29(zod@4.4.3)
 
-  '@ai-sdk/gateway@4.0.20(zod@4.4.3)':
+  '@ai-sdk/gateway@4.0.21(zod@4.4.3)':
     dependencies:
       '@ai-sdk/provider': 4.0.3
       '@ai-sdk/provider-utils': 5.0.10(zod@4.4.3)
@@ -1313,9 +1313,9 @@ snapshots:
 
   '@workflow/serde@4.1.0': {}
 
-  ai@7.0.28(zod@4.4.3):
+  ai@7.0.29(zod@4.4.3):
     dependencies:
-      '@ai-sdk/gateway': 4.0.20(zod@4.4.3)
+      '@ai-sdk/gateway': 4.0.21(zod@4.4.3)
       '@ai-sdk/provider': 4.0.3
       '@ai-sdk/provider-utils': 5.0.10(zod@4.4.3)
       zod: 4.4.3
