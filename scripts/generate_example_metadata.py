@@ -22,6 +22,15 @@ Design constraints:
 
 Historical release notes and example-provenance content (e.g. "written
 against 0.0.1-rc.3") are out of scope and must not be touched.
+
+Audit mode (``--check``): instead of rewriting, scan the same bounded set of
+human-authored surfaces (manifest pins under ``python/ node/ go/ scenarios/``
+and SDK-version prose in READMEs / ``docs/*.md`` — never lockfiles or vendored
+trees) and exit non-zero, naming each ``file:line``, if any SDK-version literal
+has drifted from the SoT. This is the anti-recurrence invariant: a newly added
+stale surface fails CI. Legitimate historical/provenance text is exempted per
+line by the inline marker ``sdk-version-exempt``; such a line is never rewritten
+and never audited.
 """
 
 from __future__ import annotations
@@ -252,6 +261,32 @@ def rewrite_go_manifest(path: Path, sdk: GoSdk) -> bool:
 
 
 # ---------------------------------------------------------------------------
+# Dockerfile pin rewrites
+# ---------------------------------------------------------------------------
+#
+# A handful of scenario Dockerfiles ``pip install`` the published Python SDK by
+# an exact ``agent-assembly==<version>`` pin (the live-core-enforcement
+# python-agent image). Left to hand-maintenance these drift on every SDK bump —
+# AAASM-4702 had to hand-correct one. The generator now owns that pin too so
+# future bumps (and the --check audit) cover it. The negative lookbehind anchors
+# the match to the standalone ``agent-assembly`` project name so it can never
+# fire on ``@agent-assembly/sdk`` or ``github.com/ai-agent-assembly/...``.
+_DOCKERFILE_PIN_RE = re.compile(
+    r'(?<![\w/@.-])(?P<pre>agent-assembly==)(?P<ver>[^"\s]+)'
+)
+
+
+def rewrite_dockerfile(path: Path, sdk: PythonSdk) -> bool:
+    text = path.read_text(encoding="utf-8")
+
+    def _sub(match: re.Match[str]) -> str:
+        return f"{match.group('pre')}{sdk.version}"
+
+    new_text = _DOCKERFILE_PIN_RE.sub(_sub, text)
+    return _write_if_changed(path, new_text)
+
+
+# ---------------------------------------------------------------------------
 # README bounded-block rewrites
 # ---------------------------------------------------------------------------
 
@@ -420,6 +455,41 @@ def rewrite_prereq_row(path: Path, label: str, version: str) -> bool:
     return _write_if_changed(path, new_text)
 
 
+# Some landing-page READMEs state the same requirement as a Markdown *bullet*
+# instead of a table row — ``go/README.md`` carries ``- Agent Assembly Go SDK
+# <version>`` under ``## Prerequisites`` (AAASM-4717). The bullet is anchored to
+# a list marker (``-``/``*``), so it can never collide with the table row (which
+# starts with ``|``) nor with the generated sdk-install block. Only the first
+# version token in the value is rewritten, so a trailing note is preserved
+# verbatim, exactly like the table-row pass.
+def _prereq_bullet_re(label: str) -> re.Pattern[str]:
+    return re.compile(
+        r"^(?P<pre>[ \t]*[-*][ \t]+Agent Assembly "
+        + re.escape(label)
+        + r" SDK[ \t]+)(?P<val>.*)$",
+        re.MULTILINE,
+    )
+
+
+def rewrite_prereq_bullet(path: Path, label: str, version: str) -> bool:
+    """Align a bullet-form ``- Agent Assembly <label> SDK <version>`` line.
+
+    The list-item sibling of ``rewrite_prereq_row``. A no-op for READMEs that
+    state the requirement as a table row or omit it entirely; when the bullet is
+    present only its first version token is aligned with the SoT.
+    """
+
+    text = path.read_text(encoding="utf-8")
+    bullet_re = _prereq_bullet_re(label)
+
+    def _sub(match: re.Match[str]) -> str:
+        new_val = _VERSION_TOKEN_RE.sub(version, match.group("val"), count=1)
+        return f"{match.group('pre')}{new_val}"
+
+    new_text = bullet_re.sub(_sub, text)
+    return _write_if_changed(path, new_text)
+
+
 # ---------------------------------------------------------------------------
 # Directory walkers
 # ---------------------------------------------------------------------------
@@ -427,6 +497,24 @@ def rewrite_prereq_row(path: Path, label: str, version: str) -> bool:
 
 _PYPROJECT_TOML = "pyproject.toml"
 _README = "README.md"
+
+
+def _globbed(repo_root: Path, patterns: tuple[str, ...]) -> list[Path]:
+    """Return the de-duplicated files matched by a set of bounded globs.
+
+    The patterns are explicit (no ``**`` recursion) so vendored trees
+    (``node_modules``, ``.venv``, ``dist``, build contexts) can never leak into
+    the generator's or the audit's scope.
+    """
+
+    seen: set[Path] = set()
+    out: list[Path] = []
+    for pattern in patterns:
+        for path in sorted(repo_root.glob(pattern)):
+            if path.is_file() and path not in seen:
+                seen.add(path)
+                out.append(path)
+    return out
 
 
 def _python_subprojects(repo_root: Path) -> list[Path]:
@@ -499,6 +587,18 @@ def _go_subprojects(repo_root: Path) -> list[Path]:
     return out
 
 
+# Bounded, non-recursive walk over the scenario Dockerfiles: a scenario may keep
+# its Dockerfile at ``scenarios/<scenario>/Dockerfile`` or one level deeper at
+# ``scenarios/<scenario>/<component>/Dockerfile`` (e.g. the python-agent image).
+_DOCKERFILE_GLOBS = ("scenarios/*/Dockerfile", "scenarios/*/*/Dockerfile")
+
+
+def _dockerfiles(repo_root: Path) -> list[Path]:
+    """Return every in-scope scenario Dockerfile."""
+
+    return _globbed(repo_root, _DOCKERFILE_GLOBS)
+
+
 def process_python(repo_root: Path, versions: SdkVersions) -> list[Path]:
     """Rewrite all in-scope python manifests and READMEs.
 
@@ -557,6 +657,19 @@ def process_go(repo_root: Path, versions: SdkVersions) -> list[Path]:
     return changed
 
 
+def process_dockerfiles(repo_root: Path, versions: SdkVersions) -> list[Path]:
+    """Align the ``agent-assembly==`` pin in every in-scope Dockerfile.
+
+    Returns the list of files that were rewritten.
+    """
+
+    changed: list[Path] = []
+    for dockerfile in _dockerfiles(repo_root):
+        if rewrite_dockerfile(dockerfile, versions.python):
+            changed.append(dockerfile)
+    return changed
+
+
 # Bounded set of README locations that may carry a prose ``## Prerequisites``
 # table: the per-example READMEs, the language landing pages, and the scenario
 # READMEs (both scenario-level and per-agent). Kept as explicit globs rather
@@ -605,9 +718,144 @@ def process_prereq_rows(repo_root: Path, versions: SdkVersions) -> list[Path]:
         for label, version in labels:
             if rewrite_prereq_row(readme, label, version):
                 touched = True
+            if rewrite_prereq_bullet(readme, label, version):
+                touched = True
         if touched:
             changed.append(readme)
     return changed
+
+
+# ---------------------------------------------------------------------------
+# Orphan-version-literal audit (--check)
+# ---------------------------------------------------------------------------
+#
+# The rewriters above make the generator the single *writer* of every SDK-version
+# literal it knows about; this audit is the matching *reader* that fails CI when
+# a new human-authored surface introduces a literal the generator does not yet
+# own, or when someone hand-edits an owned literal out of sync. It scans a
+# bounded set of human-authored surfaces — never lockfiles (``go.sum``,
+# ``pnpm-lock.yaml``), vendored trees, or build output — and reports each
+# ``file:line`` whose SDK-version literal differs from the SoT.
+#
+# Exemption: any line containing the inline marker ``sdk-version-exempt`` is
+# skipped, for legitimate historical / provenance text (e.g. a release note or
+# a "written against 0.0.1-rc.3" verification report).
+
+EXEMPT_MARKER = "sdk-version-exempt"
+
+# Which SDK a prose line refers to, so its version token can be compared against
+# the right SoT entry.
+_PROSE_LABEL_RE = re.compile(r"Agent Assembly (Python|Node\.js|Go) SDK")
+
+# Precise main-SDK pin matchers for the manifest audit. Each captures the pinned
+# version in group ``ver``. The identifiers are anchored so a subpackage
+# (``@agent-assembly/runtime-*``) or a non-``go-sdk`` org path
+# (``github.com/ai-agent-assembly/...``) can never false-match: the python id is
+# ``agent-assembly`` immediately followed by a PEP 440 operator; the node id is
+# exactly ``@agent-assembly/sdk``; the go id is exactly
+# ``github.com/ai-agent-assembly/go-sdk`` followed by whitespace.
+_PY_PIN_AUDIT_RE = re.compile(
+    r"(?<![\w/@.-])agent-assembly(?:==|>=|~=|<=|!=|<|>)(?P<ver>[^\"'\s,]+)"
+)
+_NODE_PIN_AUDIT_RE = re.compile(r'"@agent-assembly/sdk"\s*:\s*"(?P<ver>[^"]+)"')
+_GO_PIN_AUDIT_RE = re.compile(
+    r"github\.com/ai-agent-assembly/go-sdk(?=\s)\s+(?P<ver>\S+)"
+)
+
+# Bounded globs for the pin audit — every manifest that carries a main-SDK pin
+# under python/, node/, go/, and scenarios/. Lockfiles and go.sum are excluded
+# by construction (never globbed).
+_PY_PIN_GLOBS = (
+    "python/*/pyproject.toml",
+    "scenarios/*/pyproject.toml",
+    "scenarios/*/*/pyproject.toml",
+)
+_NODE_PIN_GLOBS = (
+    "node/*/package.json",
+    "scenarios/*/package.json",
+    "scenarios/*/*/package.json",
+)
+_GO_PIN_GLOBS = (
+    "go/*/go.mod",
+    "scenarios/*/go.mod",
+    "scenarios/*/*/go.mod",
+)
+
+
+def _audit_lines(path: Path):
+    """Yield ``(lineno, line)`` pairs for a text file, 1-based."""
+
+    for lineno, line in enumerate(
+        path.read_text(encoding="utf-8").splitlines(), start=1
+    ):
+        yield lineno, line
+
+
+def _audit_pins(repo_root: Path, versions: SdkVersions) -> list[str]:
+    """Report every manifest/Dockerfile pin whose version drifts from the SoT."""
+
+    checks = (
+        (_PY_PIN_GLOBS, _PY_PIN_AUDIT_RE, versions.python.version),
+        (_NODE_PIN_GLOBS, _NODE_PIN_AUDIT_RE, versions.node.version),
+        (_GO_PIN_GLOBS, _GO_PIN_AUDIT_RE, versions.go.version),
+        (_DOCKERFILE_GLOBS, _DOCKERFILE_PIN_RE, versions.python.version),
+    )
+    problems: list[str] = []
+    for globs, pin_re, expected in checks:
+        for path in _globbed(repo_root, globs):
+            for lineno, line in _audit_lines(path):
+                if EXEMPT_MARKER in line:
+                    continue
+                match = pin_re.search(line)
+                if match and match.group("ver") != expected:
+                    rel = path.relative_to(repo_root)
+                    problems.append(
+                        f"{rel}:{lineno}: pins {match.group('ver')!r}, "
+                        f"expected {expected!r}"
+                    )
+    return problems
+
+
+def _audit_prose(repo_root: Path, versions: SdkVersions) -> list[str]:
+    """Report every README/doc prose line whose SDK version drifts from the SoT.
+
+    Only lines that both name a language SDK (``Agent Assembly <Lang> SDK``) and
+    carry a version token are checked; the token is compared like the rewriter's
+    first-token substitution, so a generator-produced tree always audits clean.
+    """
+
+    expected_by_label = {
+        "Python": versions.python.version,
+        "Node.js": versions.node.version,
+        "Go": versions.go.version,
+    }
+    problems: list[str] = []
+    for path in _globbed(repo_root, _README_GLOBS + ("docs/*.md",)):
+        for lineno, line in _audit_lines(path):
+            if EXEMPT_MARKER in line:
+                continue
+            label_match = _PROSE_LABEL_RE.search(line)
+            if not label_match:
+                continue
+            token_match = _VERSION_TOKEN_RE.search(line)
+            if token_match is None:
+                continue
+            expected = expected_by_label[label_match.group(1)]
+            if token_match.group(0) != expected:
+                rel = path.relative_to(repo_root)
+                problems.append(
+                    f"{rel}:{lineno}: states {token_match.group(0)!r}, "
+                    f"expected {expected!r}"
+                )
+    return problems
+
+
+def audit(repo_root: Path, versions: SdkVersions) -> list[str]:
+    """Return every drifted SDK-version literal as a sorted ``file:line`` list."""
+
+    return sorted(
+        _audit_pins(repo_root, versions) + _audit_prose(repo_root, versions)
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -628,13 +876,38 @@ def main(argv: list[str] | None = None) -> int:
         default=_repo_root_from_script(),
         help="Path to the repository root (defaults to the script's parent).",
     )
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help=(
+            "Audit mode: do not rewrite. Scan the bounded human-authored "
+            "surfaces and exit non-zero, naming each file:line, if any "
+            "SDK-version literal has drifted from the SoT."
+        ),
+    )
     args = parser.parse_args(argv)
 
     versions = load_sdk_versions(args.repo_root)
+
+    if args.check:
+        problems = audit(args.repo_root, versions)
+        if problems:
+            print("SDK-version literals out of sync with the SoT:")
+            for problem in problems:
+                print(f"  {problem}")
+            print(
+                "\nAlign metadata/sdk-versions.yaml + re-run the generator, or "
+                f"mark legitimate historical text with '{EXEMPT_MARKER}'."
+            )
+            return 1
+        print("--check: every audited surface matches the SoT.")
+        return 0
+
     changed: list[Path] = []
     changed.extend(process_python(args.repo_root, versions))
     changed.extend(process_node(args.repo_root, versions))
     changed.extend(process_go(args.repo_root, versions))
+    changed.extend(process_dockerfiles(args.repo_root, versions))
     changed.extend(process_prereq_rows(args.repo_root, versions))
 
     if changed:

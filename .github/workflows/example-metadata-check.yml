@@ -19,7 +19,10 @@ on:
       - "snippets/**"
       - "scenarios/**/pyproject.toml"
       - "scenarios/**/package.json"
+      - "scenarios/**/go.mod"
+      - "scenarios/**/Dockerfile"
       - "scenarios/**/README.md"
+      - "scripts/test_generate_example_metadata.py"
       - ".github/workflows/example-metadata-check.yml"
   push:
     branches:
@@ -60,3 +63,9 @@ jobs:
             echo "::error::  python scripts/extract_snippets.py"
             exit 1
           fi
+
+      - name: Audit for orphan SDK-version literals
+        run: python scripts/generate_example_metadata.py --check
+
+      - name: Run generator unit tests
+        run: python -m unittest scripts.test_generate_example_metadata
