@@ -395,35 +395,52 @@ def _python_subprojects(repo_root: Path) -> list[Path]:
 def _node_subprojects(repo_root: Path) -> list[Path]:
     """Return every directory that holds a node `package.json` that pins the SDK.
 
-    Scenario node packages that do not depend on ``@agent-assembly/sdk`` are
-    intentionally excluded: they have no manifest line to rewrite and no
-    SDK version literal to advertise in their README.
+    Covers both the top-level ``node/*`` examples and the scenario
+    real-transport drivers at ``scenarios/*/node-agent`` — the latter pin the
+    SDK too but sit outside ``node/``, so they were previously invisible to the
+    generator and drifted (AAASM-4702). Scenario node packages that do not
+    depend on ``@agent-assembly/sdk`` are still excluded: they have no manifest
+    line to rewrite and no SDK version literal to advertise in their README.
     """
 
-    out: list[Path] = []
+    candidates: list[Path] = []
     node_dir = repo_root / "node"
     if node_dir.is_dir():
-        for sub in sorted(node_dir.iterdir()):
-            manifest = sub / "package.json"
-            if manifest.is_file() and "@agent-assembly/sdk" in manifest.read_text(
-                encoding="utf-8"
-            ):
-                out.append(sub)
+        candidates.extend(sorted(node_dir.iterdir()))
+    candidates.extend(sorted(repo_root.glob("scenarios/*/node-agent")))
+
+    out: list[Path] = []
+    for sub in candidates:
+        manifest = sub / "package.json"
+        if manifest.is_file() and "@agent-assembly/sdk" in manifest.read_text(
+            encoding="utf-8"
+        ):
+            out.append(sub)
     return out
 
 
 def _go_subprojects(repo_root: Path) -> list[Path]:
-    """Return every directory that holds a Go module pinning the go-sdk."""
+    """Return every directory that holds a Go module pinning the go-sdk.
 
-    out: list[Path] = []
+    Covers both the top-level ``go/*`` examples and the scenario
+    real-transport drivers at ``scenarios/*/go-agent`` — the latter pin the
+    go-sdk too but sit outside ``go/``, so they were previously invisible to
+    the generator and drifted (AAASM-4702).
+    """
+
+    candidates: list[Path] = []
     go_dir = repo_root / "go"
     if go_dir.is_dir():
-        for sub in sorted(go_dir.iterdir()):
-            manifest = sub / "go.mod"
-            if manifest.is_file() and "github.com/ai-agent-assembly/go-sdk" in (
-                manifest.read_text(encoding="utf-8")
-            ):
-                out.append(sub)
+        candidates.extend(sorted(go_dir.iterdir()))
+    candidates.extend(sorted(repo_root.glob("scenarios/*/go-agent")))
+
+    out: list[Path] = []
+    for sub in candidates:
+        manifest = sub / "go.mod"
+        if manifest.is_file() and "github.com/ai-agent-assembly/go-sdk" in (
+            manifest.read_text(encoding="utf-8")
+        ):
+            out.append(sub)
     return out
 
 
