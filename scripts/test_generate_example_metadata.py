@@ -260,5 +260,199 @@ class PythonPinOperatorTests(_RepoTestCase):
         self.assertNotIn(">=", path.read_text())
 
 
+class BacktickRowRewriteTests(_RepoTestCase):
+    def test_rewrites_python_backtick_row(self) -> None:
+        path = _write(
+            self.root,
+            "scenarios/x/README.md",
+            "| `agent-assembly` SDK | ≥ 0.0.1rc3 |\n",
+        )
+        changed = gen.rewrite_prereq_backtick_row(
+            path, self.versions.python.package, self.versions.python.version
+        )
+        self.assertTrue(changed)
+        self.assertEqual(
+            path.read_text(), "| `agent-assembly` SDK | ≥ 0.0.1rc5 |\n"
+        )
+
+    def test_rewrites_node_backtick_row_without_sdk_suffix(self) -> None:
+        path = _write(
+            self.root,
+            "scenarios/x/README.md",
+            "| `@agent-assembly/sdk` | ≥ 0.0.1-rc.3 |\n",
+        )
+        changed = gen.rewrite_prereq_backtick_row(
+            path, self.versions.node.package, self.versions.node.version
+        )
+        self.assertTrue(changed)
+        self.assertEqual(
+            path.read_text(), "| `@agent-assembly/sdk` | ≥ 0.0.1-rc.5 |\n"
+        )
+
+    def test_rewrites_go_backtick_row(self) -> None:
+        path = _write(
+            self.root,
+            "scenarios/x/README.md",
+            "| `github.com/ai-agent-assembly/go-sdk` | ≥ v0.0.1-rc.3 |\n",
+        )
+        changed = gen.rewrite_prereq_backtick_row(
+            path, self.versions.go.module, self.versions.go.version
+        )
+        self.assertTrue(changed)
+        self.assertIn("≥ v0.0.1-rc.5", path.read_text())
+
+    def test_preserves_trailing_note_in_value_cell(self) -> None:
+        path = _write(
+            self.root,
+            "scenarios/x/README.md",
+            "| `agent-assembly` SDK | ≥ 0.0.1rc3 (with adapter) |\n",
+        )
+        gen.rewrite_prereq_backtick_row(
+            path, self.versions.python.package, self.versions.python.version
+        )
+        self.assertEqual(
+            path.read_text(),
+            "| `agent-assembly` SDK | ≥ 0.0.1rc5 (with adapter) |\n",
+        )
+
+    def test_does_not_touch_generated_block_row(self) -> None:
+        # The generated block's row starts with prose, not a backtick, so the
+        # backtick-anchored matcher must never fire on it.
+        block = (
+            f"{gen.SDK_BLOCK_BEGIN}\n"
+            "| Agent Assembly Python SDK (`agent-assembly`) | >= 0.0.1rc3 |\n"
+            f"{gen.SDK_BLOCK_END}\n"
+        )
+        path = _write(self.root, "scenarios/x/README.md", block)
+        changed = gen.rewrite_prereq_backtick_row(
+            path, self.versions.python.package, self.versions.python.version
+        )
+        self.assertFalse(changed)
+        self.assertEqual(path.read_text(), block)
+
+    def test_does_not_touch_backtick_name_in_running_prose(self) -> None:
+        # A backtick package name mid-sentence (not a table row) has no leading
+        # ``|`` and must be left alone.
+        prose = "If you have a local checkout of the `agent-assembly` monorepo.\n"
+        path = _write(self.root, "scenarios/x/README.md", prose)
+        changed = gen.rewrite_prereq_backtick_row(
+            path, self.versions.python.package, self.versions.python.version
+        )
+        self.assertFalse(changed)
+        self.assertEqual(path.read_text(), prose)
+
+
+class ReadmeInstallHintRewriteTests(_RepoTestCase):
+    def test_rewrites_python_install_hint_keeping_double_equals(self) -> None:
+        path = _write(
+            self.root,
+            "scenarios/x/README.md",
+            'pip install "agent-assembly==0.0.1rc3"   # native ext\n',
+        )
+        changed = gen.rewrite_readme_install_hints(path, self.versions)
+        self.assertTrue(changed)
+        self.assertEqual(
+            path.read_text(),
+            'pip install "agent-assembly==0.0.1rc5"   # native ext\n',
+        )
+
+    def test_rewrites_node_install_hint(self) -> None:
+        path = _write(
+            self.root,
+            "scenarios/x/README.md",
+            "npm install @agent-assembly/sdk@0.0.1-rc.3\n",
+        )
+        changed = gen.rewrite_readme_install_hints(path, self.versions)
+        self.assertTrue(changed)
+        self.assertEqual(
+            path.read_text(), "npm install @agent-assembly/sdk@0.0.1-rc.5\n"
+        )
+
+    def test_excludes_generated_block(self) -> None:
+        # The generated block legitimately carries an install hint; the prose
+        # pass must not disturb the block region even if it is stale-looking.
+        block = (
+            f"{gen.SDK_BLOCK_BEGIN}\n"
+            "uv add agent-assembly==0.0.1rc3\n"
+            f"{gen.SDK_BLOCK_END}\n"
+        )
+        path = _write(self.root, "scenarios/x/README.md", block)
+        changed = gen.rewrite_readme_install_hints(path, self.versions)
+        self.assertFalse(changed)
+        self.assertEqual(path.read_text(), block)
+
+    def test_ignores_go_path_and_runtime_subpackage(self) -> None:
+        content = (
+            "go get github.com/ai-agent-assembly/go-sdk@v0.0.1-rc.3\n"
+            "npm install @agent-assembly/runtime-linux-x64@0.0.1-rc.3\n"
+        )
+        path = _write(self.root, "scenarios/x/README.md", content)
+        changed = gen.rewrite_readme_install_hints(path, self.versions)
+        self.assertFalse(changed)
+        self.assertEqual(path.read_text(), content)
+
+
+class BacktickRowAndInstallHintAuditTests(_RepoTestCase):
+    def test_detects_stale_backtick_row(self) -> None:
+        _in_sync_tree(self.root)
+        _write(
+            self.root,
+            "scenarios/x/README.md",
+            "| `agent-assembly` SDK | ≥ 0.0.1rc3 |\n",
+        )
+        problems = gen.audit(self.root, self.versions)
+        self.assertEqual(len(problems), 1)
+        self.assertIn("scenarios/x/README.md:1", problems[0])
+        self.assertIn("0.0.1rc3", problems[0])
+
+    def test_detects_stale_install_hint(self) -> None:
+        _in_sync_tree(self.root)
+        _write(
+            self.root,
+            "scenarios/x/README.md",
+            'pip install "agent-assembly==0.0.1rc3"\n',
+        )
+        problems = gen.audit(self.root, self.versions)
+        self.assertEqual(len(problems), 1)
+        self.assertIn("scenarios/x/README.md:1", problems[0])
+        self.assertIn("install hint", problems[0])
+
+    def test_install_hint_in_generated_block_is_not_audited(self) -> None:
+        _in_sync_tree(self.root)
+        _write(
+            self.root,
+            "scenarios/x/README.md",
+            f"{gen.SDK_BLOCK_BEGIN}\n"
+            "uv add agent-assembly==0.0.1rc3\n"
+            f"{gen.SDK_BLOCK_END}\n",
+        )
+        self.assertEqual(gen.audit(self.root, self.versions), [])
+
+    def test_exemption_marker_honored_on_new_forms(self) -> None:
+        _in_sync_tree(self.root)
+        _write(
+            self.root,
+            "scenarios/x/README.md",
+            "| `agent-assembly` SDK | ≥ 0.0.1rc3 |  <!-- sdk-version-exempt -->\n"
+            'pip install "agent-assembly==0.0.1rc3"  # sdk-version-exempt\n',
+        )
+        self.assertEqual(gen.audit(self.root, self.versions), [])
+
+    def test_process_prereq_rows_and_hints_produce_clean_audit(self) -> None:
+        # End-to-end: a stale tree, once run through the generator passes, must
+        # audit clean — the writer and the reader agree.
+        _in_sync_tree(self.root)
+        _write(
+            self.root,
+            "scenarios/x/README.md",
+            "| `agent-assembly` SDK | ≥ 0.0.1rc3 |\n"
+            "| `@agent-assembly/sdk` | ≥ 0.0.1-rc.3 |\n"
+            'pip install "agent-assembly==0.0.1rc3"\n',
+        )
+        gen.process_prereq_rows(self.root, self.versions)
+        gen.process_readme_install_hints(self.root, self.versions)
+        self.assertEqual(gen.audit(self.root, self.versions), [])
+
+
 if __name__ == "__main__":
     unittest.main()

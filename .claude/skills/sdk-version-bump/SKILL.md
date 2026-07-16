@@ -47,8 +47,14 @@ distinct formats — they are not interchangeable:
 version-bearing surface it owns: python/node/go manifests, scenario
 `node-agent`/`go-agent` manifests, scenario Dockerfile `agent-assembly==` pins,
 the generated `sdk-install` block, and the Prerequisites row in both table and
-bullet form. It **never** bumps versions itself — it aligns everything to this
-file — and it is idempotent.
+bullet form. The generator (and the `--check` audit) also own two more
+README-prose surfaces (AAASM-4722): a Prerequisites row whose label cell is the
+bare backtick **package** name (``| `agent-assembly` SDK | ... |``,
+``| `@agent-assembly/sdk` | ... |``) rather than the prose `Agent Assembly
+<Lang> SDK` name, and a raw install-hint literal in running prose outside the
+generated block (`agent-assembly==<ver>`, `@agent-assembly/sdk@<ver>`). It
+**never** bumps versions itself — it aligns everything to this file — and it is
+idempotent.
 
 ## Runbook
 
