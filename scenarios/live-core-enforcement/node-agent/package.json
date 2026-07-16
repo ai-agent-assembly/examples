@@ -11,6 +11,6 @@
     "start": "node agent.mjs"
   },
   "dependencies": {
-    "@agent-assembly/sdk": "0.0.1-rc.3"
+    "@agent-assembly/sdk": "0.0.1-rc.5"
   }
 }
