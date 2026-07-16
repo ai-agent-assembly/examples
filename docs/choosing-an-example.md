@@ -50,7 +50,7 @@ All Python examples use the `agent-assembly` Python SDK (PyPI package).
 
 > See [`node/README.md`](../node/README.md) for the full index.
 
-| I want to…                                     | Example sub-project (coming soon)              |
+| I want to…                                     | Example sub-project                            |
 |------------------------------------------------|------------------------------------------------|
 | Wire Agent Assembly into a LangChain.js agent  | `node/langchain-js-basic-agent/`              |
 | Apply tool policies with the OpenAI Node SDK   | `node/openai-node-tool-policy/`               |
@@ -72,7 +72,7 @@ All Node.js examples use the `@agent-assembly/sdk` npm package.
 
 > See [`go/README.md`](../go/README.md) for the full index.
 
-| I want to…                                     | Example sub-project (coming soon)              |
+| I want to…                                     | Example sub-project                            |
 |------------------------------------------------|------------------------------------------------|
 | Build a basic governed agent in Go             | `go/basic-agent/`                             |
 | Enforce tool-level policies in Go              | `go/tool-policy/`                             |
@@ -89,7 +89,7 @@ All Go examples use the `github.com/ai-agent-assembly/go-sdk` module.
 
 These examples demonstrate a specific Agent Assembly capability in a language-agnostic way. Pick by what you want to understand.
 
-| I want to understand…                          | Scenario sub-project (coming soon)             |
+| I want to understand…                          | Scenario sub-project                           |
 |------------------------------------------------|------------------------------------------------|
 | How policy enforcement works end-to-end        | `scenarios/policy-enforcement/`               |
 | How human-in-the-loop approval gates work      | `scenarios/approval-gates/`                   |

@@ -4,7 +4,7 @@ This directory contains runnable Python examples showing how to integrate Agent 
 
 ## What lives here
 
-| Sub-project (coming soon)          | Framework        | What it demonstrates                                      |
+| Sub-project                        | Framework        | What it demonstrates                                      |
 |------------------------------------|------------------|-----------------------------------------------------------|
 | `langchain-basic-agent/`           | LangChain        | Wire Agent Assembly SDK into a basic LangChain agent      |
 | `openai-agents-sdk/`               | OpenAI Agents SDK| Govern tool calls made by an OpenAI Agents SDK agent      |

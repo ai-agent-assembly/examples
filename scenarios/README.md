@@ -4,7 +4,7 @@ This directory contains cross-language examples that demonstrate a specific Agen
 
 ## What lives here
 
-| Sub-project (coming soon)          | What it demonstrates                                                        |
+| Sub-project                        | What it demonstrates                                                        |
 |------------------------------------|-----------------------------------------------------------------------------|
 | `policy-enforcement/`              | Define and apply allow/deny policy rules; observe blocked and allowed calls |
 | `approval-gates/`                  | Trigger human-in-the-loop approval for a high-risk tool call                |
