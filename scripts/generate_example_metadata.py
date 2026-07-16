@@ -22,6 +22,15 @@ Design constraints:
 
 Historical release notes and example-provenance content (e.g. "written
 against 0.0.1-rc.3") are out of scope and must not be touched.
+
+Audit mode (``--check``): instead of rewriting, scan the same bounded set of
+human-authored surfaces (manifest pins under ``python/ node/ go/ scenarios/``
+and SDK-version prose in READMEs / ``docs/*.md`` — never lockfiles or vendored
+trees) and exit non-zero, naming each ``file:line``, if any SDK-version literal
+has drifted from the SoT. This is the anti-recurrence invariant: a newly added
+stale surface fails CI. Legitimate historical/provenance text is exempted per
+line by the inline marker ``sdk-version-exempt``; such a line is never rewritten
+and never audited.
 """
 
 from __future__ import annotations
@@ -719,6 +728,139 @@ def process_prereq_rows(repo_root: Path, versions: SdkVersions) -> list[Path]:
 
 
 # ---------------------------------------------------------------------------
+# Orphan-version-literal audit (--check)
+# ---------------------------------------------------------------------------
+#
+# The rewriters above make the generator the single *writer* of every SDK-version
+# literal it knows about; this audit is the matching *reader* that fails CI when
+# a new human-authored surface introduces a literal the generator does not yet
+# own, or when someone hand-edits an owned literal out of sync. It scans a
+# bounded set of human-authored surfaces — never lockfiles (``go.sum``,
+# ``pnpm-lock.yaml``), vendored trees, or build output — and reports each
+# ``file:line`` whose SDK-version literal differs from the SoT.
+#
+# Exemption: any line containing the inline marker ``sdk-version-exempt`` is
+# skipped, for legitimate historical / provenance text (e.g. a release note or
+# a "written against 0.0.1-rc.3" verification report).
+
+EXEMPT_MARKER = "sdk-version-exempt"
+
+# Which SDK a prose line refers to, so its version token can be compared against
+# the right SoT entry.
+_PROSE_LABEL_RE = re.compile(r"Agent Assembly (Python|Node\.js|Go) SDK")
+
+# Precise main-SDK pin matchers for the manifest audit. Each captures the pinned
+# version in group ``ver``. The identifiers are anchored so a subpackage
+# (``@agent-assembly/runtime-*``) or a non-``go-sdk`` org path
+# (``github.com/ai-agent-assembly/...``) can never false-match: the python id is
+# ``agent-assembly`` immediately followed by a PEP 440 operator; the node id is
+# exactly ``@agent-assembly/sdk``; the go id is exactly
+# ``github.com/ai-agent-assembly/go-sdk`` followed by whitespace.
+_PY_PIN_AUDIT_RE = re.compile(
+    r"(?<![\w/@.-])agent-assembly(?:==|>=|~=|<=|!=|<|>)(?P<ver>[^\"'\s,]+)"
+)
+_NODE_PIN_AUDIT_RE = re.compile(r'"@agent-assembly/sdk"\s*:\s*"(?P<ver>[^"]+)"')
+_GO_PIN_AUDIT_RE = re.compile(
+    r"github\.com/ai-agent-assembly/go-sdk(?=\s)\s+(?P<ver>\S+)"
+)
+
+# Bounded globs for the pin audit — every manifest that carries a main-SDK pin
+# under python/, node/, go/, and scenarios/. Lockfiles and go.sum are excluded
+# by construction (never globbed).
+_PY_PIN_GLOBS = (
+    "python/*/pyproject.toml",
+    "scenarios/*/pyproject.toml",
+    "scenarios/*/*/pyproject.toml",
+)
+_NODE_PIN_GLOBS = (
+    "node/*/package.json",
+    "scenarios/*/package.json",
+    "scenarios/*/*/package.json",
+)
+_GO_PIN_GLOBS = (
+    "go/*/go.mod",
+    "scenarios/*/go.mod",
+    "scenarios/*/*/go.mod",
+)
+
+
+def _audit_lines(path: Path):
+    """Yield ``(lineno, line)`` pairs for a text file, 1-based."""
+
+    for lineno, line in enumerate(
+        path.read_text(encoding="utf-8").splitlines(), start=1
+    ):
+        yield lineno, line
+
+
+def _audit_pins(repo_root: Path, versions: SdkVersions) -> list[str]:
+    """Report every manifest/Dockerfile pin whose version drifts from the SoT."""
+
+    checks = (
+        (_PY_PIN_GLOBS, _PY_PIN_AUDIT_RE, versions.python.version),
+        (_NODE_PIN_GLOBS, _NODE_PIN_AUDIT_RE, versions.node.version),
+        (_GO_PIN_GLOBS, _GO_PIN_AUDIT_RE, versions.go.version),
+        (_DOCKERFILE_GLOBS, _DOCKERFILE_PIN_RE, versions.python.version),
+    )
+    problems: list[str] = []
+    for globs, pin_re, expected in checks:
+        for path in _globbed(repo_root, globs):
+            for lineno, line in _audit_lines(path):
+                if EXEMPT_MARKER in line:
+                    continue
+                match = pin_re.search(line)
+                if match and match.group("ver") != expected:
+                    rel = path.relative_to(repo_root)
+                    problems.append(
+                        f"{rel}:{lineno}: pins {match.group('ver')!r}, "
+                        f"expected {expected!r}"
+                    )
+    return problems
+
+
+def _audit_prose(repo_root: Path, versions: SdkVersions) -> list[str]:
+    """Report every README/doc prose line whose SDK version drifts from the SoT.
+
+    Only lines that both name a language SDK (``Agent Assembly <Lang> SDK``) and
+    carry a version token are checked; the token is compared like the rewriter's
+    first-token substitution, so a generator-produced tree always audits clean.
+    """
+
+    expected_by_label = {
+        "Python": versions.python.version,
+        "Node.js": versions.node.version,
+        "Go": versions.go.version,
+    }
+    problems: list[str] = []
+    for path in _globbed(repo_root, _README_GLOBS + ("docs/*.md",)):
+        for lineno, line in _audit_lines(path):
+            if EXEMPT_MARKER in line:
+                continue
+            label_match = _PROSE_LABEL_RE.search(line)
+            if not label_match:
+                continue
+            token_match = _VERSION_TOKEN_RE.search(line)
+            if token_match is None:
+                continue
+            expected = expected_by_label[label_match.group(1)]
+            if token_match.group(0) != expected:
+                rel = path.relative_to(repo_root)
+                problems.append(
+                    f"{rel}:{lineno}: states {token_match.group(0)!r}, "
+                    f"expected {expected!r}"
+                )
+    return problems
+
+
+def audit(repo_root: Path, versions: SdkVersions) -> list[str]:
+    """Return every drifted SDK-version literal as a sorted ``file:line`` list."""
+
+    return sorted(
+        _audit_pins(repo_root, versions) + _audit_prose(repo_root, versions)
+    )
+
+
+# ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
 
@@ -736,9 +878,33 @@ def main(argv: list[str] | None = None) -> int:
         default=_repo_root_from_script(),
         help="Path to the repository root (defaults to the script's parent).",
     )
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help=(
+            "Audit mode: do not rewrite. Scan the bounded human-authored "
+            "surfaces and exit non-zero, naming each file:line, if any "
+            "SDK-version literal has drifted from the SoT."
+        ),
+    )
     args = parser.parse_args(argv)
 
     versions = load_sdk_versions(args.repo_root)
+
+    if args.check:
+        problems = audit(args.repo_root, versions)
+        if problems:
+            print("SDK-version literals out of sync with the SoT:")
+            for problem in problems:
+                print(f"  {problem}")
+            print(
+                "\nAlign metadata/sdk-versions.yaml + re-run the generator, or "
+                f"mark legitimate historical text with '{EXEMPT_MARKER}'."
+            )
+            return 1
+        print("--check: every audited surface matches the SoT.")
+        return 0
+
     changed: list[Path] = []
     changed.extend(process_python(args.repo_root, versions))
     changed.extend(process_node(args.repo_root, versions))
