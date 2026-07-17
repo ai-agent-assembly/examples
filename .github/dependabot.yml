@@ -43,6 +43,16 @@ updates:
     labels:
       - "dependencies"
       - "python"
+    ignore:
+      # AAASM-4778 accepted risk: mcp and json-repair are transitive-only deps
+      # pulled in solely by crewai (crewai-research-crew `live` extra, which CI
+      # never installs — it runs the --mock/dev path via `uv sync --extra dev`).
+      # crewai~=1.15 hard-pins mcp~=1.26.0 (<1.27) and json-repair~=0.25.2
+      # (<0.26) on every released and pre-released version, so no reachable
+      # patched version exists until an upstream crewai release relaxes the
+      # pins. Remove these ignores once crewai adopts patched mcp/json-repair.
+      - dependency-name: "mcp"
+      - dependency-name: "json-repair"
 
   - package-ecosystem: "github-actions"
     directory: "/"
