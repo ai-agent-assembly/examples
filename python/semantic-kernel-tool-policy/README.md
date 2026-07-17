@@ -16,7 +16,7 @@ pip install agent-assembly==0.0.1rc6
 ```
 <!-- END GENERATED: sdk-install -->
 
-Demonstrates [Agent Assembly](https://github.com/AI-agent-assembly/agent-assembly-examples) governance of a [Microsoft Semantic Kernel](https://learn.microsoft.com/semantic-kernel/) agent's tool calls.
+Demonstrates [Agent Assembly](https://github.com/ai-agent-assembly/examples) governance of a [Microsoft Semantic Kernel](https://learn.microsoft.com/semantic-kernel/) agent's tool calls.
 
 > **Not the Microsoft Agent Framework.** Semantic Kernel and the Microsoft Agent Framework are two different Microsoft projects. The Agent Framework has its own example ([`microsoft-agent-framework-tool-policy`](../microsoft-agent-framework-tool-policy/)) and a native Agent Assembly adapter. This example targets **Semantic Kernel**, which has no native adapter.
 

@@ -16,7 +16,7 @@ pip install agent-assembly==0.0.1rc6
 ```
 <!-- END GENERATED: sdk-install -->
 
-Demonstrates [Agent Assembly](https://github.com/AI-agent-assembly/agent-assembly-examples) governance of a [Strands Agents](https://strandsagents.com/) (AWS) agent's tool calls.
+Demonstrates [Agent Assembly](https://github.com/ai-agent-assembly/examples) governance of a [Strands Agents](https://strandsagents.com/) (AWS) agent's tool calls.
 
 Strands Agents has **no native Agent Assembly adapter**, so this example governs it the framework-agnostic way — the same path the [`custom-tool-policy`](../custom-tool-policy/) example uses. Every real `@strands.tool` invocation is routed through Agent Assembly's callback host (`AssemblyCallbackHandler`), which consults a local policy **before** the tool body runs: a `deny` short-circuits the tool entirely (its body never runs), an `allow` runs it. The demo drives genuine Strands `@tool` objects — the same objects a Strands `Agent` invokes — so you can watch the safe tools run and the dangerous one get blocked, with no gateway, API key, or live LLM.
 
