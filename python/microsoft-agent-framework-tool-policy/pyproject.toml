@@ -4,9 +4,8 @@ version = "0.1.0"
 description = "Agent Assembly governance demo with Microsoft Agent Framework"
 requires-python = ">=3.12"
 dependencies = [
-    # Pinned exactly: the only newer release, 0.0.2, was yanked upstream
-    # ("have wrong to release"). 0.0.1rc5 remains the latest installable
-    # version on PyPI. Re-evaluate once a non-yanked 0.0.2+ is published.
+    # Latest release (0.0.2) was yanked upstream ("wrong to release"); pinned to
+    # the latest non-yanked release. See AAASM-4441 exception notes.
     "agent-assembly==0.0.1rc6",
 ]
 

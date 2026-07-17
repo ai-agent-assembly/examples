@@ -1,15 +1,21 @@
 # CI Workflows
 
-This directory will contain GitHub Actions workflows that verify the examples in this repository on pull requests and pushes.
+This directory contains the GitHub Actions workflows that verify the examples in this repository on pull requests, pushes, and schedules.
 
-## Planned workflows
+## Workflows in this directory
 
-| Workflow file (coming soon)   | Trigger                      | What it verifies                                        |
-|-------------------------------|------------------------------|---------------------------------------------------------|
+| Workflow file                 | Trigger                      | What it verifies                                        |
+|-------------------------------|------------------------------|-----------------------------------------------------------|
 | `verify-python.yml`           | PR / push affecting `python/`| Python examples install cleanly and run without errors  |
 | `verify-node.yml`             | PR / push affecting `node/`  | Node.js examples build and run without errors           |
 | `verify-go.yml`               | PR / push affecting `go/`    | Go examples compile and run without errors              |
-| `verify-scenarios.yml`        | PR / push affecting `scenarios/` | Scenario examples run end-to-end without errors     |
+| `verify-scenarios.yml`        | PR / push affecting `scenarios/`; manual dispatch for the real end-to-end run | Scenario examples run end-to-end; the offline smoke lanes are the required per-PR gate, and the real-gateway run is opt-in |
+| `verify-all-samples.yml`      | Weekly schedule              | Discovers and runs every sample in the repo, catching drift the per-PR path filters miss |
+| `verify-live.yml`             | Daily schedule / manual dispatch | Runs a real (non-mock) SDK driver against a real local gateway, one job per language |
+| `example-metadata-check.yml`  | PR affecting SDK version metadata or manifests | SDK version pins and generated README blocks aren't out of sync with `metadata/sdk-versions.yaml` |
+| `codeql.yml`                  | PR / push to `master` / weekly schedule | Static security analysis |
+| `proof-html.yml`              | Push to `master` / manual dispatch | Rendered HTML/docs links are valid |
+| `auto-assign.yml`             | Issue / PR opened            | Auto-assigns an owner |
 
 ## Design principles for CI workflows
 
