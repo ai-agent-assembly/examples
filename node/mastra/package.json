@@ -25,6 +25,7 @@
     "vitest": "^4.1.10"
   },
   "pnpm": {
+    "onlyBuiltDependencies": ["@agent-assembly/sdk", "esbuild", "protobufjs"],
     "overrides": {
       "js-yaml": "4.2.0"
     }

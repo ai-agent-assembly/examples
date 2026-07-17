@@ -7,7 +7,7 @@ version: "3.9"
 #
 # To use the real Agent Assembly gateway instead of this mock, replace the
 # `build` block with:
-#   image: ghcr.io/ai-agent-assembly/agent-assembly-gateway:latest
+#   image: ghcr.io/ai-agent-assembly/aa-gateway:latest
 # and configure credentials via environment variables.
 
 services:
