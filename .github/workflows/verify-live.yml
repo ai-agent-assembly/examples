@@ -34,10 +34,14 @@
 # lane becomes a hard, red-on-regression gate — and update `.claude/CLAUDE.md`.
 #
 # Related: scenarios/live-core-enforcement's `live-core-enforcement-live` job
-# (in verify-scenarios.yml) stays workflow_dispatch-only for a *distinct* reason
-# — it needs the unpublished `ghcr.io/ai-agent-assembly/aa-gateway` container
-# image. This lane deliberately uses the `aasm start --mode local` binary path
-# instead, so it does not depend on that image.
+# (in verify-scenarios.yml) stays workflow_dispatch-only for a *distinct*
+# reason. The `ghcr.io/ai-agent-assembly/aa-gateway` container image that job's
+# docker-compose stack pulls IS now published (tagged per SDK release, e.g.
+# v0.0.1-rc.4/rc.5/rc.6, plus `latest`) — image availability is no longer the
+# blocker (see scenarios/live-core-enforcement/README.md, AAASM-4743). It stays
+# workflow_dispatch-only because this lane already covers this scenario's live
+# drivers on a daily schedule via the lighter `aasm start --mode local` path;
+# standing up the full docker-compose stack too would be redundant CI weight.
 
 name: Verify Live (real transport)
 

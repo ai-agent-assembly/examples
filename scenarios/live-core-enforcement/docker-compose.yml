@@ -21,10 +21,10 @@
 # IMPORTANT — gateway image dependency (AAASM-3791): the per-tool allow/deny
 # semantics of this scenario require a REAL aa-gateway (the runtime's own local
 # policy evaluation is action-type-based, not per-tool). The gateway is NOT
-# bundled in the aa-runtime image, and `ghcr.io/ai-agent-assembly/aa-gateway`
-# is not yet published. Until it is, `docker compose up` cannot pull the gateway
-# image and the stack cannot run end-to-end out of the box. See the scenario
-# README "Gateway image dependency" section.
+# bundled in the aa-runtime image, but it ships as its own published image,
+# `ghcr.io/ai-agent-assembly/aa-gateway` (tagged per SDK release, e.g.
+# v0.0.1-rc.4/rc.5/rc.6, plus `latest`) — `docker compose up` can pull it like
+# any other image. See the scenario README "Gateway image dependency" section.
 #
 # Start:  bash scripts/start.sh    (or: docker compose up --build)
 # Stop:   bash scripts/stop.sh     (or: docker compose down -v)
@@ -33,7 +33,8 @@ services:
   aa-gateway:
     # The governance gateway — the policy authority. Pin a tag for
     # reproducibility in real use; `latest` is fine for a local demo.
-    # NOTE: this image is not published yet (see the header note above).
+    # Published per SDK release (v0.0.1-rc.4/rc.5/rc.6, plus `latest`); see
+    # the header note above.
     image: ghcr.io/ai-agent-assembly/aa-gateway:latest
     restart: unless-stopped
     # legacy-grpc mode: load the section-based policy.yaml and serve gRPC.
