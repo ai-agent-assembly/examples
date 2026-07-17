@@ -4,7 +4,7 @@ requires-python = ">=3.12"
 
 [[package]]
 name = "agent-assembly"
-version = "0.0.1rc3"
+version = "0.0.1rc6"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "grpcio" },
@@ -13,12 +13,20 @@ dependencies = [
     { name = "pydantic" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/21/b4/011d51322a34ceec5bda83408191ca47748c3b8fa122733dcace38ec03db/agent_assembly-0.0.1rc3.tar.gz", hash = "sha256:dcad78135cf05ab9e415afdc42d21215fd11dc3df62bcff43818376bdfeed983", size = 104197, upload-time = "2026-07-04T00:42:16.565Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/82/75/fab2c549b0e36b0a7c63b02cfcf97db3bc0e5598f5db164765823cfb232a/agent_assembly-0.0.1rc6.tar.gz", hash = "sha256:dc2c74b34f86a4895b9eb4f95c8fe1d012454f82ec2344eceeb7f038b7287b8b", size = 111976, upload-time = "2026-07-17T00:31:03.479Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7a/d3/1383bec1bd0a6fb0bcbb2cc0cd4d0555ccfcb775a9ed1f0c9fc9534fe08b/agent_assembly-0.0.1rc3-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:34a5e00681dcc58bbbf812342149d28725977c846bda0aa0102d1ac3d97e5b77", size = 19629009, upload-time = "2026-07-04T00:42:05.671Z" },
-    { url = "https://files.pythonhosted.org/packages/d3/67/f9778d84fad1c570c7e6f73f6b9eb42271dabf7ba3339dcc23b687d22a53/agent_assembly-0.0.1rc3-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:70a3e8da1b66df8445407ee7a97412303569fdf273a0b0953973ce1efba20fa2", size = 17607845, upload-time = "2026-07-04T00:42:08.863Z" },
-    { url = "https://files.pythonhosted.org/packages/c5/e7/209baedee5acb75187dbfdb8f8d3798e9cad547bd62ae61fb4c8efc5b442/agent_assembly-0.0.1rc3-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:e8787cb9eb5d6648a8762236f0c9b345af8d8a80893825f2c08a719f2a217ad8", size = 19024550, upload-time = "2026-07-04T00:42:11.495Z" },
-    { url = "https://files.pythonhosted.org/packages/01/8d/5f0da9d58bcb8fb68a237205cd06bb2449ad531bec796a93b87e26e5a80a/agent_assembly-0.0.1rc3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:7c9941e0566efb31d46fdebe4e8556c40415532c4aa0be11305cdbdeda8beb65", size = 20538409, upload-time = "2026-07-04T00:42:14.424Z" },
+    { url = "https://files.pythonhosted.org/packages/1d/2a/f350ef44fd443a1b25b1f6f7119fba48303e87598b1eda6004c5b61caee5/agent_assembly-0.0.1rc6-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:dc7bc642ef1105a8fbd6d42dc40121cca36427de4c838e8e08204f9f5a12cd96", size = 23912138, upload-time = "2026-07-17T00:30:32.693Z" },
+    { url = "https://files.pythonhosted.org/packages/7b/77/07995f8412f25d862d8f8569ecd9aa0e0278e6763dd51e6cbdad6dd034a4/agent_assembly-0.0.1rc6-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:f0a3ef6d2910883cd75f347258d257f3052b807bef3a9de5648612efdc147506", size = 22301013, upload-time = "2026-07-17T00:30:35.775Z" },
+    { url = "https://files.pythonhosted.org/packages/49/3c/94756c88d37fa748aa79e2c5dfc2dd92066e281da1093c768e7729a553b4/agent_assembly-0.0.1rc6-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:57b3559c6ccde85fc9a3f66d75fc4c7e61015d76b4f27feb65e805cf6cf9e7d7", size = 22740123, upload-time = "2026-07-17T00:30:38.342Z" },
+    { url = "https://files.pythonhosted.org/packages/3d/3e/39a7fa72f78dd04b8a3ab7e49915f92464335abcbbdfccd9293ce232d659/agent_assembly-0.0.1rc6-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:99c72d52586e8334af101e99e89ab045f68c0932f3e69515277bc2235d39dfff", size = 24435252, upload-time = "2026-07-17T00:30:41.036Z" },
+    { url = "https://files.pythonhosted.org/packages/85/f0/f2116651b67fdd48365233953b4bf3b887c50a0f7979dad864d1ec0a8ee0/agent_assembly-0.0.1rc6-cp313-cp313-macosx_10_12_x86_64.whl", hash = "sha256:7fbb676a07b281a01ec5ce2419b2f2ec1917043af3bb9ddc08c1888d90367c21", size = 23912603, upload-time = "2026-07-17T00:30:43.647Z" },
+    { url = "https://files.pythonhosted.org/packages/1b/d5/5ccda9674043a5ce0f2489ba3135e096b83aa6e64010b238ccc08d0a6a3c/agent_assembly-0.0.1rc6-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:ad60ff70fc895c48b8053b8ec4aa03bca147182ee85d25b6a73d9655083dee16", size = 22301054, upload-time = "2026-07-17T00:30:46.32Z" },
+    { url = "https://files.pythonhosted.org/packages/c3/93/a912841ae06dbbfe0ff85279e2399cd1938d83f6719290b7f1482e53737c/agent_assembly-0.0.1rc6-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:b948b5a65a7815100e3a0a595486efeb2543ab6d7355d8d55b4b94e95e2cf515", size = 22740417, upload-time = "2026-07-17T00:30:48.944Z" },
+    { url = "https://files.pythonhosted.org/packages/5b/4b/df4b0005d22fab752eb730b5a63bc6746de1a37593fd000489f857a2accd/agent_assembly-0.0.1rc6-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:688e2c128425a5920ff7209868746e3fb56bcdb703a1187b832a58249abfbba9", size = 24436064, upload-time = "2026-07-17T00:30:51.36Z" },
+    { url = "https://files.pythonhosted.org/packages/94/ad/747f43853a511024b6ba5b1d8afdc369f6601fbc974a6b66ccc0d0c1c96b/agent_assembly-0.0.1rc6-cp314-cp314-macosx_10_12_x86_64.whl", hash = "sha256:a2dff3f6e2444ee4c41dd5b5404156d012571c74d0f3e423623d8242059b5fbd", size = 23912639, upload-time = "2026-07-17T00:30:54.005Z" },
+    { url = "https://files.pythonhosted.org/packages/bb/0b/c18553abdc9179f9b684cb234513fe46de56de8da07bae810e704a6c465b/agent_assembly-0.0.1rc6-cp314-cp314-macosx_11_0_arm64.whl", hash = "sha256:a303f374517a555ec1b4b5b8eab673750e2911808354d244b08db83e0ebee877", size = 22300016, upload-time = "2026-07-17T00:30:56.612Z" },
+    { url = "https://files.pythonhosted.org/packages/54/64/2f15fd9d3b2ae831dd964b600b47591e16843fbe912c0d1b01dc0fe950ea/agent_assembly-0.0.1rc6-cp314-cp314-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:eb08614a1b3dceb058c019b33e4f7588f7b2a67e9ba60c58211d326901341d4b", size = 22742139, upload-time = "2026-07-17T00:30:58.921Z" },
+    { url = "https://files.pythonhosted.org/packages/5f/a9/b4c44e937aa4ae97b7f63edb071ea365a1a9020688e88dfd3d9326e1bc9f/agent_assembly-0.0.1rc6-cp314-cp314-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:fdc23524ca09b73353a5da7480b494f5fde4923d859503b527af09d36f79363f", size = 24436421, upload-time = "2026-07-17T00:31:01.339Z" },
 ]
 
 [[package]]
@@ -77,7 +85,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "agent-assembly", specifier = "==0.0.1rc3" },
+    { name = "agent-assembly", specifier = "==0.0.1rc6" },
     { name = "autogen-core", specifier = ">=0.7.5" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=9.1.1" },
     { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=1.4.0" },
