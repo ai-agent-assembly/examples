@@ -136,7 +136,8 @@ generator should own.
 ### 6. Commit, branch, PR
 
 - **Branch** off `master` (never `main` — it is stale here):
-  `<version-or-phase>/<ticket>/<short_summary>`.
+  `<version-or-phase>/<ticket>/<type>/<short_summary>` (e.g.
+  `v0.0.1/AAASM-4728/deps/bump_sdk`).
 - **Commits** are gitmoji, one logical unit each — e.g. the `sdk-versions.yaml`
   bump, the regenerated manifests/READMEs, and each ecosystem's lockfile regen as
   separate commits. Bisectable; the tree passes the audit at every commit.
