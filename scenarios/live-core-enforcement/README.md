@@ -10,12 +10,12 @@ runtimes and no gateway — that is what keeps CI green offline. **This scenario
 does not stand anything in.** It imports `agent_assembly` for real and talks to
 a real core over gRPC/UDS, exactly as a production integration does.
 
-> **Heads-up — gateway image not published yet.** This scenario needs a real
-> `aa-gateway` (the runtime alone cannot make the per-tool allow/deny decision).
-> The gateway is **not** bundled in the `aa-runtime` image, and
-> `ghcr.io/ai-agent-assembly/aa-gateway` is **not published yet**. Until it is,
-> `bash scripts/start.sh` cannot pull the gateway image and the stack will not
-> run out of the box. See [Gateway image dependency](#gateway-image-dependency).
+> **Heads-up — the gateway is a separate image from the runtime.** This
+> scenario needs a real `aa-gateway` (the runtime alone cannot make the
+> per-tool allow/deny decision). The gateway is **not** bundled in the
+> `aa-runtime` image; it ships as its own published image,
+> `ghcr.io/ai-agent-assembly/aa-gateway`. See
+> [Gateway image dependency](#gateway-image-dependency).
 
 ## The real flow (ADR 0004)
 
@@ -55,7 +55,7 @@ rules — which is exactly why a real gateway is required for this scenario.
   the genuine gRPC/UDS path. The bundled agent `Dockerfile` builds it for you.
 - The published runtime image `ghcr.io/ai-agent-assembly/aa-runtime:latest`.
 - The published gateway image `ghcr.io/ai-agent-assembly/aa-gateway:latest`
-  — **not available yet**, see [Gateway image dependency](#gateway-image-dependency).
+  — see [Gateway image dependency](#gateway-image-dependency).
 
 ## Run it
 
@@ -133,15 +133,15 @@ independent reasons:
    policy engine. The `aa-runtime`'s local policy is an action-*type* denylist
    and cannot distinguish `read_file` from `delete_file`.
 
-The gateway is **not** bundled in the `aa-runtime` image, and as of this writing
-`ghcr.io/ai-agent-assembly/aa-gateway` is **not published** (the org publishes
-`aa-runtime` and the SDK base images only). Until a version-matched gateway
-image is published, `docker compose pull`/`up` cannot fetch the gateway and the
-stack cannot complete end-to-end. The compose file and scripts here are wired
-for the correct topology so the scenario works the moment that image lands.
+The gateway is **not** bundled in the `aa-runtime` image, but it ships as its
+own published image, `ghcr.io/ai-agent-assembly/aa-gateway` (tagged per SDK
+release, e.g. `v0.0.1-rc.6`, plus `latest`). `docker compose pull`/`up` fetches
+it like any other image; the compose file and scripts here are wired for the
+correct topology.
 
-If you have a local checkout of the `agent-assembly` monorepo you can build and
-run the gateway yourself for a manual end-to-end run:
+If you'd rather build the gateway from source (e.g. to test an unreleased
+change), you can run it yourself from a local checkout of the `agent-assembly`
+monorepo for a manual end-to-end run:
 
 ```bash
 # in the agent-assembly monorepo
