@@ -162,9 +162,17 @@ jobs:
         run: docker compose -f scenarios/live-core-enforcement/docker-compose.yml config -q
 
   # ── live-core-enforcement: real end-to-end run (opt-in, manual) ──────────
-  # Disabled in normal CI: it requires the real aa-runtime image and a native
-  # SDK build, which the offline runner does not have. Trigger it deliberately
-  # via the Actions "Run workflow" button when a gateway image is available.
+  # Disabled in normal CI: it requires a native SDK build, which the offline
+  # runner does not have. The ghcr.io/ai-agent-assembly/aa-gateway image this
+  # job's docker-compose stack pulls IS now published (tagged per SDK release,
+  # e.g. v0.0.1-rc.6, plus `latest`) — image availability is no longer the
+  # blocker (see scenarios/live-core-enforcement/README.md, AAASM-4743). It
+  # stays workflow_dispatch-only because verify-live.yml already runs this
+  # scenario's live drivers on a daily schedule via the lighter
+  # `aasm start --mode local` path; standing up the full 3-container
+  # docker-compose stack here too on every schedule/PR would be redundant CI
+  # weight for no extra signal. Trigger it deliberately via the Actions
+  # "Run workflow" button for a genuine Docker-Compose-based manual run.
   live-core-enforcement-live:
     name: "live: live-core-enforcement (real gateway)"
     if: github.event_name == 'workflow_dispatch'
