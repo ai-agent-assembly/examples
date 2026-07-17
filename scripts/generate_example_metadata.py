@@ -242,12 +242,14 @@ def rewrite_node_manifest(path: Path, sdk: NodeSdk) -> bool:
 # or, inside a require ( ... ) block:
 #   \tgithub.com/ai-agent-assembly/go-sdk v0.0.1-rc.3
 # The regex captures the prefix (indent + optional "require ") so we preserve
-# whichever form the surrounding file uses. The tail requires whitespace before a
-# ``// comment`` so the version token ``\S+`` has an unambiguous, non-whitespace
-# boundary — otherwise the engine could backtrack ``\S+`` into the ``//``,
-# non-linear behavior static analysis flags as a ReDoS risk.
+# whichever form the surrounding file uses. The tail is a prefix-free alternation
+# — either whitespace before a ``// comment`` (``\s+//[^\n]*``) or bare trailing
+# whitespace (``\s*``). Written as ``(?:\s+//.*)?\s*`` instead, the comment's
+# ``.*`` and the trailing ``\s*`` both compete for trailing whitespace, a
+# super-linear ambiguity static analysis flags as a ReDoS risk (S8786); the
+# disjoint alternation removes that overlap while matching the same set.
 _GO_PIN_RE = re.compile(
-    r'''^(?P<prefix>\s*(?:require\s+)?)github\.com/ai-agent-assembly/go-sdk\s+\S+(?P<tail>(?:\s+//.*)?\s*)$''',
+    r'''^(?P<prefix>\s*(?:require\s+)?)github\.com/ai-agent-assembly/go-sdk\s+\S+(?P<tail>\s+//[^\n]*|\s*)$''',
     re.MULTILINE,
 )
 
