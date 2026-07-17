@@ -5,16 +5,16 @@
 <!-- Edit metadata/sdk-versions.yaml and re-run the generator. -->
 | Requirement | Version |
 |---|---|
-| Agent Assembly Node.js SDK (`@agent-assembly/sdk`) | 0.0.1-rc.5 |
+| Agent Assembly Node.js SDK (`@agent-assembly/sdk`) | 0.0.1-rc.6 |
 
 Install:
 
 ```bash
-pnpm add @agent-assembly/sdk@0.0.1-rc.5
+pnpm add @agent-assembly/sdk@0.0.1-rc.6
 # or
-npm install @agent-assembly/sdk@0.0.1-rc.5
+npm install @agent-assembly/sdk@0.0.1-rc.6
 # or
-yarn add @agent-assembly/sdk@0.0.1-rc.5
+yarn add @agent-assembly/sdk@0.0.1-rc.6
 ```
 <!-- END GENERATED: sdk-install -->
 

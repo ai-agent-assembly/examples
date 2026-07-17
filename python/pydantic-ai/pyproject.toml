@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Agent Assembly governance demo with Pydantic AI"
 requires-python = ">=3.12"
 dependencies = [
-    "agent-assembly==0.0.1rc5",
+    "agent-assembly==0.0.1rc6",
     # The Agent Assembly Pydantic AI adapter installs a version-tolerant tool
     # hook: it patches `AbstractToolset.call_tool` (and concrete toolsets such
     # as `FunctionToolset`) on pydantic-ai >=0.3.0, and falls back to the

@@ -5,14 +5,14 @@
 <!-- Edit metadata/sdk-versions.yaml and re-run the generator. -->
 | Requirement | Version |
 |---|---|
-| Agent Assembly Python SDK (agent-assembly) | >= 0.0.1rc5 |
+| Agent Assembly Python SDK (agent-assembly) | >= 0.0.1rc6 |
 
 Install:
 
 ```bash
-uv add agent-assembly==0.0.1rc5
+uv add agent-assembly==0.0.1rc6
 # or
-pip install agent-assembly==0.0.1rc5
+pip install agent-assembly==0.0.1rc6
 ```
 <!-- END GENERATED: sdk-install -->
 
@@ -40,7 +40,7 @@ This is not a mock: the tools are real `smolagents.Tool` subclasses and the gove
 |---|---|
 | Python | >= 3.12 |
 | [uv](https://github.com/astral-sh/uv) | latest |
-| Agent Assembly Python SDK | >= 0.0.1rc5 |
+| Agent Assembly Python SDK | >= 0.0.1rc6 |
 | smolagents | >= 1.0, < 2.0 |
 
 No running Agent Assembly gateway and no model/API credentials are required for the offline demo.

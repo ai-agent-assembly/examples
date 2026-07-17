@@ -6,7 +6,7 @@ requires-python = ">=3.12"
 dependencies = [
     # Latest release (0.0.2) was yanked upstream ("wrong to release"); pinned to
     # the latest non-yanked release. See AAASM-4441 exception notes.
-    "agent-assembly==0.0.1rc5",
+    "agent-assembly==0.0.1rc6",
     "openai-agents>=0.18.2",
     # Constrain transitive dep to fix GHSA-4xgf-cpjx-pc3j (symlink file read vulnerability)
     "pydantic-settings>=2.14.2",

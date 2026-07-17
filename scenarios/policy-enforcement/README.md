@@ -50,7 +50,7 @@ Rules are evaluated top-to-bottom.  Any tool not listed falls through to the
 | Node.js | >= 20 |
 | [pnpm](https://pnpm.io) | latest |
 | Go | >= 1.22 |
-| Agent Assembly Python SDK | >= 0.0.1rc5 |
+| Agent Assembly Python SDK | >= 0.0.1rc6 |
 
 No API key or gateway is required — this scenario runs fully offline.
 

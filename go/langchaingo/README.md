@@ -5,12 +5,12 @@
 <!-- Edit metadata/sdk-versions.yaml and re-run the generator. -->
 | Requirement | Version |
 |---|---|
-| Agent Assembly Go SDK (`github.com/ai-agent-assembly/go-sdk`) | v0.0.1-rc.5 |
+| Agent Assembly Go SDK (`github.com/ai-agent-assembly/go-sdk`) | v0.0.1-rc.6 |
 
 Install:
 
 ```bash
-go get github.com/ai-agent-assembly/go-sdk@v0.0.1-rc.5
+go get github.com/ai-agent-assembly/go-sdk@v0.0.1-rc.6
 ```
 <!-- END GENERATED: sdk-install -->
 
@@ -33,7 +33,7 @@ agent's tool calls with Agent Assembly.
 | Requirement | Version |
 |---|---|
 | Go | >= 1.26 |
-| Agent Assembly Go SDK | v0.0.1-rc.5 |
+| Agent Assembly Go SDK | v0.0.1-rc.6 |
 | LangChainGo | v0.1.14 |
 
 No live gateway and no LLM API key are required. Policy rules are applied by an

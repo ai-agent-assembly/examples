@@ -5,14 +5,14 @@
 <!-- Edit metadata/sdk-versions.yaml and re-run the generator. -->
 | Requirement | Version |
 |---|---|
-| Agent Assembly Python SDK (agent-assembly) | >= 0.0.1rc5 |
+| Agent Assembly Python SDK (agent-assembly) | >= 0.0.1rc6 |
 
 Install:
 
 ```bash
-uv add agent-assembly==0.0.1rc5
+uv add agent-assembly==0.0.1rc6
 # or
-pip install agent-assembly==0.0.1rc5
+pip install agent-assembly==0.0.1rc6
 ```
 <!-- END GENERATED: sdk-install -->
 
@@ -34,7 +34,7 @@ Strands Agents has **no native Agent Assembly adapter**, so this example governs
 |---|---|
 | Python | >= 3.12 |
 | [uv](https://github.com/astral-sh/uv) | latest |
-| Agent Assembly Python SDK | >= 0.0.1rc5 |
+| Agent Assembly Python SDK | >= 0.0.1rc6 |
 | strands-agents | >= 1.47.0 |
 
 No API key or running gateway is required for the offline demo.

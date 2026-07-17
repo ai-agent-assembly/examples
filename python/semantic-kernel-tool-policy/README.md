@@ -5,14 +5,14 @@
 <!-- Edit metadata/sdk-versions.yaml and re-run the generator. -->
 | Requirement | Version |
 |---|---|
-| Agent Assembly Python SDK (agent-assembly) | >= 0.0.1rc5 |
+| Agent Assembly Python SDK (agent-assembly) | >= 0.0.1rc6 |
 
 Install:
 
 ```bash
-uv add agent-assembly==0.0.1rc5
+uv add agent-assembly==0.0.1rc6
 # or
-pip install agent-assembly==0.0.1rc5
+pip install agent-assembly==0.0.1rc6
 ```
 <!-- END GENERATED: sdk-install -->
 
@@ -36,7 +36,7 @@ Because Semantic Kernel has no native adapter, this example governs it the frame
 |---|---|
 | Python | >= 3.12 |
 | [uv](https://github.com/astral-sh/uv) | latest |
-| Agent Assembly Python SDK | >= 0.0.1rc5 |
+| Agent Assembly Python SDK | >= 0.0.1rc6 |
 | semantic-kernel | >= 1.36.0 |
 
 No API key or running gateway is required for the offline demo — the tools are native (code) `KernelFunction`s, so no LLM connector is configured.

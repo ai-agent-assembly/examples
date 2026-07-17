@@ -5,14 +5,14 @@
 <!-- Edit metadata/sdk-versions.yaml and re-run the generator. -->
 | Requirement | Version |
 |---|---|
-| Agent Assembly Python SDK (agent-assembly) | >= 0.0.1rc5 |
+| Agent Assembly Python SDK (agent-assembly) | >= 0.0.1rc6 |
 
 Install:
 
 ```bash
-uv add agent-assembly==0.0.1rc5
+uv add agent-assembly==0.0.1rc6
 # or
-pip install agent-assembly==0.0.1rc5
+pip install agent-assembly==0.0.1rc6
 ```
 <!-- END GENERATED: sdk-install -->
 
@@ -42,7 +42,7 @@ audit event.
 |---|---|
 | Python | >= 3.12 |
 | [uv](https://github.com/astral-sh/uv) | latest |
-| Agent Assembly Python SDK | >= 0.0.1rc5 |
+| Agent Assembly Python SDK | >= 0.0.1rc6 |
 
 The mock demo needs no gateway, no `crewai`, and no API keys. The optional
 `live` extra (`crewai`) is only required for the real-crew integration.

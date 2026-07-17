@@ -5,12 +5,12 @@
 <!-- Edit metadata/sdk-versions.yaml and re-run the generator. -->
 | Requirement | Version |
 |---|---|
-| Agent Assembly Go SDK (`github.com/ai-agent-assembly/go-sdk`) | v0.0.1-rc.5 |
+| Agent Assembly Go SDK (`github.com/ai-agent-assembly/go-sdk`) | v0.0.1-rc.6 |
 
 Install:
 
 ```bash
-go get github.com/ai-agent-assembly/go-sdk@v0.0.1-rc.5
+go get github.com/ai-agent-assembly/go-sdk@v0.0.1-rc.6
 ```
 <!-- END GENERATED: sdk-install -->
 
@@ -29,7 +29,7 @@ Go example showing explicit allow and deny behavior using Agent Assembly policy 
 | Requirement | Version |
 |---|---|
 | Go | >= 1.26 |
-| Agent Assembly Go SDK | v0.0.1-rc.5 |
+| Agent Assembly Go SDK | v0.0.1-rc.6 |
 
 No live gateway is required. Policy rules are applied by an in-process mock client.
 

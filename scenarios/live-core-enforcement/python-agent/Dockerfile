@@ -21,7 +21,7 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 # maturin. We install from PyPI here and rely on the platform wheel's native
 # layer; if you are developing against a local checkout, mount it and run
 # `maturin develop` instead (see README).
-RUN pip install --no-cache-dir maturin "agent-assembly==0.0.1rc5"
+RUN pip install --no-cache-dir maturin "agent-assembly==0.0.1rc6"
 
 WORKDIR /app
 COPY agent.py /app/agent.py
