@@ -31,7 +31,7 @@ Google ADK drives its agent loop against a **cloud LLM** (Gemini / Vertex AI), w
 
 ### Adapter / version note
 
-In ADK 1.x, concrete tools (`FunctionTool` and custom `BaseTool` subclasses) override `run_async`, so patching the `BaseTool` base class alone does not intercept them. This example therefore applies the adapter's tool patch to the concrete demo tool class directly (see `src/governance.py`) — the same mechanism the Agent Assembly SDK's own integration tests use. With a future adapter release that patches concrete tool classes, `init_assembly()`'s auto-detection will wire this for you.
+In ADK 1.x, concrete tools (`FunctionTool` and custom `BaseTool` subclasses) override `run_async`, so patching the `BaseTool` base class alone does not intercept them. The public `GoogleADKAdapter` handles this: `register_hooks()` patches `BaseTool` **and** every concrete tool class exported from `google.adk.tools` that overrides `run_async`, and `init_assembly()`'s auto-detection wires it for you against real ADK tools. This example uses that same public adapter (see `src/governance.py`); because its demo tool is a local `BaseTool` subclass rather than a real `google.adk.tools` tool, it registers the class into the adapter's public discovery scope before applying the hooks. A production agent exposing real ADK tools needs no such bridging.
 
 ## Prerequisites
 
