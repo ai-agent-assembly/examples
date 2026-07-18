@@ -7,9 +7,8 @@ and enforces policy rules — including approval gates — before execution.
 Run (offline mode, no API key required):
     uv run python src/main.py
 
-For production use with a real OpenAI API key and gateway:
-    OPENAI_API_KEY=sk-... AGENT_ASSEMBLY_GATEWAY_URL=http://localhost:8080 \\
-    uv run python src/main.py
+For production use, start the Agent Assembly gateway and update the gateway URL:
+    AGENT_ASSEMBLY_GATEWAY_URL=http://localhost:8080 uv run python src/main.py
 """
 from __future__ import annotations
 

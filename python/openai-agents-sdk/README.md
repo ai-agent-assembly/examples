@@ -85,20 +85,18 @@ Running governed tool calls:
 uv run pytest tests/ -v
 ```
 
-## Switching to production mode (with real OpenAI API key)
+## Switching to production mode
 
 1. Start an Agent Assembly gateway or use your SaaS workspace URL.
 2. Copy `.env.example` to `.env` and fill in your credentials.
-3. Run with environment variables:
+3. Extend `main.py` to create a real `agents.Agent` with your `FunctionTool` instances, and set your `OPENAI_API_KEY`. Agent Assembly's `OpenAIAgentsPatch` intercepts every tool call automatically once `init_assembly()` has run.
+4. Run with gateway environment variables:
 
 ```bash
-OPENAI_API_KEY=sk-... \
 AGENT_ASSEMBLY_GATEWAY_URL=http://localhost:8080 \
 AGENT_ASSEMBLY_API_KEY=your-key \
 uv run python src/main.py
 ```
-
-When an `OPENAI_API_KEY` is set, you can extend `main.py` to create a real `agents.Agent` with your `FunctionTool` instances. Agent Assembly's `OpenAIAgentsPatch` intercepts every tool call automatically once `init_assembly()` has run.
 
 ## Troubleshooting
 
