@@ -19,9 +19,22 @@ from typing import Any
 
 
 # ---------------------------------------------------------------------------
-# Minimal Agent Assembly SDK stubs used in this offline example.
-# In a real integration replace these with:
-#   from agent_assembly import AssemblyClient, AuditLogger
+# The classes below are LOCAL stand-ins so this file runs offline with no
+# install — they are NOT the SDK's public API. In a real integration you do not
+# build the audit log in the agent: every governed tool call is recorded
+# GATEWAY-side (the gateway emits the audit event with the agent id, tool,
+# decision and reason). You initialize the SDK and make governed calls; the
+# trace is then read back from the gateway / dashboard, not assembled
+# client-side:
+#
+#   from agent_assembly import init_assembly
+#
+#   with init_assembly(gateway_url=..., agent_id="my-agent") as ctx:
+#       # dispatch_tool is async and takes the tool name + an args dict.
+#       await ctx.client.dispatch_tool("read_file", {"path": "/data/report.csv"})
+#
+# There is no client-side ``AssemblyClient``/``AuditLogger`` to import — the
+# gateway owns the audit trail.
 # ---------------------------------------------------------------------------
 
 

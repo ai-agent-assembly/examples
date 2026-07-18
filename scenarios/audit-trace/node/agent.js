@@ -14,9 +14,18 @@
 const { randomUUID } = require('node:crypto');
 
 // ---------------------------------------------------------------------------
-// Minimal Agent Assembly SDK stubs used in this offline example.
-// In a real integration replace these with:
-//   const { AssemblyClient, AuditLogger } = require('@agent-assembly/sdk');
+// The classes below are LOCAL stand-ins so this file runs offline with no
+// install — they are NOT the SDK's public API. In a real integration you do not
+// build the audit log in the agent: every governed tool call is recorded
+// GATEWAY-side (the gateway emits the audit event with the agent id, tool,
+// decision and reason). You wrap your tools with `withAssembly` and the trace is
+// then read back from the gateway / dashboard, not assembled client-side:
+//
+//   const { withAssembly } = require('@agent-assembly/sdk');
+//   const governed = withAssembly(tools, { gatewayClient, agentId: 'my-agent' });
+//
+// There is no `AssemblyClient`/`AuditLogger` export to import — the gateway owns
+// the audit trail.
 // ---------------------------------------------------------------------------
 
 const Decision = Object.freeze({
