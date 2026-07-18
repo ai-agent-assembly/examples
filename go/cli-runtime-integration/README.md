@@ -103,7 +103,7 @@ without needing `aasm` installed.
 
 ## How it works
 
-1. `main.go` calls `assembly.InitAssembly("")` — this probes `127.0.0.1:7878` and,
+1. `main.go` calls `assembly.InitAssembly("cli-runtime-demo")` — this probes `127.0.0.1:7878` and,
    if the sidecar is not already running, finds and spawns the `aasm` binary.
 2. If `assembly.ErrBinaryNotFound` is returned, the example logs the install hint
    and falls back to the offline mock governance client.

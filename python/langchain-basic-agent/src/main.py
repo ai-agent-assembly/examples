@@ -12,6 +12,7 @@ For production use, start the Agent Assembly gateway and update the gateway URL:
 """
 from __future__ import annotations
 
+import json
 import sys
 import os
 from uuid import uuid4
@@ -47,7 +48,7 @@ def _run_governed_call(
             run_id=run_id,
         )
         tool_map = {t.name: t for t in _TOOLS}
-        result = tool_map[tool_name].invoke(input_str)
+        result = tool_map[tool_name].invoke(json.loads(input_str))
         print(f"     ✅ ALLOWED  — {result}")
     except ToolExecutionBlockedError as exc:
         print(f"     ❌ BLOCKED  — {exc}")
