@@ -43,7 +43,7 @@ export const TOOL_DEFINITIONS: OpenAITool[] = [
           subject: { type: "string", description: "Email subject" },
           body: { type: "string", description: "Email body" },
         },
-        required: ["to", "subject", "body"],
+        required: ["to", "subject"],
       },
     },
   },
