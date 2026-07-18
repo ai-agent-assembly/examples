@@ -70,7 +70,7 @@ Policy rules (local simulation of gateway policy):
 Running governed tool calls:
 --------------------------------------------
   → get_weather({"city": "London"})
-     ✅ ALLOWED  — 🌤  Weather in {"city": "London"}: 22°C, partly cloudy (mock response)
+     ✅ ALLOWED  — 🌤  Weather in London: 22°C, partly cloudy (mock response)
 
   → delete_files({"path": "/etc/passwd"})
      ❌ BLOCKED  — Tool 'delete_files' is blocked by policy rule 'deny_destructive_operations'.
