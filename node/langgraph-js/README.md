@@ -86,10 +86,15 @@ No gateway or API key required. All tests run offline.
 pnpm typecheck
 ```
 
-## Note on `.env.example`
+## Offline-only demo (no real-provider mode)
 
-This example uses only mock/offline mode. No provider keys or gateway URL are needed.
-To connect to a real gateway, set `AAASM_GATEWAY_URL` in your environment directly.
+This example runs **fully offline**. Tool calls are governed in-process by a
+local fail-closed policy stub (`createPolicyGatewayClient` in `src/policy.ts`) —
+no gateway, no API key, and no network are involved. The example reads **no**
+environment variables: `AAASM_GATEWAY_URL`, `OPENAI_API_KEY`, and friends have
+no effect here, so there is no "real-provider" mode to switch into. Wiring these
+examples to a real gateway/LLM via the SDK's `initAssembly` is a possible future
+enhancement, tracked separately — not current behavior.
 
 ## Troubleshooting
 

@@ -76,21 +76,21 @@ All tests run offline — no gateway or API key required.
 pnpm typecheck
 ```
 
-## Real-provider mode (optional)
+## Offline-only demo (no real-provider mode)
 
-Copy `.env.example` to `.env` and configure:
-
-```bash
-cp .env.example .env
-# Set AAASM_GATEWAY_URL and optionally OPENAI_API_KEY
-```
+This example runs **fully offline**. Tool calls are governed in-process by a
+local fail-closed policy stub (`createPolicyGatewayClient` in `src/policy.ts`) —
+no gateway, no API key, and no network are involved. The example reads **no**
+environment variables: `AAASM_GATEWAY_URL`, `OPENAI_API_KEY`, and friends have
+no effect here, so there is no "real-provider" mode to switch into. Wiring these
+examples to a real gateway/LLM via the SDK's `initAssembly` is a possible future
+enhancement, tracked separately — not current behavior.
 
 ## Troubleshooting
 
 | Problem | Solution |
 |---------|----------|
 | `Cannot find module '@agent-assembly/sdk'` | Run `pnpm install` |
-| Gateway connection refused | Remove `AAASM_GATEWAY_URL` from `.env` to use offline mode |
 | TypeScript errors | Run `pnpm typecheck` |
 
 ## Links
