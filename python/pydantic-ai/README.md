@@ -36,7 +36,7 @@ Demonstrates how to integrate [Agent Assembly](https://github.com/ai-agent-assem
 
 No running Agent Assembly gateway is required for the offline demo.
 
-> **Version note** — the Agent Assembly Pydantic AI adapter installs a version-tolerant tool hook. On `pydantic-ai>=0.3.0` it patches `AbstractToolset.call_tool` (including concrete toolsets such as `FunctionToolset`); on `<0.3.0` it falls back to the internal `Tool._run`. `pyproject.toml` therefore requires `pydantic-ai>=0.3.0` with no upper pin — governance attaches across the `0.3.x`–`1.x` line.
+> **Version note** — the Agent Assembly Pydantic AI adapter installs a version-tolerant tool hook. On `pydantic-ai>=0.3.0` it patches `AbstractToolset.call_tool` (including concrete toolsets such as `FunctionToolset`); on `<0.3.0` it falls back to the internal `Tool._run`. `pyproject.toml` therefore requires `pydantic-ai>=2.9.0` with no upper pin.
 
 ## Setup
 
@@ -109,7 +109,7 @@ In production, `init_assembly()` auto-detects Pydantic AI and registers the adap
 |---|---|
 | `ModuleNotFoundError: agent_assembly` | Run `uv sync` first |
 | `ModuleNotFoundError: pydantic_ai` | Run `uv sync` — `pydantic-ai` is a required dependency |
-| Governance hooks do not fire | Ensure `pydantic-ai` resolves to `>=0.3.0` (or `<0.3.0` for the legacy `Tool._run` path) |
+| Governance hooks do not fire | Ensure `pydantic-ai` resolves to `>=2.9.0` (the manifest floor; the adapter's `AbstractToolset.call_tool` hook covers this range) |
 | `PolicyViolationError` in tests | Expected — the deny/pending policy rules are intentional |
 
 ## Links

@@ -36,7 +36,7 @@ Haystack has a native adapter: `HaystackPatch` hooks `haystack.tools.Tool.invoke
 | Python | >= 3.12 |
 | [uv](https://github.com/astral-sh/uv) | latest |
 | Agent Assembly Python SDK | >= 0.0.1rc6 |
-| Haystack | >= 2.0.0, < 3.0 |
+| Haystack | >= 2.31.0, < 3.0 |
 
 No API key or running gateway is required for the offline demo — the tools are driven through a `ToolInvoker` with a hand-built `ToolCall`, so no LLM is involved.
 
