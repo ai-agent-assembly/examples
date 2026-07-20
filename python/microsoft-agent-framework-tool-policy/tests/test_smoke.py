@@ -13,8 +13,8 @@ import pytest
 
 pytest.importorskip(
     "agent_framework",
-    reason="agent-framework not installed — `uv sync --extra dev` (with "
-    "--prerelease=allow) installs it to run these smokes",
+    reason="agent-framework not installed — `uv sync --extra live "
+    "--prerelease=allow` installs it to run these smokes",
 )
 
 from agent_assembly.adapters.microsoft_agent_framework import (  # noqa: E402
