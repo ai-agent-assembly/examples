@@ -7,7 +7,7 @@ dependencies = [
     "agent-assembly==0.0.1rc6",
     # Haystack 2.x ships the `Tool` / `ToolInvoker` API the SDK's native adapter
     # hooks (haystack.tools.Tool.invoke). 1.x predates it and is out of scope.
-    "haystack-ai>=2.31.0,<3.0",
+    "haystack-ai>=2.31.0,<4.0",
 ]
 
 [project.optional-dependencies]
