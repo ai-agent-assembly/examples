@@ -5,13 +5,22 @@ on:
     branches: [master]
     paths:
       - "go/**"
-      - "scenarios/live-core-enforcement/go-agent/**"
+      # The lint job scans all of scenarios/ (gofmt -l go scenarios; go vet over
+      # every scenarios/**/go.mod), so gate on any Go file or module there — not
+      # just the one go-agent dir — or a Go change elsewhere ships un-gated.
+      - "scenarios/**/*.go"
+      - "scenarios/**/go.mod"
+      - "scenarios/**/go.sum"
       - ".github/workflows/verify-go.yml"
   pull_request:
     branches: [master]
     paths:
       - "go/**"
-      - "scenarios/live-core-enforcement/go-agent/**"
+      # Mirror the push filter: the lint job scans all of scenarios/, so any Go
+      # file or module under it must trigger the gate on its own PR.
+      - "scenarios/**/*.go"
+      - "scenarios/**/go.mod"
+      - "scenarios/**/go.sum"
       - ".github/workflows/verify-go.yml"
 
 concurrency:
