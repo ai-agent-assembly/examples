@@ -76,7 +76,7 @@ Uses `assembly.WrapTools()` + `policyClient` implementing `assembly.GovernanceCl
 | `approval-gates / python` | `scenarios/approval-gates/python` | `uv run pytest tests/ -v` |
 | `approval-gates / node` | `scenarios/approval-gates/node` | `pnpm test` |
 
-Triggers on `scenarios/**` path changes and on push to master.
+Triggers on `scenarios/**` path changes and on push to main.
 
 ### ✅ Root README links these scenarios as the best product-value examples
 
@@ -123,4 +123,4 @@ Total: **44 tests, all passing**.
 
 ## Verdict
 
-All 8 acceptance criteria from AAASM-2196 are met. All 6 implementation PRs are open and ready for review. Story AAASM-2196 can be transitioned to Done after all PRs are merged and CI is green on master.
+All 8 acceptance criteria from AAASM-2196 are met. All 6 implementation PRs are open and ready for review. Story AAASM-2196 can be transitioned to Done after all PRs are merged and CI is green on main.
