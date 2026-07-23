@@ -99,21 +99,37 @@ jobs:
           ENTRY: ${{ matrix.sample.entry }}
         run: |
           set -euo pipefail
-          # `--no-build` is omitted for python/semantic-kernel-tool-policy: its
-          # transitive dep pybars4 ships no wheel on PyPI (sdist only), so it
-          # must be built from source. `--locked` still applies everywhere.
-          no_build_flag="--no-build"
+          # `--no-build` is skipped only for python/semantic-kernel-tool-policy:
+          # its transitive dep pybars4 ships no wheel on PyPI (sdist only), so
+          # it must be built from source. `--locked` still applies everywhere.
           if [[ "$PWD" == *"semantic-kernel-tool-policy"* ]]; then
-            no_build_flag=""
+            case "$RUNNER" in
+              uv-pytest)
+                uv sync --extra dev --locked
+                uv run --locked pytest tests/ -v
+                ;;
+              uv-main)
+                uv sync --extra dev --locked
+                uv run --locked python "$ENTRY" --mock
+                ;;
+              py-script)
+                python "$ENTRY"
+                ;;
+              *)
+                echo "::error::unknown python runner: $RUNNER"
+                exit 1
+                ;;
+            esac
+            exit 0
           fi
           case "$RUNNER" in
             uv-pytest)
-              uv sync --extra dev --locked $no_build_flag
-              uv run --locked $no_build_flag pytest tests/ -v
+              uv sync --extra dev --locked --no-build
+              uv run --locked --no-build pytest tests/ -v
               ;;
             uv-main)
-              uv sync --extra dev --locked $no_build_flag
-              uv run --locked $no_build_flag python "$ENTRY" --mock
+              uv sync --extra dev --locked --no-build
+              uv run --locked --no-build python "$ENTRY" --mock
               ;;
             py-script)
               python "$ENTRY"
