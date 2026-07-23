@@ -32,10 +32,10 @@ jobs:
           version: "latest"
 
       - name: Install dependencies
-        run: uv sync --extra dev
+        run: uv sync --extra dev --locked --no-build
 
       - name: Run smoke tests
-        run: uv run pytest tests/ -v
+        run: uv run --locked --no-build pytest tests/ -v
 
   custom-tool-policy:
     name: custom-tool-policy
@@ -51,10 +51,10 @@ jobs:
           version: "latest"
 
       - name: Install dependencies
-        run: uv sync --extra dev
+        run: uv sync --extra dev --locked --no-build
 
       - name: Run smoke tests
-        run: uv run pytest tests/ -v
+        run: uv run --locked --no-build pytest tests/ -v
 
   llamaindex-tool-policy:
     name: llamaindex-tool-policy
@@ -70,10 +70,10 @@ jobs:
           version: "latest"
 
       - name: Install dependencies
-        run: uv sync --extra dev
+        run: uv sync --extra dev --locked --no-build
 
       - name: Run smoke tests
-        run: uv run pytest tests/ -v
+        run: uv run --locked --no-build pytest tests/ -v
 
   openai-agents-sdk:
     name: openai-agents-sdk
@@ -89,10 +89,10 @@ jobs:
           version: "latest"
 
       - name: Install dependencies
-        run: uv sync --extra dev
+        run: uv sync --extra dev --locked --no-build
 
       - name: Run smoke tests
-        run: uv run pytest tests/ -v
+        run: uv run --locked --no-build pytest tests/ -v
 
   langchain-research-agent:
     name: langchain-research-agent
@@ -108,10 +108,10 @@ jobs:
           version: "latest"
 
       - name: Install dependencies
-        run: uv sync --extra dev
+        run: uv sync --extra dev --locked --no-build
 
       - name: Run smoke tests
-        run: uv run pytest tests/ -v
+        run: uv run --locked --no-build pytest tests/ -v
 
   crewai-research-crew:
     name: crewai-research-crew
@@ -127,10 +127,10 @@ jobs:
           version: "latest"
 
       - name: Install dependencies
-        run: uv sync --extra dev
+        run: uv sync --extra dev --locked --no-build
 
       - name: Run smoke tests
-        run: uv run pytest tests/ -v
+        run: uv run --locked --no-build pytest tests/ -v
 
   langgraph:
     name: langgraph
@@ -146,10 +146,10 @@ jobs:
           version: "latest"
 
       - name: Install dependencies
-        run: uv sync --extra dev
+        run: uv sync --extra dev --locked --no-build
 
       - name: Run smoke tests
-        run: uv run pytest tests/ -v
+        run: uv run --locked --no-build pytest tests/ -v
 
   pydantic-ai:
     name: pydantic-ai
@@ -165,10 +165,10 @@ jobs:
           version: "latest"
 
       - name: Install dependencies
-        run: uv sync --extra dev
+        run: uv sync --extra dev --locked --no-build
 
       - name: Run smoke tests
-        run: uv run pytest tests/ -v
+        run: uv run --locked --no-build pytest tests/ -v
 
   microsoft-agent-framework-tool-policy:
     name: microsoft-agent-framework-tool-policy
@@ -187,13 +187,13 @@ jobs:
       # so CI installs `dev` only. The smoke tests importorskip it and the mock
       # demo runs without it — the offline path this repo's CI is meant to verify.
       - name: Install dependencies
-        run: uv sync --extra dev
+        run: uv sync --extra dev --locked --no-build
 
       - name: Run smoke tests
-        run: uv run pytest tests/ -v
+        run: uv run --locked --no-build pytest tests/ -v
 
       - name: Run offline mock demo
-        run: uv run python src/main.py --mock
+        run: uv run --locked --no-build python src/main.py --mock
 
   google-adk:
     name: google-adk
@@ -209,10 +209,10 @@ jobs:
           version: "latest"
 
       - name: Install dependencies
-        run: uv sync --extra dev
+        run: uv sync --extra dev --locked --no-build
 
       - name: Run smoke tests
-        run: uv run pytest tests/ -v
+        run: uv run --locked --no-build pytest tests/ -v
 
   smolagents-tool-policy:
     name: smolagents-tool-policy
@@ -228,10 +228,10 @@ jobs:
           version: "latest"
 
       - name: Install dependencies
-        run: uv sync --extra dev
+        run: uv sync --extra dev --locked --no-build
 
       - name: Run smoke tests
-        run: uv run pytest tests/ -v
+        run: uv run --locked --no-build pytest tests/ -v
 
   agno-tool-policy:
     name: agno-tool-policy
@@ -247,10 +247,10 @@ jobs:
           version: "latest"
 
       - name: Install dependencies
-        run: uv sync --extra dev
+        run: uv sync --extra dev --locked --no-build
 
       - name: Run smoke tests
-        run: uv run pytest tests/ -v
+        run: uv run --locked --no-build pytest tests/ -v
 
   haystack-tool-policy:
     name: haystack-tool-policy
@@ -266,10 +266,10 @@ jobs:
           version: "latest"
 
       - name: Install dependencies
-        run: uv sync --extra dev
+        run: uv sync --extra dev --locked --no-build
 
       - name: Run smoke tests
-        run: uv run pytest tests/ -v
+        run: uv run --locked --no-build pytest tests/ -v
 
   autogen-tool-policy:
     name: autogen-tool-policy
@@ -285,13 +285,13 @@ jobs:
           version: "latest"
 
       - name: Install dependencies
-        run: uv sync --extra dev
+        run: uv sync --extra dev --locked --no-build
 
       - name: Run smoke tests
-        run: uv run pytest tests/ -v
+        run: uv run --locked --no-build pytest tests/ -v
 
       - name: Run offline demo
-        run: uv run python src/main.py
+        run: uv run --locked --no-build python src/main.py
 
   semantic-kernel-tool-policy:
     name: semantic-kernel-tool-policy
@@ -307,13 +307,16 @@ jobs:
           version: "latest"
 
       - name: Install dependencies
-        run: uv sync --extra dev
+        # `--no-build` (S8541) can't be used here: pybars4 (a transitive dep
+        # of semantic-kernel's templating) ships no wheel on PyPI, sdist only,
+        # so it must be built from source. `--locked` (S8544) still applies.
+        run: uv sync --extra dev --locked
 
       - name: Run smoke tests
-        run: uv run pytest tests/ -v
+        run: uv run --locked pytest tests/ -v
 
       - name: Run offline demo
-        run: uv run python src/main.py
+        run: uv run --locked python src/main.py
 
   strands-agents-tool-policy:
     name: strands-agents-tool-policy
@@ -329,10 +332,10 @@ jobs:
           version: "latest"
 
       - name: Install dependencies
-        run: uv sync --extra dev
+        run: uv sync --extra dev --locked --no-build
 
       - name: Run smoke tests
-        run: uv run pytest tests/ -v
+        run: uv run --locked --no-build pytest tests/ -v
 
       - name: Run offline demo
-        run: uv run python src/main.py
+        run: uv run --locked --no-build python src/main.py

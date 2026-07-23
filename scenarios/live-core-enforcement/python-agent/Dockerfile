@@ -8,11 +8,24 @@
 FROM python:3.12-slim
 
 # Build deps for the native (PyO3) extension built by maturin, plus the Rust
-# toolchain it needs — installed in one layer.
+# toolchain it needs — installed in one layer. The rustup-init binary is
+# fetched over TLS and its checksum verified against rustup's published
+# SHA-256 digest before execution, rather than piping curl straight to sh.
+ARG TARGETARCH
 RUN apt-get update \
     && apt-get install -y --no-install-recommends build-essential curl protobuf-compiler \
     && rm -rf /var/lib/apt/lists/* \
-    && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+    && case "$TARGETARCH" in \
+         amd64) RUST_ARCH=x86_64-unknown-linux-gnu ;; \
+         arm64) RUST_ARCH=aarch64-unknown-linux-gnu ;; \
+         *) echo "unsupported TARGETARCH: $TARGETARCH" >&2; exit 1 ;; \
+       esac \
+    && curl --proto '=https' --tlsv1.2 -sSfO "https://static.rust-lang.org/rustup/dist/${RUST_ARCH}/rustup-init" \
+    && curl --proto '=https' --tlsv1.2 -sSfO "https://static.rust-lang.org/rustup/dist/${RUST_ARCH}/rustup-init.sha256" \
+    && sha256sum -c rustup-init.sha256 \
+    && chmod +x rustup-init \
+    && ./rustup-init -y \
+    && rm rustup-init rustup-init.sha256
 ENV PATH="/root/.cargo/bin:${PATH}"
 
 # Install maturin (builds the native extension) and the published SDK in one
@@ -20,8 +33,10 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 # agent-assembly` is enough; against a source checkout, build the extension with
 # maturin. We install from PyPI here and rely on the platform wheel's native
 # layer; if you are developing against a local checkout, mount it and run
-# `maturin develop` instead (see README).
-RUN pip install --no-cache-dir maturin "agent-assembly==0.0.1rc6"
+# `maturin develop` instead (see README). Versions are pinned and
+# `--only-binary=:all:` forces wheel-only installs (both ship wheels for this
+# platform), so no arbitrary sdist build script runs during install.
+RUN pip install --no-cache-dir --only-binary=:all: "maturin==1.14.1" "agent-assembly==0.0.1rc6"
 
 WORKDIR /app
 COPY agent.py /app/agent.py
