@@ -99,14 +99,21 @@ jobs:
           ENTRY: ${{ matrix.sample.entry }}
         run: |
           set -euo pipefail
+          # `--no-build` is omitted for python/semantic-kernel-tool-policy: its
+          # transitive dep pybars4 ships no wheel on PyPI (sdist only), so it
+          # must be built from source. `--locked` still applies everywhere.
+          no_build_flag="--no-build"
+          if [[ "$PWD" == *"semantic-kernel-tool-policy"* ]]; then
+            no_build_flag=""
+          fi
           case "$RUNNER" in
             uv-pytest)
-              uv sync --extra dev
-              uv run pytest tests/ -v
+              uv sync --extra dev --locked $no_build_flag
+              uv run --locked $no_build_flag pytest tests/ -v
               ;;
             uv-main)
-              uv sync --extra dev
-              uv run python "$ENTRY" --mock
+              uv sync --extra dev --locked $no_build_flag
+              uv run --locked $no_build_flag python "$ENTRY" --mock
               ;;
             py-script)
               python "$ENTRY"
@@ -149,7 +156,7 @@ jobs:
           set -euo pipefail
           case "$RUNNER" in
             pnpm-test)
-              pnpm install
+              pnpm install --ignore-scripts
               pnpm test
               ;;
             node-script)

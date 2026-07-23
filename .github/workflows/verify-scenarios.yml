@@ -155,7 +155,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install PyYAML for policy validation
-        run: pip install pyyaml
+        run: "pip install --only-binary=:all: 'pyyaml==6.0.3'"
       - name: Validate example code + policy shape (no gateway required)
         run: python scenarios/live-core-enforcement/scripts/check-offline.py
       - name: Validate docker-compose config
@@ -246,8 +246,8 @@ jobs:
         run: |
           if [ -d "scenarios/policy-enforcement/python" ]; then
             cd scenarios/policy-enforcement/python
-            uv sync --extra dev
-            uv run pytest tests/ -v
+            uv sync --extra dev --locked --no-build
+            uv run --locked --no-build pytest tests/ -v
           else
             echo "scenarios/policy-enforcement/python not yet present — skipping"
           fi
@@ -273,7 +273,7 @@ jobs:
         run: |
           if [ -d "scenarios/policy-enforcement/node" ]; then
             cd scenarios/policy-enforcement/node
-            pnpm install
+            pnpm install --ignore-scripts
             pnpm run build
           else
             echo "scenarios/policy-enforcement/node not yet present — skipping"
@@ -324,8 +324,8 @@ jobs:
         run: |
           if [ -d "scenarios/approval-gates/python" ]; then
             cd scenarios/approval-gates/python
-            uv sync --extra dev
-            uv run pytest tests/ -v
+            uv sync --extra dev --locked --no-build
+            uv run --locked --no-build pytest tests/ -v
           else
             echo "scenarios/approval-gates/python not yet present — skipping"
           fi
@@ -351,7 +351,7 @@ jobs:
         run: |
           if [ -d "scenarios/approval-gates/node" ]; then
             cd scenarios/approval-gates/node
-            pnpm install
+            pnpm install --ignore-scripts
             pnpm run build
           else
             echo "scenarios/approval-gates/node not yet present — skipping"
