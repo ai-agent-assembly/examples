@@ -6,7 +6,7 @@ on:
       - "python/**"
   push:
     branches:
-      - master
+      - main
     paths:
       - "python/**"
 

@@ -6,7 +6,7 @@ config. When a fact here duplicates a sub-project's `README.md`, `pyproject.toml
 `package.json`, or a CI workflow, treat those as the source of truth and update
 them, not just this file.
 
-Org-wide baseline: https://github.com/ai-agent-assembly/.github/blob/master/CLAUDE.md (org-universal conventions this file doesn't repeat).
+Org-wide baseline: https://github.com/ai-agent-assembly/.github/blob/HEAD/CLAUDE.md (org-universal conventions this file doesn't repeat).
 
 ## What this repo is
 
@@ -151,12 +151,12 @@ neither is sufficient alone.
 
 ## Repo-specific gotchas
 
-- **Default branch is `master`.** A `main` branch also exists but is **stale**
-  (`origin/HEAD` may still point at it) — **never** target or merge into `main`.
-  All branches and PRs base on `master`.
+- **Default branch is `main`.** Migrated from `master` per ADR 0016
+  (AAASM-4963); the old `master` name 301-redirects for web/clone URLs but is
+  no longer a branch — **never recreate it**. All branches and PRs base on `main`.
 - **Canonical remote** points at `ai-agent-assembly/examples` — here
   that is **`origin`** (unlike the core monorepo, where it's `remote`). Confirm with
-  `git remote -v`; scope changes against `<canonical>/master`.
+  `git remote -v`; scope changes against `<canonical>/main`.
 - **npm dependency fixes:** pin with `^` or a precise version (e.g. `^25.9.3`,
   `0.0.1-beta.3`), **never a bare `>=`** — a bare floor lets Dependabot/resolvers
   drag in a major bump and silently break an example.

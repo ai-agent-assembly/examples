@@ -2,7 +2,7 @@ name: Verify Go examples
 
 on:
   push:
-    branches: [master]
+    branches: [main]
     paths:
       - "go/**"
       # The lint job scans all of scenarios/ (gofmt -l go scenarios; go vet over
@@ -13,7 +13,7 @@ on:
       - "scenarios/**/go.sum"
       - ".github/workflows/verify-go.yml"
   pull_request:
-    branches: [master]
+    branches: [main]
     paths:
       - "go/**"
       # Mirror the push filter: the lint job scans all of scenarios/, so any Go

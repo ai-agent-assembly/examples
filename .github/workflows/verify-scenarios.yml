@@ -7,7 +7,7 @@ on:
       - ".github/workflows/verify-scenarios.yml"
   push:
     branches:
-      - master
+      - main
     paths:
       - "scenarios/**"
   # Opt-in trigger for the real end-to-end live-core-enforcement run, which needs

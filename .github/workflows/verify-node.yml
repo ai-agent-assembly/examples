@@ -7,7 +7,7 @@ on:
       - ".github/workflows/verify-node.yml"
   push:
     branches:
-      - master
+      - main
     paths:
       - "node/**"
 

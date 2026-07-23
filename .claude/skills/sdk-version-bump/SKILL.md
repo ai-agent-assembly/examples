@@ -135,14 +135,14 @@ generator should own.
 
 ### 6. Commit, branch, PR
 
-- **Branch** off `master` (never `main` — it is stale here):
+- **Branch** off `main` (the default branch since the ADR 0016 migration):
   `<version-or-phase>/<ticket>/<type>/<short_summary>` (e.g.
   `v0.0.1/AAASM-4728/deps/bump_sdk`).
 - **Commits** are gitmoji, one logical unit each — e.g. the `sdk-versions.yaml`
   bump, the regenerated manifests/READMEs, and each ecosystem's lockfile regen as
   separate commits. Bisectable; the tree passes the audit at every commit.
 - **Canonical remote is `origin`** (this repo, unlike the core monorepo).
-- **PR** title `[<ticket>] <emoji> (<scope>): <summary>`, base `master`, body per
+- **PR** title `[<ticket>] <emoji> (<scope>): <summary>`, base `main`, body per
   `.github/PULL_REQUEST_TEMPLATE.md`; ≥1 Pioneer-team approval. CI
   (`example-metadata-check.yml`) re-runs the generator, the snippet extractor, the
   `--check` audit, and the generator unit tests, and fails on any drift.

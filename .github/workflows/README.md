@@ -13,8 +13,8 @@ This directory contains the GitHub Actions workflows that verify the examples in
 | `verify-all-samples.yml`      | Weekly schedule              | Discovers and runs every sample in the repo, catching drift the per-PR path filters miss |
 | `verify-live.yml`             | Daily schedule / manual dispatch | Runs a real (non-mock) SDK driver against a real local gateway, one job per language |
 | `example-metadata-check.yml`  | PR affecting SDK version metadata or manifests | SDK version pins and generated README blocks aren't out of sync with `metadata/sdk-versions.yaml` |
-| `codeql.yml`                  | PR / push to `master` / weekly schedule | Static security analysis |
-| `proof-html.yml`              | Push to `master` / manual dispatch | Rendered HTML/docs links are valid |
+| `codeql.yml`                  | PR / push to `main` / weekly schedule | Static security analysis |
+| `proof-html.yml`              | Push to `main` / manual dispatch | Rendered HTML/docs links are valid |
 | `auto-assign.yml`             | Issue / PR opened            | Auto-assigns an owner |
 
 ## Design principles for CI workflows
