@@ -31,7 +31,7 @@
       "protobufjs"
     ],
     "overrides": {
-      "js-yaml": "^4.3.0",
+      "js-yaml": "^4.3.1",
       "@modelcontextprotocol/sdk": "^1.30.0",
       "@hono/node-server": "^2.0.5",
       "fast-uri": "^3.1.5",
