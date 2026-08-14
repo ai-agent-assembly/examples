@@ -60,9 +60,15 @@ API_TARBALL="aasm-api-${AASM_VERSION}-linux-${ARCH}.tar.gz"
 echo "Installing the aasm CLI and aa-api-server from ${RELEASE_REPO}@${AASM_VERSION} (linux-${ARCH})..."
 pushd "${INSTALL_DIR}" >/dev/null
 
-curl -fsSL -O "${BASE_URL}/SHA256SUMS"
-curl -fsSL -O "${BASE_URL}/${CLI_TARBALL}"
-curl -fsSL -O "${BASE_URL}/${API_TARBALL}"
+# --proto '=https' rejects a non-HTTPS URL outright and --proto-redir '=https'
+# holds that across the redirect chain, which -L follows (the release download
+# URL redirects to objects.githubusercontent.com). Without the second flag a
+# redirect could downgrade the transport for a binary this script then executes.
+CURL_OPTS=(--fail --silent --show-error --location --proto '=https' --proto-redir '=https' --tlsv1.2 --remote-name)
+
+curl "${CURL_OPTS[@]}" "${BASE_URL}/SHA256SUMS"
+curl "${CURL_OPTS[@]}" "${BASE_URL}/${CLI_TARBALL}"
+curl "${CURL_OPTS[@]}" "${BASE_URL}/${API_TARBALL}"
 
 # Verify before extracting. --ignore-missing lets one SHA256SUMS cover the whole
 # release while this lane downloads two of its assets.
