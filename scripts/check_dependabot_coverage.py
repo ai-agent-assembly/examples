@@ -160,124 +160,132 @@ def parse_dependabot_config(text: str) -> list[UpdateEntry]:
     for an entry key.
 
     Fails loudly on a structure it does not recognise, per
-    :class:`DependabotConfigError`.
+    :class:`DependabotConfigError`. Split into three stages — isolate the
+    ``updates:`` block, cut it into per-entry chunks, read each chunk — because
+    a parser whose correctness is load-bearing should be reviewable in pieces.
     """
-    lines = text.splitlines()
+    block = _updates_block(text.splitlines())
+    chunks = _split_entries(block)
+    return [_parse_entry(chunk) for chunk in chunks]
 
-    updates_index: int | None = None
-    for index, raw in enumerate(lines):
-        if raw.rstrip() == "updates:":
-            updates_index = index
-            break
-    if updates_index is None:
-        raise DependabotConfigError("no top-level 'updates:' key found")
 
-    entries: list[UpdateEntry] = []
-    current_ecosystem: str | None = None
-    current_directories: list[str] = []
-    current_line = 0
-    entry_indent: int | None = None
-    collecting_directories = False
+def _updates_block(lines: list[str]) -> list[tuple[int, str]]:
+    """Return the ``(line number, text)`` pairs sitting under ``updates:``.
 
-    def flush() -> None:
-        nonlocal current_ecosystem, current_directories, collecting_directories
-        if current_ecosystem is None and not current_directories:
-            return
-        if current_ecosystem is None:
-            raise DependabotConfigError(
-                f"update entry at line {current_line} has no 'package-ecosystem'"
-            )
-        if not current_directories:
-            raise DependabotConfigError(
-                f"update entry '{current_ecosystem}' at line {current_line} "
-                "declares neither 'directory' nor 'directories'"
-            )
-        entries.append(UpdateEntry(current_ecosystem, current_directories, current_line))
-        current_ecosystem = None
-        current_directories = []
-        collecting_directories = False
+    Blank lines and comments are dropped; the block ends at the next key in
+    column 0.
+    """
+    block: list[tuple[int, str]] = []
+    inside = False
 
-    for offset, raw in enumerate(lines[updates_index + 1 :], start=updates_index + 2):
+    for number, raw in enumerate(lines, start=1):
+        if not inside:
+            inside = raw.rstrip() == "updates:"
+            continue
         stripped = _strip_comment(raw).rstrip()
         if not stripped.strip():
             continue
-
-        indent = _indent_of(stripped)
-        content = stripped.strip()
-
-        # A new top-level key ends the `updates:` block.
-        if indent == 0:
+        if _indent_of(stripped) == 0:
             break
+        block.append((number, stripped))
 
-        # Start of a new update entry: `  - package-ecosystem: "npm"`.
-        if content.startswith("- ") and (entry_indent is None or indent == entry_indent):
+    if not inside:
+        raise DependabotConfigError("no top-level 'updates:' key found")
+    return block
+
+
+def _split_entries(block: list[tuple[int, str]]) -> list[list[tuple[int, str]]]:
+    """Cut the ``updates:`` block into one chunk per ``- `` item."""
+    chunks: list[list[tuple[int, str]]] = []
+    entry_indent: int | None = None
+
+    for number, line in block:
+        indent = _indent_of(line)
+        content = line.strip()
+        # A `- ` deeper than the entry indent is a list item belonging to the
+        # current entry (a `directories:` path, an `ignore:` rule), so only the
+        # ones at the entry indent open a new chunk.
+        if content.startswith("- "):
             if entry_indent is None:
                 entry_indent = indent
-            flush()
-            current_line = offset
-            inner = content[2:].strip()
-            if inner:
-                key, sep, value = inner.partition(":")
-                if not sep:
-                    raise DependabotConfigError(
-                        f"line {offset}: expected 'key: value', found {inner!r}"
-                    )
-                key = key.strip()
-                if key == "package-ecosystem":
-                    current_ecosystem = _unquote(value)
-                elif key == "directory":
-                    current_directories.append(_normalise_directory(_unquote(value)))
-                elif key == "directories":
-                    collecting_directories = True
-                    continue
-            collecting_directories = False
-            continue
+            if indent == entry_indent:
+                chunks.append([])
 
-        if entry_indent is None:
-            # Content under `updates:` that is not an entry — unrecognised.
+        if not chunks:
             raise DependabotConfigError(
-                f"line {offset}: expected an update entry, found {content!r}"
+                f"line {number}: expected an update entry, found {content!r}"
             )
+        chunks[-1].append((number, line))
 
-        key_indent = entry_indent + 2
-
-        # A `directories:` list item: `      - "/node/*"`.
-        if collecting_directories and indent > key_indent and content.startswith("- "):
-            current_directories.append(_normalise_directory(_unquote(content[2:])))
-            continue
-
-        if indent == key_indent:
-            collecting_directories = False
-            key, sep, value = content.partition(":")
-            if not sep:
-                raise DependabotConfigError(f"line {offset}: expected 'key: value', found {content!r}")
-            key = key.strip()
-            value = value.strip()
-            if key == "package-ecosystem":
-                current_ecosystem = _unquote(value)
-            elif key == "directory":
-                current_directories.append(_normalise_directory(_unquote(value)))
-            elif key == "directories":
-                if value:
-                    raise DependabotConfigError(
-                        f"line {offset}: inline 'directories' lists are not supported"
-                    )
-                collecting_directories = True
-            # Other entry keys (schedule, labels, ignore, ...) are not this
-            # gate's concern and are skipped by indentation below.
-            continue
-
-        # Deeper than an entry key -> belongs to schedule/ignore/labels/etc.
-        if indent > key_indent:
-            continue
-
-        raise DependabotConfigError(f"line {offset}: unexpected indentation in {content!r}")
-
-    flush()
-
-    if not entries:
+    if not chunks:
         raise DependabotConfigError("'updates:' contains zero entries")
-    return entries
+    return chunks
+
+
+def _parse_entry(chunk: list[tuple[int, str]]) -> UpdateEntry:
+    """Read one update entry's ecosystem and directories."""
+    first_number, first_line = chunk[0]
+    entry_indent = _indent_of(first_line)
+    key_indent = entry_indent + 2
+
+    ecosystem: str | None = None
+    directories: list[str] = []
+    collecting = False
+
+    for number, line in chunk:
+        indent = _indent_of(line)
+        content = line.strip()
+
+        # `  - package-ecosystem: "npm"` carries its first key inline.
+        if indent == entry_indent and content.startswith("- "):
+            content = content[2:].strip()
+            indent = key_indent
+            if not content:
+                continue
+
+        # A `directories:` list item sits deeper than the entry's own keys.
+        if collecting and indent > key_indent and content.startswith("- "):
+            directories.append(_normalise_directory(_unquote(content[2:])))
+            continue
+
+        # Deeper than an entry key -> schedule/ignore/labels internals.
+        if indent != key_indent:
+            continue
+
+        collecting = False
+        key, value = _split_key(number, content)
+        if key == "package-ecosystem":
+            ecosystem = _unquote(value)
+        elif key == "directory":
+            directories.append(_normalise_directory(_unquote(value)))
+        elif key == "directories":
+            if value:
+                raise DependabotConfigError(
+                    f"line {number}: inline 'directories' lists are not supported"
+                )
+            collecting = True
+
+    return _validated_entry(ecosystem, directories, first_number)
+
+
+def _split_key(number: int, content: str) -> tuple[str, str]:
+    key, sep, value = content.partition(":")
+    if not sep:
+        raise DependabotConfigError(f"line {number}: expected 'key: value', found {content!r}")
+    return key.strip(), value.strip()
+
+
+def _validated_entry(
+    ecosystem: str | None, directories: list[str], line: int
+) -> UpdateEntry:
+    if ecosystem is None:
+        raise DependabotConfigError(f"update entry at line {line} has no 'package-ecosystem'")
+    if not directories:
+        raise DependabotConfigError(
+            f"update entry '{ecosystem}' at line {line} declares neither "
+            "'directory' nor 'directories'"
+        )
+    return UpdateEntry(ecosystem, directories, line)
 
 
 def _normalise_directory(value: str) -> str:
