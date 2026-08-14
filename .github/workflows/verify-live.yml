@@ -82,7 +82,8 @@ permissions:
 env:
   # aa-api-server serves the /api/v1/* REST surface here; start-aasm.sh
   # installs that binary from the release alongside the CLI.
-  AA_API_BASE: "http://127.0.0.1:7700"
+  # See start-aasm.sh for why this is 7391 and not 7700 (AAASM-5675).
+  AA_API_BASE: "http://127.0.0.1:7391"
   # The gateway gRPC endpoint the SDKs register against.
   AA_GATEWAY_URL: "http://127.0.0.1:50051"
 

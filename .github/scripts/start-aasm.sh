@@ -24,15 +24,29 @@
 # brings that surface up is what the health check below measures; this script
 # does not assert it in advance.
 #
-# STILL RC-GATED: the real assertion this lane makes (an agent becomes visible in
-# /api/v1/agents) also depends on SDK/transport fixes tracked outside this repo —
-# AAASM-4447, AAASM-4467, AAASM-4468, AAASM-4469, AAASM-4446. Those are not
-# addressed here, so the lane is expected to stay red until they land. The point
-# of this change is that it now fails at the condition it documents rather than
-# at a missing package manager.
+# TWO LOCAL BUGS, NOT ONE. The first fix here (tarballs instead of Homebrew)
+# replaced `brew: command not found` with a health probe on the wrong port: the
+# gateway binds 7391 and the probe polled 7700 for the full 120 s. The lane was
+# red for a second repo-local reason, and both the script and the PR reported it
+# as the rc-gate below. Found in review; the port is corrected above.
+#
+# WHAT IS ACTUALLY RC-GATED: the assertion this lane makes at the end — that an
+# agent becomes visible in /api/v1/agents — depends on SDK/transport fixes
+# tracked outside this repo (AAASM-4447, AAASM-4467, AAASM-4468, AAASM-4469,
+# AAASM-4446). Those are not addressed here.
+#
+# What this script must NOT do is claim which of those a given red run hit. It
+# has twice been wrong about that, in the same direction each time: a local
+# defect wearing the label of an external blocker. So it reports what it probed
+# and stops there.
 set -euo pipefail
 
-AA_API_BASE="${AA_API_BASE:-http://127.0.0.1:7700}"
+# 7391, not 7700. `aasm start --mode local` embeds the API on the CLI's own
+# --port, which defaults to 7391; 7700 is the default for the STANDALONE
+# aa-api-server binary, which this lane downloads but never runs directly. The
+# probe polled 7700 for the full 120 s while the gateway was healthy on 7391
+# within ~200 ms, and the timeout was then reported as the rc-gate (AAASM-5675).
+AA_API_BASE="${AA_API_BASE:-http://127.0.0.1:7391}"
 
 # Keep aligned with metadata/sdk-versions.yaml, which pins the SDK versions the
 # live drivers install. A gateway from a different release than the SDK under
@@ -103,7 +117,13 @@ done
 
 if [[ $ELAPSED -ge $MAX_WAIT ]]; then
   echo "ERROR: aasm gateway did not become healthy within ${MAX_WAIT}s." >&2
-  echo "       This is the rc-gated failure described in verify-live.yml's header." >&2
+  echo "       Probed: ${AA_API_BASE}/api/v1/health" >&2
+  echo "       Read the gateway output above for the address it actually bound." >&2
+  # This used to read "This is the rc-gated failure described in verify-live.yml's
+  # header." It was not: the probe was on the wrong port, and the script asserted
+  # a cause it has no way to determine. A timeout says the probe did not succeed,
+  # nothing more — so it now prints what it probed and points at the evidence
+  # instead of naming a culprit (AAASM-5675).
   exit 1
 fi
 
