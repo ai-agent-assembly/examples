@@ -20,7 +20,7 @@ agent's tool calls with Agent Assembly.
 ## What this example demonstrates
 
 - Defining tools that implement LangChainGo's `tools.Tool` interface
-- Wrapping those tools with `assembly.WrapTools` so every tool call is checked
+- Wrapping those tools with `assembly.WrapTools` so each tool call is checked
   against a governance policy before it runs
 - That a governed tool **is still a valid LangChainGo tool** — the wrapping is
   drop-in, because `tools.Tool` and `assembly.Tool` share the same shape

@@ -108,7 +108,7 @@ the real gateway in production is **not** a matter of passing `ctx.client` to
 **The supported production path is a framework adapter.** Run your tools through
 a supported AI framework (LangChain, LlamaIndex, CrewAI, …). On startup
 `init_assembly()` auto-detects the installed adapter and wires the real
-gateway-backed interceptor into that framework's tool-execution path, so every
+gateway-backed interceptor into that framework's tool-execution path, so each
 tool call is checked against the gateway with no per-tool wrapper and no
 interceptor argument of your own. The `llamaindex-tool-policy` example shows
 this end to end — it registers the native `LlamaIndexAdapter` and lets
