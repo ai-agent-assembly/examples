@@ -89,7 +89,7 @@ uv run pytest tests/ -v
 
 1. Start an Agent Assembly gateway or use your SaaS workspace URL.
 2. Copy `.env.example` to `.env` and fill in your credentials.
-3. Extend `main.py` to create a real `agents.Agent` with your `FunctionTool` instances, and set your `OPENAI_API_KEY`. Agent Assembly's `OpenAIAgentsPatch` intercepts every tool call automatically once `init_assembly()` has run.
+3. Extend `main.py` to create a real `agents.Agent` with your `FunctionTool` instances, and set your `OPENAI_API_KEY`. Agent Assembly's `OpenAIAgentsPatch` intercepts each tool call automatically once `init_assembly()` has run.
 4. Run with gateway environment variables:
 
 ```bash

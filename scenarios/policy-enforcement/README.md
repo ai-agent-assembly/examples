@@ -1,6 +1,6 @@
 # Policy Enforcement Scenario
 
-Demonstrates how a shared `policy.yaml` file drives allow/deny decisions for every
+Demonstrates how a shared `policy.yaml` file drives allow/deny decisions for each
 tool call made by an agent — with no gateway, no API key, and no AI framework required.
 
 ## What you will see
