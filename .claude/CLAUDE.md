@@ -132,22 +132,38 @@ neither is sufficient alone.
   the quarantine is expressed at the workflow level (with a header comment naming
   the blockers). It cannot pass until the rc-pending SDK/transport fixes land
   (AAASM-4447 core protocol gap, AAASM-4446 Python cp313/native, AAASM-4467/4468
-  Node, AAASM-4469 Go) **and** the agent-assembly release pipeline publishes
-  `aa-api-server`, which serves `/api/v1/*` (AAASM-4449). When those land, drop
-  `continue-on-error` so the lane becomes a hard, red-on-regression gate — and
-  update this section. Per the Verification policy above, the quarantine names
-  open tickets and must never be silently converted into a permanent skip.
+  Node, AAASM-4469 Go). When those land, drop `continue-on-error` so the lane
+  becomes a hard, red-on-regression gate — and update this section. Per the
+  Verification policy above, the quarantine names open tickets and must not be
+  silently converted into a permanent skip.
+
+- **`aa-api-server` is published — AAASM-4449 is no longer a blocker for this
+  lane.** This section previously listed it as a second gate. The agent-assembly
+  release has shipped an `aa-api-server` binary since v0.0.1-rc.4:
+  `components.json` lists an `api` component for linux-amd64/arm64, and
+  `aasm-api-<version>-linux-<arch>.tar.gz` contains that binary.
+  `.github/scripts/start-aasm.sh` installs it alongside the CLI from the release
+  tarballs (it used to `brew install`, which exits 127 on `ubuntu-latest` —
+  AAASM-5675).
+
+- **The quarantine is partial, and that is the intended behaviour.** Job-level
+  `continue-on-error` neutralises the *workflow run's* conclusion; the *per-job
+  check runs* still conclude `failure`. Measured on run 31779321984 (main @
+  `9edecae`): run conclusion `success`, three job conclusions `failure`. So this
+  lane shows red on `commits/<sha>/check-runs` while its scheduled run reports
+  green. Do not resolve that by pushing `continue-on-error` down to the step
+  level — that hides the rc-gated state, which the Verification policy above
+  forbids. Tracked on AAASM-5675.
 
 - **Why `scenarios/live-core-enforcement`'s `live-core-enforcement-live` job
   stays `workflow_dispatch`-only** (in `verify-scenarios.yml`): a *distinct*
-  blocker — it brings the stack up via `docker compose` using the
-  `ghcr.io/ai-agent-assembly/aa-gateway` **container image**, which is not
-  published (only `aa-runtime` + SDK base images are). That container-image gap
-  appears untracked (AAASM-3791 fixed only the scenario's `start.sh` bug; the
-  distinct `aa-api-server` *binary* gap is AAASM-4449) and warrants a follow-up
-  ticket against agent-assembly's image-publishing pipeline. `verify-live.yml`
-  sidesteps it by using the `aasm start --mode local` binary path instead of the
-  container image.
+  reason. The `ghcr.io/ai-agent-assembly/aa-gateway` **container image** its
+  docker-compose stack pulls **is** published (tagged per SDK release, e.g.
+  `v0.0.1-rc.6`, plus `latest`), so image availability is no longer the blocker
+  (AAASM-4743). It stays `workflow_dispatch`-only because `verify-live.yml`
+  already covers this scenario's live drivers on a daily schedule via the
+  lighter `aasm start --mode local` binary path; standing the full
+  docker-compose stack up too would be redundant CI weight.
 
 ## Repo-specific gotchas
 

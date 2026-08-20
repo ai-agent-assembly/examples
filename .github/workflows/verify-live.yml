@@ -18,15 +18,36 @@
 #
 # QUARANTINED — WHY THE JOBS ARE continue-on-error: true
 # ------------------------------------------------------
-# The real assertion cannot pass yet. It is rc-gated on BOTH:
-#   * rc-pending SDK/transport fixes — AAASM-4447 (core REST/gRPC protocol gap),
-#     AAASM-4467 (Node native binding never published), AAASM-4468 (Node no-op
-#     register()), AAASM-4469 (Go Init() unconditionally failing), and the
-#     Python cp313 wheel / native registration gap (AAASM-4446); AND
-#   * a published gateway/API surface — AAASM-4449: the agent-assembly release
-#     pipeline does not yet ship `aa-api-server`, the process that serves
-#     /api/v1/* (including /api/v1/agents). Until it is published, `aasm start
-#     --mode local` cannot bring up the REST surface this lane asserts against.
+# The real assertion cannot pass yet. It is rc-gated on the rc-pending
+# SDK/transport fixes — AAASM-4447 (core REST/gRPC protocol gap), AAASM-4467
+# (Node native binding unpublished), AAASM-4468 (Node no-op register()),
+# AAASM-4469 (Go Init() unconditionally failing), and the Python cp313 wheel /
+# native registration gap (AAASM-4446).
+#
+# AAASM-4449 was cited here as a second blocker — "the release pipeline does not
+# yet ship aa-api-server". That is no longer accurate: the agent-assembly release
+# has published an `aa-api-server` binary since v0.0.1-rc.4. Its
+# `components.json` lists an `api` component for linux-amd64 and linux-arm64, and
+# `aasm-api-<version>-linux-<arch>.tar.gz` contains that binary.
+# `.github/scripts/start-aasm.sh` now installs it alongside the CLI. Whether
+# `aasm start --mode local` brings the REST surface up is measured by that
+# script's health check rather than asserted in advance here.
+#
+# WHAT continue-on-error ACTUALLY SUPPRESSES (AAASM-5675)
+# -------------------------------------------------------
+# Measured on run 31779321984 (main @ 9edecae): the workflow RUN concluded
+# `success`, while each of the three live JOBS concluded `failure`. Job-level
+# `continue-on-error` neutralises the run's conclusion; it leaves the per-job
+# check runs red. A reader of `commits/<sha>/check-runs` — the commit status UI,
+# and a reviewer diffing a PR's failures against its base — sees three failures
+# on main.
+#
+# So the quarantine is partial by construction: it stops the scheduled run from
+# reporting failure, and it does not stop the branch from presenting as red.
+# Treat that as a known property of this mechanism, not as a regression, and do
+# not "fix" it by moving continue-on-error down to the step level — that would
+# make the lane green and its rc-gated state invisible, which is the substitution
+# this repo's Verification policy exists to stop.
 #
 # This repo has no `rc_pending` pytest mechanism, so the quarantine is expressed
 # at the workflow level: each live job is `continue-on-error: true`. When the
@@ -59,8 +80,10 @@ permissions:
   contents: read
 
 env:
-  # aa-api-server serves the /api/v1/* REST surface here (see AAASM-4449).
-  AA_API_BASE: "http://127.0.0.1:7700"
+  # aa-api-server serves the /api/v1/* REST surface here; start-aasm.sh
+  # installs that binary from the release alongside the CLI.
+  # See start-aasm.sh for why this is 7391 and not 7700 (AAASM-5675).
+  AA_API_BASE: "http://127.0.0.1:7391"
   # The gateway gRPC endpoint the SDKs register against.
   AA_GATEWAY_URL: "http://127.0.0.1:50051"
 
@@ -69,7 +92,7 @@ jobs:
   live-python:
     name: "live: python (real init_assembly)"
     runs-on: ubuntu-latest
-    # QUARANTINED: rc-gated on AAASM-4446/4447 + AAASM-4449 (see file header).
+    # QUARANTINED: rc-gated on AAASM-4446/4447 (see file header).
     continue-on-error: true
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
@@ -100,7 +123,7 @@ jobs:
   live-node:
     name: "live: node (real initAssembly)"
     runs-on: ubuntu-latest
-    # QUARANTINED: rc-gated on AAASM-4447/4467/4468 + AAASM-4449 (see file header).
+    # QUARANTINED: rc-gated on AAASM-4447/4467/4468 (see file header).
     continue-on-error: true
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
@@ -137,7 +160,7 @@ jobs:
   live-go:
     name: "live: go (real assembly.Init)"
     runs-on: ubuntu-latest
-    # QUARANTINED: rc-gated on AAASM-4447/4469 + AAASM-4449 (see file header).
+    # QUARANTINED: rc-gated on AAASM-4447/4469 (see file header).
     continue-on-error: true
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
