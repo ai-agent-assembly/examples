@@ -23,7 +23,7 @@ A LangChain.js-style agent example showing how to integrate the Agent Assembly N
 ## What this example demonstrates
 
 - Wrapping tools with `withAssembly()` + a custom `GatewayClient` that enforces a local policy
-- Governing every tool call through a local policy before execution
+- Governing each tool call through a local policy before execution
 - One **allowed** tool call (`get_weather`) — executes and logs output
 - One **denied** tool call (`delete_file`) — blocked at the policy layer
 - A denied tool throws `PolicyViolationError`; runs fully offline (no gateway, no `@langchain/core`)
