@@ -30,7 +30,7 @@ Useful when you cannot modify application code or want a second layer of defense
 
 ### 3. eBPF probes (`aa-ebpf`)
 
-Kernel-level hooks attached to SSL library uprobes and process exec/file syscalls. Catch everything, including attempts to bypass the SDK or proxy layers. Linux-only; requires elevated privileges.
+Kernel-level hooks attached to SSL library uprobes and process exec/file syscalls. Catches what the SDK or proxy layers miss, including bypass attempts. Linux-only; requires elevated privileges.
 
 ## The gateway
 
@@ -53,7 +53,7 @@ When a tool call matches an approval-required rule, the gateway pauses execution
 
 ### Audit and trace
 
-Every tool call that passes through Agent Assembly generates an audit event: agent identity, tool name, arguments (optionally redacted), timestamp, policy decision, and outcome. Events are written to the audit log and can be forwarded to external observability systems.
+Each tool call that passes through Agent Assembly generates an audit event: agent identity, tool name, arguments (optionally redacted), timestamp, policy decision, and outcome. Events are written to the audit log and can be forwarded to external observability systems.
 
 ### Budget controls
 
