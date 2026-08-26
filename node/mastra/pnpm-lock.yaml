@@ -17,10 +17,10 @@ importers:
     dependencies:
       '@agent-assembly/sdk':
         specifier: 0.0.1-rc.6
-        version: 0.0.1-rc.6(@mastra/core@1.59.0(@bufbuild/protobuf@2.12.1)(@grpc/grpc-js@1.14.4)(express@5.2.1)(zod@4.4.3))
+        version: 0.0.1-rc.6(@mastra/core@1.61.0(@bufbuild/protobuf@2.12.1)(@grpc/grpc-js@1.14.4)(express@5.2.1)(zod@4.4.3))
       '@mastra/core':
-        specifier: ^1.59.0
-        version: 1.59.0(@bufbuild/protobuf@2.12.1)(@grpc/grpc-js@1.14.4)(express@5.2.1)(zod@4.4.3)
+        specifier: ^1.61.0
+        version: 1.61.0(@bufbuild/protobuf@2.12.1)(@grpc/grpc-js@1.14.4)(express@5.2.1)(zod@4.4.3)
       zod:
         specifier: ^4.4.3
         version: 4.4.3
@@ -340,8 +340,8 @@ packages:
     resolution: {integrity: sha512-qC72D4+CDdjGqJvkFMMEAtancHUQ7/d/tAiHf64z8MopFDmcrtbcJuerDtFceuAfQJ2pDSfCKCtbqoGBNnwg0w==}
     engines: {node: '>=8'}
 
-  '@mastra/core@1.59.0':
-    resolution: {integrity: sha512-LMPkEtGcAeaCBq0IPPk/yuaaA/p8+BJjaZnNREkoJ4l7p5/CBpFqu3fHfMoBLoiabqCqF+5kaw6JFNztq/4Vtw==}
+  '@mastra/core@1.61.0':
+    resolution: {integrity: sha512-HaarHi6tn8mgm9/wtD/H51rJ8YbiQFTZMbFP3zUfcpL6/v5uZcIa9KzNH6pyKVjMB3cWZU+2Np3yCei1LKf+aQ==}
     engines: {node: '>=22.13.0'}
     peerDependencies:
       zod: ^3.25.0 || ^4.0.0
@@ -370,11 +370,11 @@ packages:
   '@oxc-project/types@0.133.0':
     resolution: {integrity: sha512-KzkdCd6Uxqnf6l3HOw1xfatAlUURA0g14cvBYFyJ5SaNOQbOUvBr9PKArcPcrNIeRsBdgcUzOGrhKveVpvOIGA==}
 
-  '@posthog/core@1.48.1':
-    resolution: {integrity: sha512-mxw31XdYgt/SnlwqLPAcltK67q+QmsiYjVLGQ4GbBc8OJ7O4yRFSDwAXt8QsokHokeyEZtTRWM6jDHL7LYMx1A==}
+  '@posthog/core@1.48.6':
+    resolution: {integrity: sha512-lvSO1nrxxakrAfB51fetHC29gSqdDtT+AyRrGlnc5nDSWhiBGtyqKNjDqsbnlTQoj14bAaWXS7RtzuGoTo5IsQ==}
 
-  '@posthog/types@1.404.1':
-    resolution: {integrity: sha512-i2Gei6ARfOSBeTN4s2yUP1p97s2UNI+1NWmtLjhnR/V6t3RFOfI1sBWKcJNWHjtoOCCWoAFU+PNPY6SgT2VtEQ==}
+  '@posthog/types@1.405.0':
+    resolution: {integrity: sha512-4rZ/taVXKQxs9Jrf7ZjlCRgrOSL69oKAgIWJQa5kRNJ6wll1UANbrJTSY+Su1e88LIG4zZVjKKKjyQHCkHdHcw==}
 
   '@protobufjs/aspromise@1.1.2':
     resolution: {integrity: sha512-j+gKExEuLmKwvz3OgROXtrJ2UG2x8Ch2YZUxahh+s1F2HZ+wAceUNLkvy6zKCPVRkU++ZWQrdxsUeQXmcg4uoQ==}
@@ -752,8 +752,8 @@ packages:
   character-entities@2.0.2:
     resolution: {integrity: sha512-shx7oQ0Awen/BRIdkjkvz54PnEEI/EjwXDSIZp86/KKdbafHh1Df/RYGBhn4hbe2+uKC9FnT5UCEdyPz3ai9hQ==}
 
-  chat@4.38.0:
-    resolution: {integrity: sha512-begN9W19/kSfMPz7hl0q8CNufs6TE7ddvIERhBPjShxWRvwI6+KGVGlr9cJsNoppjE3JywvHUYUuifZa5uj6IA==}
+  chat@4.38.1:
+    resolution: {integrity: sha512-FD6vNLT8clXHKhN3I1m+3Bn2nz0rsB6/bmNPsJeh6Cr7kwWLg0MYl2uor9YaKBp38F77sBRVKdYKVA6ihUby3w==}
     engines: {node: '>=20'}
     peerDependencies:
       ai: ^6.0.182 || ^7.0.0
@@ -1368,8 +1368,8 @@ packages:
     resolution: {integrity: sha512-u82N74LFzG8ca+dD8puPnplTXoGH4fTPpVGuIbt36G3qvNlkvfD0lEAZSxaly3KX8TS/L1A1gsCEmvKmBcVbkQ==}
     engines: {node: ^10 || ^12 || >=14}
 
-  posthog-node@5.49.1:
-    resolution: {integrity: sha512-kmjvzc7K8y+wQX7r3oIkLfKc2BzDJPXMJor5D8gAxpGE7qLNlk4HO2y1brc5587GxtdsZzqtGOxfBJXUBE2MiQ==}
+  posthog-node@5.49.2:
+    resolution: {integrity: sha512-+ihwLaB+zoP7mOdk8bOV8phWhoS/U9zG9tnA49B0BGLjNt9rQ05zp9DPnwSYjh9wZkN8zD2V+LMYV6W9pQosVg==}
     engines: {node: ^20.20.0 || >=22.22.0}
     peerDependencies:
       rxjs: ^7.0.0
@@ -1767,7 +1767,7 @@ snapshots:
   '@agent-assembly/runtime-linux-x64@0.0.1-rc.6':
     optional: true
 
-  '@agent-assembly/sdk@0.0.1-rc.6(@mastra/core@1.59.0(@bufbuild/protobuf@2.12.1)(@grpc/grpc-js@1.14.4)(express@5.2.1)(zod@4.4.3))':
+  '@agent-assembly/sdk@0.0.1-rc.6(@mastra/core@1.61.0(@bufbuild/protobuf@2.12.1)(@grpc/grpc-js@1.14.4)(express@5.2.1)(zod@4.4.3))':
     dependencies:
       '@bufbuild/protobuf': 2.12.1
       '@grpc/grpc-js': 1.14.4
@@ -1776,7 +1776,7 @@ snapshots:
       '@agent-assembly/runtime-darwin-x64': 0.0.1-rc.6
       '@agent-assembly/runtime-linux-arm64': 0.0.1-rc.6
       '@agent-assembly/runtime-linux-x64': 0.0.1-rc.6
-      '@mastra/core': 1.59.0(@bufbuild/protobuf@2.12.1)(@grpc/grpc-js@1.14.4)(express@5.2.1)(zod@4.4.3)
+      '@mastra/core': 1.61.0(@bufbuild/protobuf@2.12.1)(@grpc/grpc-js@1.14.4)(express@5.2.1)(zod@4.4.3)
 
   '@ai-sdk/provider-utils@3.0.30(zod@4.4.3)':
     dependencies:
@@ -1932,7 +1932,7 @@ snapshots:
     dependencies:
       '@lukeed/csprng': 1.1.0
 
-  '@mastra/core@1.59.0(@bufbuild/protobuf@2.12.1)(@grpc/grpc-js@1.14.4)(express@5.2.1)(zod@4.4.3)':
+  '@mastra/core@1.61.0(@bufbuild/protobuf@2.12.1)(@grpc/grpc-js@1.14.4)(express@5.2.1)(zod@4.4.3)':
     dependencies:
       '@a2a-js/sdk-v0_3': '@a2a-js/sdk@0.3.14(@bufbuild/protobuf@2.12.1)(@grpc/grpc-js@1.14.4)(express@5.2.1)'
       '@a2a-js/sdk-v1': '@a2a-js/sdk@1.0.1(@bufbuild/protobuf@2.12.1)(@grpc/grpc-js@1.14.4)(express@5.2.1)'
@@ -1949,7 +1949,7 @@ snapshots:
       '@sindresorhus/slugify': 2.2.1
       '@standard-schema/spec': 1.1.0
       ajv: 8.20.0
-      chat: 4.38.0(zod@4.4.3)
+      chat: 4.38.1(zod@4.4.3)
       croner: 10.0.1
       dotenv: 17.4.2
       execa: 9.6.1
@@ -1962,7 +1962,7 @@ snapshots:
       p-map: 7.0.6
       p-retry: 7.1.1
       picomatch: 4.0.5
-      posthog-node: 5.49.1
+      posthog-node: 5.49.2
       tokenx: 1.6.0
       ws: 8.21.3
       xxhash-wasm: 1.1.0
@@ -2002,11 +2002,11 @@ snapshots:
 
   '@oxc-project/types@0.133.0': {}
 
-  '@posthog/core@1.48.1':
+  '@posthog/core@1.48.6':
     dependencies:
-      '@posthog/types': 1.404.1
+      '@posthog/types': 1.405.0
 
-  '@posthog/types@1.404.1': {}
+  '@posthog/types@1.405.0': {}
 
   '@protobufjs/aspromise@1.1.2': {}
 
@@ -2290,7 +2290,7 @@ snapshots:
 
   character-entities@2.0.2: {}
 
-  chat@4.38.0(zod@4.4.3):
+  chat@4.38.1(zod@4.4.3):
     dependencies:
       '@workflow/serde': 4.1.0-beta.2
       mdast-util-to-string: 4.0.0
@@ -3066,9 +3066,9 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
-  posthog-node@5.49.1:
+  posthog-node@5.49.2:
     dependencies:
-      '@posthog/core': 1.48.1
+      '@posthog/core': 1.48.6
 
   pretty-ms@9.3.0:
     dependencies:
