@@ -1,0 +1,66 @@
+# Dependabot Coverage — assert each dependency manifest is reachable by Dependabot.
+#
+# WHY THIS EXISTS
+# ---------------
+# AAASM-5675: a Dependabot *security* job failed repeatedly against a directory
+# that `.github/dependabot.yml` did not list, leaving a vulnerable dependency in
+# place. Security updates are advisory-driven and run against a manifest whether
+# or not it has a scheduled-update entry, so an unlisted directory does not fall
+# silent — it produces a job that cannot be configured to succeed. The defect and
+# its own alarm landed on a check run nobody was required to read.
+#
+# `scripts/check_dependabot_coverage.py` turns that into a build failure at the
+# moment the coverage hole is introduced, rather than weeks later in a security
+# job's logs.
+#
+# WHY THERE IS NO `paths:` FILTER
+# -------------------------------
+# The defect this guards is *a manifest arriving somewhere unanticipated*. A
+# paths filter would have to predict those locations in advance — the same
+# assumption that produced the gap. The script is stdlib-only and finishes in
+# well under a second, so it runs on each pull request instead.
+#
+# It also runs on pushes to `main`. A pull-request-only gate leaves the default
+# branch free to drift red between merges, which is the second half of what
+# AAASM-5675 documented.
+#
+# NOT A REQUIRED CHECK
+# --------------------
+# `main`'s protection currently lists zero required status checks, so this job
+# reports but does not block a merge. Changing that is owner-gated and tracked
+# separately on AAASM-5677; this workflow deliberately leaves protection alone.
+
+name: Dependabot Coverage
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  coverage:
+    name: dependabot coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: "3.12"
+
+      # The checker's own tests run first. A coverage gate that silently stops
+      # measuring reports success on a tree it did not read, so its parser is
+      # held to the same standard as the thing it checks.
+      - name: Run the checker's unit tests
+        run: python -m unittest scripts.test_check_dependabot_coverage
+
+      - name: Assert each manifest maps to a dependabot.yml entry
+        run: python scripts/check_dependabot_coverage.py

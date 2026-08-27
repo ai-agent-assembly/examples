@@ -48,9 +48,16 @@ curl -fsS http://127.0.0.1:7700/api/v1/agents | grep live-smoke-node
 ## Status — rc-gated
 
 This driver cannot yet complete end-to-end: it depends on the rc-pending
-SDK/transport fixes (AAASM-4447, AAASM-4467, AAASM-4468) **and** a published
-`aasm start --mode local` gateway/API surface (AAASM-4449 — the release pipeline
-does not yet ship `aa-api-server`, which serves `/api/v1/*`). Until those land,
-the `verify-live.yml` job that drives this is quarantined `continue-on-error:
-true`. See the workflow header and this repo's `.claude/CLAUDE.md` (mock-vs-live
-lanes) for the full picture.
+SDK/transport fixes (AAASM-4447, AAASM-4467, AAASM-4468). Until those land, the
+`verify-live.yml` job that drives this is quarantined `continue-on-error: true`.
+
+AAASM-4449 was listed here as a second blocker — "the release pipeline does not
+yet ship `aa-api-server`". That is no longer accurate: the agent-assembly release
+has published an `aa-api-server` binary since v0.0.1-rc.4, and
+`.github/scripts/start-aasm.sh` installs it alongside the CLI.
+
+Note that the quarantine is partial: job-level `continue-on-error` neutralises
+the workflow run's conclusion, and the per-job check runs still conclude
+`failure`, so this lane shows as red on the commit it ran against (AAASM-5675).
+See the workflow header and this repo's `.claude/CLAUDE.md` (mock-vs-live lanes)
+for the full picture.
