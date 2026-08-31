@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@agent-assembly/sdk": "0.0.1-rc.6",
-    "ai": "^7.0.77",
+    "ai": "^7.0.83",
     "zod": "^4.4.3"
   },
   "devDependencies": {
