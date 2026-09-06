@@ -4,7 +4,7 @@ Runnable examples showing how to integrate [Agent Assembly](https://github.com/a
 
 ## What is Agent Assembly?
 
-Agent Assembly is a multi-layer AI agent governance platform that intercepts, inspects, and enforces policies on tool calls made by AI agents — without requiring you to rewrite your agent code. It works via three independently deployable layers: SDK wrappers (Python, Node.js, Go), a sidecar MitM proxy, and kernel-level eBPF probes. A central gateway holds the agent registry, evaluates policies, tracks budgets, and exposes gRPC and HTTP APIs for observability and control.
+Agent Assembly is a multi-layer AI agent governance platform that inspects and evaluates policy on tool calls made by AI agents — without requiring you to rewrite your agent code. Enforcement holds where a layer sits in the actual request path. It works via three independently deployable layers: SDK wrappers (Python, Node.js, Go) that evaluate a call and return an advisory decision, a sidecar MitM proxy that enforces network-egress policy on traffic routed through it, and kernel-level eBPF probes that observe and report rather than block. A central gateway holds the agent registry, evaluates policies, tracks budgets, and exposes gRPC and HTTP APIs for observability and control.
 
 ## Official docs & SDKs
 
