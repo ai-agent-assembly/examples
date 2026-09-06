@@ -1,0 +1,50 @@
+# pnpm Overrides Parity — assert pnpm-workspace.yaml and pnpm-lock.yaml agree.
+#
+# WHY THIS EXISTS
+# ----------------
+# AAASM-6032: four Dependabot relocks silently dropped the "overrides" block
+# from pnpm-lock.yaml while the sibling config still declared it, breaking
+# every subsequent `pnpm install --frozen-lockfile` with a generic
+# ERR_PNPM_LOCKFILE_CONFIG_MISMATCH that names neither the directory nor the
+# package. The install step already catches this on its own; this job names
+# the cause directly instead of leaving it to be diagnosed from a resolver
+# error. `scripts/check_pnpm_overrides_parity.py` has more detail.
+#
+# WHY THERE IS NO `paths:` FILTER
+# --------------------------------
+# The defect this guards against is a relock landing in any directory that
+# happens to declare overrides — new ones can be added at any time — so this
+# runs on every PR and push to main rather than trying to predict which paths
+# matter. It is stdlib-only and finishes in well under a second.
+
+name: pnpm Overrides Parity
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  parity:
+    name: pnpm overrides parity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: "3.12"
+
+      - name: Run the checker's unit tests
+        run: python -m unittest scripts.test_check_pnpm_overrides_parity
+
+      - name: Assert pnpm-workspace.yaml and pnpm-lock.yaml overrides agree
+        run: python scripts/check_pnpm_overrides_parity.py

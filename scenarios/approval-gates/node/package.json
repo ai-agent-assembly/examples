@@ -22,12 +22,5 @@
     "tsx": "4.23.13",
     "typescript": "^5.9.3",
     "vitest": "^4.1.11"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": ["esbuild"],
-    "overrides": {
-      "esbuild": ">=0.28.1",
-      "vite": "^7.3.5"
-    }
   }
 }

@@ -1,0 +1,12 @@
+# Migrated from package.json's "pnpm.overrides" (no longer read by pnpm 11+,
+# see https://pnpm.io/settings). AAASM-6032: a relock performed with pnpm 11
+# silently dropped the "overrides" block package.json declared but pnpm no
+# longer honours, breaking `--frozen-lockfile`. pnpm-workspace.yaml is the
+# supported home for both pnpm 10 and 11, so a relock stays consistent
+# regardless of which major version performs it.
+overrides:
+  esbuild: '>=0.28.1'
+  vite: ^7.3.5
+
+onlyBuiltDependencies:
+  - esbuild
