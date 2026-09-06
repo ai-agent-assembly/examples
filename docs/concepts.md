@@ -17,7 +17,7 @@ Agent Assembly is designed to be deployed incrementally. Each layer adds coverag
 The language SDKs — `agent-assembly` for Python, `@agent-assembly/sdk` for Node.js, and `github.com/ai-agent-assembly/go-sdk` for Go — wrap your agent's tool-calling code directly. The SDK calls into a thin Rust shim that:
 
 - Emits a governance event to the gateway before the tool executes.
-- Applies an allow/deny decision returned by the gateway.
+- Evaluates the gateway's response and skips the call if it comes back denied — advisory: this holds only because the wrapper you call into checks the answer before proceeding.
 - Records the outcome in the audit log.
 
 This is the **fastest** interception path. Requires SDK adoption by the agent application.
@@ -30,7 +30,7 @@ Useful when you cannot modify application code or want a second layer of defense
 
 ### 3. eBPF probes (`aa-ebpf`)
 
-Kernel-level hooks attached to SSL library uprobes and process exec/file syscalls. Catches what the SDK or proxy layers miss, including bypass attempts. Linux-only; requires elevated privileges.
+Kernel-level hooks attached to SSL library uprobes and process exec/file syscalls. Observe-only: the probes emit telemetry and return no verdict, so this layer detects, it does not block. It fails open if it cannot attach, and its file-I/O probes are x86_64-only. Linux-only; requires elevated privileges.
 
 ## The gateway
 
