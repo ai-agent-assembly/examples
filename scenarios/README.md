@@ -13,6 +13,15 @@ This directory contains cross-language examples that demonstrate a specific Agen
 | `sidecar-runtime/`                 | Intercept tool calls via the sidecar proxy without SDK code changes         |
 | `live-core-enforcement/`           | Run the **real** SDK governed end-to-end by a live `aa-runtime` + `aa-gateway` (Python-only, Docker) |
 
+**Only `live-core-enforcement/` loads a policy into a real `aa-gateway`.**
+Every other scenario's `policy.yaml` is a scenario-local schema interpreted by
+that scenario's own bundled policy engine — none of them is the real gateway's
+policy format, and none loads with `aasm policy validate` (AAASM-4996). This is
+deliberate: those scenarios run fully offline, with no gateway required. For a
+policy file in the real, gateway-loadable format, see
+`live-core-enforcement/policy.yaml` or `agent-assembly/schemas/examples/` in
+the core monorepo.
+
 ## When to use scenario examples
 
 Start with a language example (in `python/`, `node/`, or `go/`) if you want to see basic SDK integration in your ecosystem first.
