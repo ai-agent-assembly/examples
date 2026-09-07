@@ -11,6 +11,14 @@ then allows the tool to run.
 | 1 | `get_balance` | Executes immediately — policy says `allow` |
 | 2 | `transfer_funds` | Pauses — policy says `approval_required`; mock approver auto-approves; tool executes |
 
+> **This `policy.yaml` is a scenario-local schema**, understood only by this
+> scenario's own local policy engine — it is not the real `aa-gateway`'s policy
+> format and cannot be loaded with `aasm policy validate` or a real gateway
+> (AAASM-4996). The real gateway expresses approval gating differently — a
+> per-tool `requires_approval_if` expression, not an `approval_required` rule
+> action — see `scenarios/live-core-enforcement/` and the section-based schema
+> documented at `agent-assembly/schemas/examples/` in the core monorepo.
+
 ## Policy walkthrough
 
 ```yaml
