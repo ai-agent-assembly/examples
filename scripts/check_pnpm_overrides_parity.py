@@ -66,11 +66,15 @@ def _parse_flat_mapping(lines: list[str], header: str) -> dict[str, str] | None:
             continue
         mapping: dict[str, str] = {}
         for follow in lines[i + 1 :]:
-            if follow.strip() == "" or follow.startswith("#"):
+            stripped = follow.strip()
+            # Comments carry no entry at any indentation. Testing `follow` rather
+            # than `stripped` here missed indented ones, so a justification
+            # comment written between two override entries ended the block early
+            # and every entry below it read as absent from the config.
+            if stripped == "" or stripped.startswith("#"):
                 continue
             if not follow.startswith(("  ", "\t")):
                 break  # dedented past the end of this block
-            stripped = follow.strip()
             if ":" not in stripped:
                 break
             key, _, value = stripped.partition(":")
