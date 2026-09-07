@@ -8,8 +8,14 @@ overrides:
   js-yaml: ^4.3.1
   '@modelcontextprotocol/sdk': ^1.30.0
   '@hono/node-server': ^2.0.5
-  fast-uri: ^3.1.5
+  fast-uri: ^3.1.6
   hono: ^4.12.34
+  # GHSA-x5fp-wj9c-mxmx (array-limit bypass via bracket-key comma parsing) and
+  # GHSA-4mjr-xmp4-gh2g (DoS via attacker-controlled isBuffer), both fixed in
+  # 6.16.0. express@5 / body-parser@2 already allow it by range, but pinning
+  # keeps the resolution explicit and prevents a future relock from drifting
+  # back below the fix.
+  qs: ^6.16.0
 
 onlyBuiltDependencies:
   - '@agent-assembly/sdk'

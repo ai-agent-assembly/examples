@@ -54,6 +54,22 @@ class TestParseFlatMapping(unittest.TestCase):
     def test_returns_none_when_header_absent(self) -> None:
         self.assertIsNone(_parse_flat_mapping(["onlyBuiltDependencies:", "  - esbuild"], "overrides"))
 
+    def test_indented_comment_does_not_truncate_the_block(self) -> None:
+        # An override carrying a justification comment above it is the house
+        # style for every security-driven pin in this repo. Treating that
+        # comment as the end of the mapping hid every entry below it from the
+        # config side, so the checker reported them as lockfile-only.
+        yaml = textwrap.dedent(
+            """\
+            overrides:
+              js-yaml: ^4.3.1
+              # GHSA-x5fp-wj9c-mxmx, fixed in 6.16.0.
+              qs: ^6.16.0
+            """
+        )
+        mapping = _parse_flat_mapping(yaml.splitlines(), "overrides")
+        self.assertEqual(mapping, {"js-yaml": "^4.3.1", "qs": "^6.16.0"})
+
     def test_stops_at_dedent(self) -> None:
         # onlyBuiltDependencies must not be swallowed into the overrides mapping.
         mapping = _parse_flat_mapping(WORKSPACE_YAML.splitlines(), "overrides")
