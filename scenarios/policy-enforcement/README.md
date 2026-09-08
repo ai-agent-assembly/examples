@@ -11,6 +11,13 @@ tool call made by an agent — with no gateway, no API key, and no AI framework 
 - Two **denied** calls (`delete_agent`, `send_email`) — the function body never executes.
 - A final summary line: `4 tool calls: 2 allowed, 2 denied.`
 
+> **This `policy.yaml` is a scenario-local schema**, understood only by this
+> scenario's own `LocalPolicyEngine` — it is not the real `aa-gateway`'s policy
+> format and cannot be loaded with `aasm policy validate` or a real gateway
+> (AAASM-4996). For a policy file that a real gateway actually loads, see
+> `scenarios/live-core-enforcement/` and the section-based schema documented at
+> `agent-assembly/schemas/examples/` in the core monorepo.
+
 ## Policy walkthrough
 
 ```yaml
