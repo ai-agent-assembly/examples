@@ -5,7 +5,7 @@
 # supported home for both pnpm 10 and 11, so a relock stays consistent
 # regardless of which major version performs it.
 overrides:
-  js-yaml: ^4.3.1
+  js-yaml: ^4.3.2
   '@modelcontextprotocol/sdk': ^1.30.0
   '@hono/node-server': ^2.0.5
   fast-uri: ^3.1.6
