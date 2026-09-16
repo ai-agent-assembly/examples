@@ -10,13 +10,13 @@ importers:
     dependencies:
       '@agent-assembly/sdk':
         specifier: 0.0.1-rc.6
-        version: 0.0.1-rc.6(ai@7.0.99(zod@4.6.2))
+        version: 0.0.1-rc.6(ai@7.0.99(zod@4.6.4))
       ai:
         specifier: ^7.0.99
-        version: 7.0.99(zod@4.6.2)
+        version: 7.0.99(zod@4.6.4)
       zod:
-        specifier: ^4.6.2
-        version: 4.6.2
+        specifier: ^4.6.4
+        version: 4.6.4
     devDependencies:
       '@types/node':
         specifier: ^26.5.1
@@ -944,8 +944,8 @@ packages:
     resolution: {integrity: sha512-GZtjxm/J/4TSxuL3FNYjCmLktBTnIw/rVmKSIyKeYAZpmJB2ig9VauCC5xsa82GNKVKDAqpOn3KVzNt0zmrU0g==}
     engines: {node: '>=12'}
 
-  zod@4.6.2:
-    resolution: {integrity: sha512-lh5RCAGFa1Cm2hjtNwLQhSs/AsqdWnTQaBER9fEwN/88pSh7KOtJavtBx/0VlkN/uFd61SwYmljLMDAsHlvzBQ==}
+  zod@4.6.4:
+    resolution: {integrity: sha512-AXSD6hvGdvRjajG/l1cC+d6IrhH+sjmPKtYeQdJIK8MFJl3LyClzS+o/YsVC+zQZPupAaeH5skwwm8YqYH7BqA==}
 
 snapshots:
 
@@ -961,7 +961,7 @@ snapshots:
   '@agent-assembly/runtime-linux-x64@0.0.1-rc.6':
     optional: true
 
-  '@agent-assembly/sdk@0.0.1-rc.6(ai@7.0.99(zod@4.6.2))':
+  '@agent-assembly/sdk@0.0.1-rc.6(ai@7.0.99(zod@4.6.4))':
     dependencies:
       '@bufbuild/protobuf': 2.12.1
       '@grpc/grpc-js': 1.14.4
@@ -970,23 +970,23 @@ snapshots:
       '@agent-assembly/runtime-darwin-x64': 0.0.1-rc.6
       '@agent-assembly/runtime-linux-arm64': 0.0.1-rc.6
       '@agent-assembly/runtime-linux-x64': 0.0.1-rc.6
-      ai: 7.0.99(zod@4.6.2)
+      ai: 7.0.99(zod@4.6.4)
 
-  '@ai-sdk/gateway@4.0.80(zod@4.6.2)':
+  '@ai-sdk/gateway@4.0.80(zod@4.6.4)':
     dependencies:
       '@ai-sdk/provider': 4.0.14
-      '@ai-sdk/provider-utils': 5.0.40(zod@4.6.2)
+      '@ai-sdk/provider-utils': 5.0.40(zod@4.6.4)
       '@vercel/oidc': 3.2.0
-      zod: 4.6.2
+      zod: 4.6.4
 
-  '@ai-sdk/provider-utils@5.0.40(zod@4.6.2)':
+  '@ai-sdk/provider-utils@5.0.40(zod@4.6.4)':
     dependencies:
       '@ai-sdk/provider': 4.0.14
       '@standard-schema/spec': 1.1.0
       '@workflow/serde': 4.1.0
       eventsource-parser: 3.1.1
       undici: 7.29.1
-      zod: 4.6.2
+      zod: 4.6.4
 
   '@ai-sdk/provider@4.0.14':
     dependencies:
@@ -1289,12 +1289,12 @@ snapshots:
 
   '@workflow/serde@4.1.0': {}
 
-  ai@7.0.99(zod@4.6.2):
+  ai@7.0.99(zod@4.6.4):
     dependencies:
-      '@ai-sdk/gateway': 4.0.80(zod@4.6.2)
+      '@ai-sdk/gateway': 4.0.80(zod@4.6.4)
       '@ai-sdk/provider': 4.0.14
-      '@ai-sdk/provider-utils': 5.0.40(zod@4.6.2)
-      zod: 4.6.2
+      '@ai-sdk/provider-utils': 5.0.40(zod@4.6.4)
+      zod: 4.6.4
 
   ansi-regex@5.0.1: {}
 
@@ -1607,4 +1607,4 @@ snapshots:
       y18n: 5.0.8
       yargs-parser: 21.1.1
 
-  zod@4.6.2: {}
+  zod@4.6.4: {}
