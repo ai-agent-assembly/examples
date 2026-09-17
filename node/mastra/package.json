@@ -16,7 +16,7 @@
   "dependencies": {
     "@agent-assembly/sdk": "0.0.1-rc.6",
     "@mastra/core": "^1.66.0",
-    "zod": "^4.6.4"
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@types/node": "^26.5.1",
