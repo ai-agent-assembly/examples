@@ -13,9 +13,11 @@
 #
 # The release pipeline publishes per-component Linux tarballs, so the tap is not
 # the only route: `aasm-cli-<version>-linux-<arch>.tar.gz` carries `aasm` plus
-# `aa-gateway`, and `aasm-api-<version>-linux-<arch>.tar.gz` carries
-# `aa-api-server`, the process that serves /api/v1/*. Both are downloaded here
-# and checksum-verified against the release's own SHA256SUMS.
+# `aa-gateway`, `aasm-api-<version>-linux-<arch>.tar.gz` carries `aa-api-server`
+# (the process that serves /api/v1/*), and `aasm-runtime-<version>-linux-<arch>
+# .tar.gz` carries `aa-runtime` (the process that binds the IPC socket the SDKs
+# query before a tool call). All three are downloaded here and checksum-verified
+# against the release's own SHA256SUMS.
 #
 # NOTE ON AAASM-4449: that ticket is cited elsewhere in this repo as "the release
 # pipeline does not yet ship aa-api-server". As of v0.0.1-rc.4 it does —
@@ -79,8 +81,12 @@ esac
 
 CLI_TARBALL="aasm-cli-${AASM_VERSION}-linux-${ARCH}.tar.gz"
 API_TARBALL="aasm-api-${AASM_VERSION}-linux-${ARCH}.tar.gz"
+# The `runtime` component, listed in the release's components.json for all four
+# darwin/linux × amd64/arm64 targets. It is what binds the runtime IPC socket;
+# without it the SDK's pre-execution check has nothing to query and fails closed.
+RUNTIME_TARBALL="aasm-runtime-${AASM_VERSION}-linux-${ARCH}.tar.gz"
 
-echo "Installing the aasm CLI and aa-api-server from ${RELEASE_REPO}@${AASM_VERSION} (linux-${ARCH})..."
+echo "Installing the aasm CLI, aa-api-server and aa-runtime from ${RELEASE_REPO}@${AASM_VERSION} (linux-${ARCH})..."
 pushd "${INSTALL_DIR}" >/dev/null
 
 # --proto '=https' rejects a non-HTTPS URL outright and --proto-redir '=https'
@@ -92,14 +98,16 @@ CURL_OPTS=(--fail --silent --show-error --location --proto '=https' --proto-redi
 curl "${CURL_OPTS[@]}" "${BASE_URL}/SHA256SUMS"
 curl "${CURL_OPTS[@]}" "${BASE_URL}/${CLI_TARBALL}"
 curl "${CURL_OPTS[@]}" "${BASE_URL}/${API_TARBALL}"
+curl "${CURL_OPTS[@]}" "${BASE_URL}/${RUNTIME_TARBALL}"
 
 # Verify before extracting. --ignore-missing lets one SHA256SUMS cover the whole
-# release while this lane downloads two of its assets.
+# release while this lane downloads three of its assets.
 echo "Verifying checksums against the release SHA256SUMS..."
 sha256sum --check --ignore-missing SHA256SUMS
 
 tar -xzf "${CLI_TARBALL}" -C "${BIN_DIR}"
 tar -xzf "${API_TARBALL}" -C "${BIN_DIR}"
+tar -xzf "${RUNTIME_TARBALL}" -C "${BIN_DIR}"
 chmod +x "${BIN_DIR}"/*
 popd >/dev/null
 
