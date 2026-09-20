@@ -12,17 +12,52 @@
 # This workflow is the missing counterpart: one *scheduled* lane per language
 # that starts a REAL `aasm start --mode local` gateway, runs a real (non-mock)
 # SDK driver against it — init_assembly / initAssembly / assembly.Init — and
-# asserts the agent becomes visible in the gateway's /api/v1/agents REST surface.
+# asserts the agent becomes visible to an authenticated operator querying the
+# gateway's agent registry the way a real one would, with `aasm agent list`.
 # It does NOT replace the mock lanes; verify-python/node/go/scenarios remain the
 # required per-PR gate and stay green on their own.
 #
 # QUARANTINED — WHY THE JOBS ARE continue-on-error: true
 # ------------------------------------------------------
-# The real assertion cannot pass yet. It is rc-gated on the rc-pending
-# SDK/transport fixes — AAASM-4447 (core REST/gRPC protocol gap), AAASM-4467
-# (Node native binding unpublished), AAASM-4468 (Node no-op register()),
-# AAASM-4469 (Go Init() unconditionally failing), and the Python cp313 wheel /
-# native registration gap (AAASM-4446).
+# This list used to read "rc-gated on AAASM-4447 / 4467 / 4468 / 4469 / 4446".
+# AAASM-6147 measured what actually fails, and it was not that set. One of the
+# three failures was this repo's own bug and is now fixed; the rest are product
+# defects with their own tickets, and each is named where it bites:
+#
+# 1. FIXED HERE, NOT A BLOCKER. The registration assertion queried the protected
+#    /api/v1/agents with no credential and got `401 Missing Authorization
+#    header` — a local setup gap, not a transport failure. The lane now
+#    provisions AASM_API_KEY and asserts through `aasm agent list`; see
+#    .github/scripts/start-aasm.sh and assert-agent.sh.
+#
+# 2. AAASM-6150 blocks the Go job outright. The published go-sdk compiles in a
+#    no-transport stub (`//go:build !cgo || !aa_ffi_go`), and the real binding
+#    cannot be linked by any consumer: `CGO_ENABLED=1 go build -tags aa_ffi_go`
+#    fails with `ld: library 'aa_ffi_go' not found`, because the search path is a
+#    Cargo target directory the module zip does not ship. Proven address-
+#    independent: four probe variants — no sidecar option, an address with
+#    nothing listening, a real accepting :50051 listener, and that same listener
+#    with an `http://` scheme — all return a byte-identical `sidecar
+#    unavailable`. So neither the URL scheme nor a missing listener is the cause,
+#    and no change in this repo can fix it.
+#
+# 3. AAASM-6151 caps what any job here can assert. `runtime unreachable; failing
+#    closed under enforce` is the SDK denying because it could not reach the
+#    runtime IPC socket, not the gateway deciding policy: nothing shipped binds
+#    /tmp/aa-runtime-<agent_id>.sock (aa-runtime has no [[bin]] target and is
+#    absent from the release; `aasm start` never launches it). Locally both
+#    read_file and delete_file deny, including the one the policy allows — the
+#    tell that the decision is policy-independent. So this lane can assert
+#    registration, and cannot yet observe a real allow.
+#
+# 4. AAASM-6149 makes the assertion timing-dependent. aa-api-server serves REST
+#    for exactly 30 s and then stops listening while the process stays alive and
+#    keeps serving gRPC. Measured on the released v0.0.1-rc.6 `aasm start --mode
+#    local`: authenticated 200 at t=6s, connection failure at t=40s, only :50051
+#    still bound. These jobs currently finish inside that window, which is why it
+#    has stayed invisible. Dropping continue-on-error before it is fixed and
+#    released would make main red on a product race, so it stays until then;
+#    assert-agent.sh at least names it instead of blaming the SDK.
 #
 # AAASM-4449 was cited here as a second blocker — "the release pipeline does not
 # yet ship aa-api-server". That is no longer accurate: the agent-assembly release
@@ -50,9 +85,13 @@
 # this repo's Verification policy exists to stop.
 #
 # This repo has no `rc_pending` pytest mechanism, so the quarantine is expressed
-# at the workflow level: each live job is `continue-on-error: true`. When the
-# blocking tickets land, drop `continue-on-error` (and delete this note) so the
-# lane becomes a hard, red-on-regression gate — and update `.claude/CLAUDE.md`.
+# at the workflow level: each live job is `continue-on-error: true`. Dropping it
+# needs AAASM-6149 fixed and released (otherwise main goes red on the 30 s race)
+# and, for the Go job, AAASM-6150. When those land, drop `continue-on-error` (and
+# delete this note) so the lane becomes a hard, red-on-regression gate — and
+# update `.claude/CLAUDE.md`. AAASM-6151 governs something different: not whether
+# these jobs can be trusted, but whether this lane can ever assert more than
+# registration.
 #
 # Related: scenarios/live-core-enforcement's `live-core-enforcement-live` job
 # (in verify-scenarios.yml) stays workflow_dispatch-only for a *distinct*
@@ -92,7 +131,9 @@ jobs:
   live-python:
     name: "live: python (real init_assembly)"
     runs-on: ubuntu-latest
-    # QUARANTINED: rc-gated on AAASM-4446/4447 (see file header).
+    # QUARANTINED: the 401 is fixed, but AAASM-6149 (REST stops listening 30s
+    # after start) makes the assertion timing-dependent, so this stays until that
+    # is released. AAASM-6151 caps it at registration. See the file header.
     continue-on-error: true
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
@@ -112,7 +153,7 @@ jobs:
           AA_AGENT_ID: "live-smoke-python"
         run: python scenarios/live-core-enforcement/python-agent/agent.py
 
-      - name: Assert the agent registered (visible in /api/v1/agents)
+      - name: Assert the agent registered (authenticated operator query)
         run: bash .github/scripts/assert-agent.sh live-smoke-python
 
       - name: Stop the gateway
@@ -123,7 +164,9 @@ jobs:
   live-node:
     name: "live: node (real initAssembly)"
     runs-on: ubuntu-latest
-    # QUARANTINED: rc-gated on AAASM-4447/4467/4468 (see file header).
+    # QUARANTINED: same as live-python — AAASM-6149 for the timing, AAASM-6151 for
+    # how far the assertion can reach. Node registers successfully today; the
+    # earlier AAASM-4467/4468 reasons no longer describe this job. See the header.
     continue-on-error: true
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
@@ -149,7 +192,7 @@ jobs:
           AA_AGENT_ID: "live-smoke-node"
         run: node agent.mjs
 
-      - name: Assert the agent registered (visible in /api/v1/agents)
+      - name: Assert the agent registered (authenticated operator query)
         run: bash .github/scripts/assert-agent.sh live-smoke-node
 
       - name: Stop the gateway
@@ -160,7 +203,9 @@ jobs:
   live-go:
     name: "live: go (real assembly.Init)"
     runs-on: ubuntu-latest
-    # QUARANTINED: rc-gated on AAASM-4447/4469 (see file header).
+    # QUARANTINED: AAASM-6150 — the published go-sdk links no transport, so
+    # assembly.Init cannot connect no matter what this repo does. This job cannot
+    # be un-quarantined until that ships; measured in AAASM-6147. See the header.
     continue-on-error: true
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
@@ -182,7 +227,7 @@ jobs:
           AA_AGENT_ID: "live-smoke-go"
         run: go run .
 
-      - name: Assert the agent registered (visible in /api/v1/agents)
+      - name: Assert the agent registered (authenticated operator query)
         run: bash .github/scripts/assert-agent.sh live-smoke-go
 
       - name: Stop the gateway
