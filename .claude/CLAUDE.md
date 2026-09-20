@@ -119,23 +119,53 @@ neither is sufficient alone.
   `workflow_dispatch`, not manual-only) lane, one job per language, that starts a
   real `aasm start --mode local` gateway, runs a real (non-mock) driver against
   it — `init_assembly` / `initAssembly` / `assembly.Init` — and asserts the agent
-  becomes visible in the gateway's `/api/v1/agents`. It exists specifically to
-  catch the class of bug (AAASM-4446/4447/4467/4468/4469/4470) the mock lanes are
-  structurally blind to. The drivers live at
+  is visible to an **authenticated operator** querying the agent registry. It
+  exists specifically to catch the class of bug
+  (AAASM-4446/4447/4467/4468/4469/4470) the mock lanes are structurally blind to.
+  The drivers live at
   `scenarios/live-core-enforcement/{python,node,go}-agent/` (the Python one is the
   scenario's existing deny-flow agent; the Node/Go ones are minimal
   register-and-assert drivers). Helper scripts:
   `.github/scripts/{start-aasm,assert-agent,stop-aasm}.sh`.
 
-- **The live real-assertion is currently rc-gated (quarantined).** Its jobs are
-  `continue-on-error: true` — this repo has no `rc_pending` pytest mechanism, so
-  the quarantine is expressed at the workflow level (with a header comment naming
-  the blockers). It cannot pass until the rc-pending SDK/transport fixes land
-  (AAASM-4447 core protocol gap, AAASM-4446 Python cp313/native, AAASM-4467/4468
-  Node, AAASM-4469 Go). When those land, drop `continue-on-error` so the lane
-  becomes a hard, red-on-regression gate — and update this section. Per the
-  Verification policy above, the quarantine names open tickets and must not be
-  silently converted into a permanent skip.
+- **The lane's assertion path: `AASM_API_KEY` + `aasm agent list` (AAASM-6147).**
+  Only `/api/v1/health` is public; `/api/v1/agents` requires
+  `Authorization: Bearer aa_…`. The lane used to `curl` it with no credential and
+  read the resulting `401 Missing Authorization header` as an rc-gated transport
+  failure — the endpoint was correct, the lane had never authenticated.
+  `start-aasm.sh` now mints a per-run key (`aa_` + 32 hex, the format
+  `aa-auth/src/api_key.rs` enforces), `::add-mask::`s it, and exports it via
+  `GITHUB_ENV`; `assert-agent.sh` asserts through `aasm agent list --output json`
+  and `jq`, structurally on `.name`/`.id`. Keep it that way: the credential goes
+  in the **environment, not a flag** (a flag leaves the token in `argv`, so `ps`
+  and shell history can read it), and the assertion goes through the CLI because
+  that is the path a real operator uses. Do not "fix" a future 401 by dropping
+  back to an unauthenticated `curl` or a `grep` over the payload.
+
+- **The live jobs are quarantined (`continue-on-error: true`), on *measured*
+  blockers — not the ones this section used to list.** It said the lane was
+  rc-gated on AAASM-4447 / 4446 / 4467/4468 / 4469. AAASM-6147 measured what
+  actually fails, and it was not that set. This repo has no `rc_pending` pytest
+  mechanism, so the quarantine stays expressed at the workflow level, with the
+  header comment naming each blocker where it bites:
+
+  | Blocker | Effect on the lane | Un-quarantine condition |
+  |---|---|---|
+  | AAASM-6149 — `aa-api-server` serves REST for exactly 30 s, then stops listening while the process stays alive and keeps serving gRPC (measured on released `v0.0.1-rc.6`: authenticated 200 at t=6 s, connection failure at t=40 s, only `:50051` still bound) | the registration assertion is timing-dependent on all three jobs; they currently finish inside the window, which is why it stayed invisible | fixed **and released** — the lane downloads release binaries, so a merged fix alone changes nothing here |
+  | AAASM-6150 — the published `go-sdk` compiles in a no-transport stub (`//go:build !cgo \|\| !aa_ffi_go`) and the real binding cannot be linked by any consumer (`ld: library 'aa_ffi_go' not found`) | blocks `live-go` outright; `assembly.Init` can never connect | fixed and released |
+  | AAASM-6151 — nothing shipped binds `/tmp/aa-runtime-<agent_id>.sock` (`aa-runtime` has no `[[bin]]` and is absent from the release; `aasm start` never launches it), so `runtime unreachable; failing closed under enforce` is the SDK failing closed, not a policy decision | caps *how far* the lane can assert: registration yes, a real allow/deny never | a shipped way to run the runtime — this governs scope, not trust |
+
+  AAASM-6150's cause is proven address-independent: four probe variants (no
+  sidecar option; an address with nothing listening; a real accepting `:50051`
+  listener; that same listener with an `http://` scheme) return a byte-identical
+  `sidecar unavailable`, so neither the URL scheme nor a missing listener is the
+  cause and nothing in this repo can fix it.
+
+  Do **not** drop `continue-on-error` before AAASM-6149 is released — main would
+  go red on a product race, not on a regression. When 6149 and 6150 ship, drop it
+  (and the header note) so the lane becomes a hard, red-on-regression gate, and
+  update this section. Per the Verification policy above, the quarantine names
+  open tickets and must not be silently converted into a permanent skip.
 
 - **`aa-api-server` is published — AAASM-4449 is no longer a blocker for this
   lane.** This section previously listed it as a second gate. The agent-assembly
