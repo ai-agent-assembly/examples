@@ -3,6 +3,14 @@
 These prove the example *genuinely governs* the real framework: with the adapter
 installed, a denied tool's `FunctionTool.invoke` raises before its body runs,
 while an allowed tool's body executes (a negative control against a no-op).
+
+`agent_framework` is required only by the tests that drive it, so the
+`importorskip` lives in the `governed_adapter` fixture rather than at module
+scope. The offline policy assertions need nothing but `src.policy` and
+`agent_assembly` — both installed by `--extra dev` — so they collect and run in
+CI, while the four framework-dependent tests skip when the framework is absent.
+Every module-level import below is safe without it: `src.tools` imports
+`agent_framework` lazily inside `build_tools()`.
 """
 
 from __future__ import annotations
@@ -11,23 +19,22 @@ from unittest.mock import patch
 
 import pytest
 
-pytest.importorskip(
-    "agent_framework",
-    reason="agent-framework not installed — `uv sync --extra live "
-    "--prerelease=allow` installs it to run these smokes",
-)
-
-from agent_assembly.adapters.microsoft_agent_framework import (  # noqa: E402
+from agent_assembly.adapters.microsoft_agent_framework import (
     MicrosoftAgentFrameworkAdapter,
 )
-from agent_assembly.exceptions import PolicyViolationError  # noqa: E402
+from agent_assembly.exceptions import PolicyViolationError
 
-from src.policy import LocalPolicyEngine  # noqa: E402
-from src.tools import build_tools, tool_arguments  # noqa: E402
+from src.policy import LocalPolicyEngine
+from src.tools import build_tools, tool_arguments
 
 
 @pytest.fixture
 def governed_adapter() -> MicrosoftAgentFrameworkAdapter:
+    pytest.importorskip(
+        "agent_framework",
+        reason="agent-framework not installed — `uv sync --extra live "
+        "--prerelease=allow` installs it to run these governance smokes",
+    )
     adapter = MicrosoftAgentFrameworkAdapter()
     adapter.set_process_agent_id("test-maf-agent")
     adapter.register_hooks(LocalPolicyEngine())
