@@ -146,15 +146,27 @@ jobs:
         run: "pip install --pre --only-binary=:all: 'agent-assembly==0.0.1rc6'"
 
       - name: Install and start the real aasm gateway
-        run: bash .github/scripts/start-aasm.sh
+        # The agent id is an argument because aa-runtime binds a per-agent socket
+        # and the SDK derives the same path from AA_AGENT_ID below; they must match.
+        run: bash .github/scripts/start-aasm.sh live-smoke-python
 
       - name: Run the real-transport agent (mock disabled)
         env:
           AA_AGENT_ID: "live-smoke-python"
-        run: python scenarios/live-core-enforcement/python-agent/agent.py
+        # Captured because the driver's exit code cannot distinguish a policy deny
+        # from a fail-closed one — the next step reads the decisions themselves.
+        # pipefail is not on by default in the runner's shell, so a driver crash
+        # would otherwise be masked by tee succeeding.
+        run: |
+          set -o pipefail
+          python scenarios/live-core-enforcement/python-agent/agent.py 2>&1 \
+            | tee /tmp/live-python.out
 
       - name: Assert the agent registered (authenticated operator query)
         run: bash .github/scripts/assert-agent.sh live-smoke-python
+
+      - name: Assert the gateway returned a real policy decision
+        run: bash .github/scripts/assert-policy-decision.sh /tmp/live-python.out
 
       - name: Stop the gateway
         if: always()
@@ -184,8 +196,12 @@ jobs:
         run: pnpm install --ignore-scripts
 
       - name: Install and start the real aasm gateway
-        run: bash .github/scripts/start-aasm.sh
+        run: bash .github/scripts/start-aasm.sh live-smoke-node
 
+      # No policy-decision assertion here, unlike live-python: this driver wires
+      # the SDK's own no-op gateway client on purpose (the pass-through posture
+      # node/custom-tool-policy demonstrates), so its governed call has no gateway
+      # decision to read. What it proves is registration over the real transport.
       - name: Run the real-transport agent (mock disabled)
         working-directory: scenarios/live-core-enforcement/node-agent
         env:
@@ -219,7 +235,7 @@ jobs:
         run: go build ./...
 
       - name: Install and start the real aasm gateway
-        run: bash .github/scripts/start-aasm.sh
+        run: bash .github/scripts/start-aasm.sh live-smoke-go
 
       - name: Run the real-transport agent (mock disabled)
         working-directory: scenarios/live-core-enforcement/go-agent
