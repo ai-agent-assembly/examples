@@ -105,7 +105,13 @@ uv sync --extra live --extra dev --prerelease=allow
 uv run pytest tests/ -v
 ```
 
-The smoke tests `importorskip("agent_framework")`, so they **skip cleanly** (rather than fail) when only the `dev` extra is installed — the same graceful-degradation convention the live framework smokes use.
+With only the `dev` extra installed, the four offline policy assertions still run — they need nothing beyond `src.policy` and `agent_assembly`. The four tests that drive the real framework take the `governed_adapter` fixture, which `importorskip`s `agent_framework` and so **skips cleanly** (rather than fails) when it is absent — the same graceful-degradation convention the live framework smokes use:
+
+```bash
+# `dev` only, as CI runs it: 4 passed, 4 skipped
+uv sync --extra dev --locked --no-build
+uv run --locked --no-build pytest tests/ -v
+```
 
 ## Switching to production mode
 
