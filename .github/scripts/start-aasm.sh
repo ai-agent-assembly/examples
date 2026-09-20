@@ -81,10 +81,26 @@ fi
 # within ~200 ms, and the timeout was then reported as the rc-gate (AAASM-5675).
 AA_API_BASE="${AA_API_BASE:-http://127.0.0.1:7391}"
 
-# Keep aligned with metadata/sdk-versions.yaml, which pins the SDK versions the
-# live drivers install. A gateway from a different release than the SDK under
-# test would make a failure ambiguous between the two.
-AASM_VERSION="${AASM_VERSION:-v0.0.1-rc.6}"
+# The BINARY pin, deliberately one release ahead of metadata/sdk-versions.yaml
+# (the SDK pin). Normally these track each other, so a failure is unambiguous
+# between gateway and SDK; here they cannot, and the gap is measured rather than
+# assumed:
+#
+#   * rc.6's local gateway has no PolicyService at all. Its banner reads
+#     "local gRPC AgentLifecycleService listening"; rc.7's reads
+#     "AgentLifecycleService + PolicyService". So on rc.6 the runtime started
+#     below has nothing to forward the policy question to, and every governed
+#     call denies with `gateway unreachable; denied by fail-closed policy` —
+#     a different fail-closed deny, not a policy decision.
+#   * The SDK pins cannot follow, because the go-sdk has no rc.7: its newest
+#     published version is still rc.6 (AAASM-6150). Bumping sdk-versions.yaml
+#     would be a lie the drift gate would rightly reject.
+#
+# The mixed pin is verified, not hoped for: rc.6 SDK + rc.6 runtime + rc.7
+# gateway produces a real allow for read_file and a real
+# `tool denied by policy` deny for delete_file. rc.7 also carries the AAASM-5908
+# drain fix, so the REST surface no longer stops listening 30 s after start.
+AASM_VERSION="${AASM_VERSION:-v0.0.1-rc.7}"
 RELEASE_REPO="${AASM_RELEASE_REPO:-ai-agent-assembly/agent-assembly}"
 BASE_URL="https://github.com/${RELEASE_REPO}/releases/download/${AASM_VERSION}"
 
