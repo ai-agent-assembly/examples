@@ -142,6 +142,26 @@ neither is sufficient alone.
   that is the path a real operator uses. Do not "fix" a future 401 by dropping
   back to an unauthenticated `curl` or a `grep` over the payload.
 
+- **The lane asserts a real allow/deny pair, not a deny count (AAASM-6147).**
+  `start-aasm.sh` also installs and starts the release's `runtime` component,
+  keyed to the agent id passed as its first argument — the socket is per-agent
+  (`/tmp/aa-runtime-<agent_id>.sock`) and the SDK derives the same path from
+  `AA_AGENT_ID`, so a mismatch silently reverts the lane to failing closed. Two
+  policy planes are involved and they are **not** the same format: the gateway
+  reads the scenario's section-based YAML with the per-tool `allow` keys from
+  `AA_POLICY`, while `aa-runtime` reads a coarse policy over proto ActionTypes
+  from `AA_POLICY_PATH` (written ruleless on purpose, so it cannot deny ahead of
+  the plane under test). The binary pin therefore leads the SDK pin in
+  `metadata/sdk-versions.yaml` by one release: rc.6's local gateway has no
+  `PolicyService` at all, and the SDK pins cannot follow because the go-sdk has no
+  rc.7. `assert-policy-decision.sh` then requires `read_file` allowed and
+  `delete_file` denied *by policy* — the Python driver alone exits 0 whenever
+  anything was denied, so an outage that denies everything used to pass. Do not
+  satisfy that assertion by relaxing `AA_GATEWAY_FAIL_CLOSED`; that converts
+  fail-closed into fail-open, which is the gate-weakening the Verification policy
+  below exists to stop. Node gets no such assertion by design — its driver wires
+  the SDK's own no-op gateway client, so it has no decision to read.
+
 - **The live jobs are quarantined (`continue-on-error: true`), on *measured*
   blockers — not the ones this section used to list.** It said the lane was
   rc-gated on AAASM-4447 / 4446 / 4467/4468 / 4469. AAASM-6147 measured what
@@ -151,9 +171,22 @@ neither is sufficient alone.
 
   | Blocker | Effect on the lane | Un-quarantine condition |
   |---|---|---|
-  | AAASM-6149 — `aa-api-server` serves REST for exactly 30 s, then stops listening while the process stays alive and keeps serving gRPC (measured on released `v0.0.1-rc.6`: authenticated 200 at t=6 s, connection failure at t=40 s, only `:50051` still bound) | the registration assertion is timing-dependent on all three jobs; they currently finish inside the window, which is why it stayed invisible | fixed **and released** — the lane downloads release binaries, so a merged fix alone changes nothing here |
   | AAASM-6150 — the published `go-sdk` compiles in a no-transport stub (`//go:build !cgo \|\| !aa_ffi_go`) and the real binding cannot be linked by any consumer (`ld: library 'aa_ffi_go' not found`) | blocks `live-go` outright; `assembly.Init` can never connect | fixed and released |
-  | AAASM-6151 — nothing shipped binds `/tmp/aa-runtime-<agent_id>.sock` (`aa-runtime` has no `[[bin]]` and is absent from the release; `aasm start` never launches it), so `runtime unreachable; failing closed under enforce` is the SDK failing closed, not a policy decision | caps *how far* the lane can assert: registration yes, a real allow/deny never | a shipped way to run the runtime — this governs scope, not trust |
+  | *(no external blocker for `live-python` / `live-node`)* | these stay `continue-on-error` only until one real run of the current configuration is observed to pass | an observed passing scheduled or dispatched run |
+
+  **Two blockers this table used to list were my own wrong calls — read this
+  before re-filing either.** AAASM-6149 (REST stops listening 30 s after start)
+  was real behaviour on rc.6 but a **duplicate of AAASM-5908**, filed off a stale
+  checkout; it is fixed upstream and released in `v0.0.1-rc.7`, re-measured green
+  there (health + authenticated `/api/v1/agents` both 200 through t≈67 s, all
+  three ports bound). AAASM-6151 ("nothing shipped binds the runtime socket") is
+  **retracted**: the release ships a `runtime` component for all four
+  darwin/linux × amd64/arm64 targets, listed in `components.json` and covered by
+  the release `SHA256SUMS` — the missing Cargo bin-target section proved nothing,
+  because Cargo auto-discovers `src/main.rs`. The lane had simply never installed
+  or started it. That was the **fifth** time a local setup gap in this lane got
+  labelled as an external product defect; check `git tag --contains` and the
+  release assets before filing the sixth.
 
   AAASM-6150's cause is proven address-independent: four probe variants (no
   sidecar option; an address with nothing listening; a real accepting `:50051`
@@ -161,11 +194,14 @@ neither is sufficient alone.
   `sidecar unavailable`, so neither the URL scheme nor a missing listener is the
   cause and nothing in this repo can fix it.
 
-  Do **not** drop `continue-on-error` before AAASM-6149 is released — main would
-  go red on a product race, not on a regression. When 6149 and 6150 ship, drop it
-  (and the header note) so the lane becomes a hard, red-on-regression gate, and
-  update this section. Per the Verification policy above, the quarantine names
-  open tickets and must not be silently converted into a permanent skip.
+  Do **not** drop `continue-on-error` for `live-python`/`live-node` before a real
+  run of the current configuration has been observed to pass — removing it to
+  declare the work done would be asserting a result nobody measured, the same
+  error as the two retractions above pointing the other way. Keep it on `live-go`
+  until AAASM-6150 ships. When it comes off, delete the header note too so the
+  lane becomes a hard, red-on-regression gate, and update this section. Per the
+  Verification policy above, the quarantine names open tickets and must not be
+  silently converted into a permanent skip.
 
 - **`aa-api-server` is published — AAASM-4449 is no longer a blocker for this
   lane.** This section previously listed it as a second gate. The agent-assembly
