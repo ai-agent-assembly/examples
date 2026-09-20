@@ -74,12 +74,13 @@
 #
 # WHAT continue-on-error ACTUALLY SUPPRESSES (AAASM-5675)
 # -------------------------------------------------------
-# Measured on run 31779321984 (main @ 9edecae): the workflow RUN concluded
-# `success`, while each of the three live JOBS concluded `failure`. Job-level
-# `continue-on-error` neutralises the run's conclusion; it leaves the per-job
-# check runs red. A reader of `commits/<sha>/check-runs` — the commit status UI,
-# and a reviewer diffing a PR's failures against its base — sees three failures
-# on main.
+# Measured on run 31779321984 (main @ 9edecae), when all three jobs still had it:
+# the workflow RUN concluded `success`, while each of the three live JOBS
+# concluded `failure`. Job-level `continue-on-error` neutralises the run's
+# conclusion; it leaves the per-job check runs red. A reader of
+# `commits/<sha>/check-runs` — the commit status UI, and a reviewer diffing a PR's
+# failures against its base — still sees those failures. That now applies to
+# live-go alone, which is the only job still carrying the flag.
 #
 # So the quarantine is partial by construction: it stops the scheduled run from
 # reporting failure, and it does not stop the branch from presenting as red.
@@ -88,17 +89,25 @@
 # make the lane green and its rc-gated state invisible, which is the substitution
 # this repo's Verification policy exists to stop.
 #
-# This repo has no `rc_pending` pytest mechanism, so the quarantine is expressed
-# at the workflow level: each live job is `continue-on-error: true`. After the
-# corrections above, only ONE external blocker is left, and it is confined to one
-# job: AAASM-6150, for live-go.
+# WHERE THE QUARANTINE STANDS NOW
+# -------------------------------
+# After the corrections above, exactly one external blocker is left and it is
+# confined to one job: AAASM-6150, for live-go. That job keeps
+# `continue-on-error: true` until a linkable go-sdk ships.
 #
-# So `continue-on-error` should come off live-python and live-node — but only
-# once a real scheduled or dispatched run of THIS configuration passes. Removing
-# it before that would not be a fix; it would be asserting a result nobody has
-# observed, which is the same mistake as the four above in a different direction.
-# It stays on live-go until AAASM-6150 ships. When it comes off, delete the
-# matching note here and in `.claude/CLAUDE.md`.
+# live-python and live-node no longer have it. The condition for dropping it was
+# an observed passing run of this exact configuration, not an argument that it
+# ought to pass — measured on dispatched runs 35523443069 and 35523566182, both
+# of which registered the agent AND asserted a real allow/deny pair
+# (`decision=allow` for read_file, `decision=deny reason=tool denied by policy`
+# for delete_file). Two runs rather than one, because a single green run is how a
+# race hides.
+#
+# One honest limit on that evidence: the Python job completes in ~21 s, so it
+# would have finished inside the old 30 s REST window regardless. rc.7 carries the
+# AAASM-5908 drain fix and it was verified directly (health and authenticated
+# /api/v1/agents both 200 through t≈67 s), but this lane's own runtime is too
+# short to demonstrate it. Do not cite these runs as proof of that fix.
 #
 # Related: scenarios/live-core-enforcement's `live-core-enforcement-live` job
 # (in verify-scenarios.yml) stays workflow_dispatch-only for a *distinct*
@@ -138,11 +147,9 @@ jobs:
   live-python:
     name: "live: python (real init_assembly)"
     runs-on: ubuntu-latest
-    # QUARANTINED, but no longer on an external blocker: the 401, the missing
-    # runtime, and the REST drain are all addressed (see the file header). This
-    # stays only until a real run of this configuration is observed to pass —
-    # dropping it first would assert a result nobody has measured.
-    continue-on-error: true
+    # NOT quarantined. This job is a hard gate: it must go red on a regression.
+    # Observed passing on runs 35523443069 and 35523566182, each asserting a real
+    # allow/deny pair from the gateway — see the file header.
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
@@ -184,10 +191,9 @@ jobs:
   live-node:
     name: "live: node (real initAssembly)"
     runs-on: ubuntu-latest
-    # QUARANTINED: same as live-python — pending one observed passing run, not an
-    # external blocker. Node registers successfully today; the earlier
-    # AAASM-4467/4468 reasons no longer describe this job. See the header.
-    continue-on-error: true
+    # NOT quarantined, same as live-python: observed passing on runs 35523443069
+    # and 35523566182. The earlier AAASM-4467/4468 reasons no longer describe this
+    # job. See the header.
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 

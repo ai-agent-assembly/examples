@@ -162,17 +162,18 @@ neither is sufficient alone.
   below exists to stop. Node gets no such assertion by design — its driver wires
   the SDK's own no-op gateway client, so it has no decision to read.
 
-- **The live jobs are quarantined (`continue-on-error: true`), on *measured*
-  blockers — not the ones this section used to list.** It said the lane was
-  rc-gated on AAASM-4447 / 4446 / 4467/4468 / 4469. AAASM-6147 measured what
-  actually fails, and it was not that set. This repo has no `rc_pending` pytest
-  mechanism, so the quarantine stays expressed at the workflow level, with the
-  header comment naming each blocker where it bites:
+- **Only `live-go` is still quarantined (`continue-on-error: true`).**
+  `live-python` and `live-node` are now hard, red-on-regression gates. This
+  section used to claim the lane was rc-gated on AAASM-4447 / 4446 / 4467/4468 /
+  4469; AAASM-6147 measured what actually fails and it was not that set, and two
+  of the three replacement tickets turned out to be wrong as well (see below).
+  The quarantine that remains is expressed at the workflow level, with the header
+  comment naming the blocker where it bites:
 
   | Blocker | Effect on the lane | Un-quarantine condition |
   |---|---|---|
   | AAASM-6150 — the published `go-sdk` compiles in a no-transport stub (`//go:build !cgo \|\| !aa_ffi_go`) and the real binding cannot be linked by any consumer (`ld: library 'aa_ffi_go' not found`) | blocks `live-go` outright; `assembly.Init` can never connect | fixed and released |
-  | *(no external blocker for `live-python` / `live-node`)* | these stay `continue-on-error` only until one real run of the current configuration is observed to pass | an observed passing scheduled or dispatched run |
+  | *(none — `live-python` and `live-node` are un-quarantined)* | both are hard gates as of runs 35523443069 and 35523566182, each asserting a real allow/deny pair | n/a |
 
   **Two blockers this table used to list were my own wrong calls — read this
   before re-filing either.** AAASM-6149 (REST stops listening 30 s after start)
@@ -194,14 +195,18 @@ neither is sufficient alone.
   `sidecar unavailable`, so neither the URL scheme nor a missing listener is the
   cause and nothing in this repo can fix it.
 
-  Do **not** drop `continue-on-error` for `live-python`/`live-node` before a real
-  run of the current configuration has been observed to pass — removing it to
-  declare the work done would be asserting a result nobody measured, the same
-  error as the two retractions above pointing the other way. Keep it on `live-go`
-  until AAASM-6150 ships. When it comes off, delete the header note too so the
-  lane becomes a hard, red-on-regression gate, and update this section. Per the
-  Verification policy above, the quarantine names open tickets and must not be
-  silently converted into a permanent skip.
+  `live-python` and `live-node` were un-quarantined only after two dispatched
+  runs of the current configuration were observed to pass, not because the fixes
+  argued they should — removing the flag to declare work done is the same error as
+  the two retractions above, pointing the other way. Keep it on `live-go` until
+  AAASM-6150 ships, then delete the header note too. Per the Verification policy
+  below, a quarantine names open tickets and must not be silently converted into a
+  permanent skip.
+
+  One limit worth keeping straight: the Python job finishes in ~21 s, so it would
+  have completed inside the old 30 s REST window regardless. These runs do **not**
+  demonstrate the AAASM-5908 drain fix; that was verified directly against rc.7
+  (health and authenticated `/api/v1/agents` both 200 through t≈67 s).
 
 - **`aa-api-server` is published — AAASM-4449 is no longer a blocker for this
   lane.** This section previously listed it as a second gate. The agent-assembly
