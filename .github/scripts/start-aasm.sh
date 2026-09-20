@@ -249,6 +249,15 @@ echo "Gateway is healthy."
 # AA_METRICS_ADDR stays on loopback: the runtime refuses a non-loopback metrics
 # bind unless AA_METRICS_ALLOW_REMOTE=1 (AAASM-5985), and nothing here needs the
 # metrics surface reachable from off-host.
+#
+# EXPECTED NOISE, NOT A FAILURE. With AA_GATEWAY_CREDENTIAL_TOKEN and
+# AA_GATEWAY_AGENT_ID both unset, the runtime still opens an op-control stream and
+# logs `ERROR ... op-control stream rejected by the gateway's credential auth —
+# this will keep failing until fixed`, even though its own remediation text says
+# to "unset both if this gateway does not enforce op-control auth" — the state it
+# is already in. Measured harmless: policy decisions flow correctly alongside it.
+# Do not chase that line when a run is otherwise green, and do not invent a
+# credential to silence it.
 echo "Starting aa-runtime for agent '${AGENT_ID}'..."
 AA_AGENT_ID="${AGENT_ID}" \
 AA_GATEWAY_ENDPOINT="${AA_GATEWAY_URL:-http://127.0.0.1:50051}" \
