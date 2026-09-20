@@ -41,23 +41,27 @@
 #    unavailable`. So neither the URL scheme nor a missing listener is the cause,
 #    and no change in this repo can fix it.
 #
-# 3. AAASM-6151 caps what any job here can assert. `runtime unreachable; failing
-#    closed under enforce` is the SDK denying because it could not reach the
-#    runtime IPC socket, not the gateway deciding policy: nothing shipped binds
-#    /tmp/aa-runtime-<agent_id>.sock (aa-runtime has no [[bin]] target and is
-#    absent from the release; `aasm start` never launches it). Locally both
-#    read_file and delete_file deny, including the one the policy allows — the
-#    tell that the decision is policy-independent. So this lane can assert
-#    registration, and cannot yet observe a real allow.
+# 3. FIXED HERE TOO, AND IT WAS NEVER A PRODUCT DEFECT. This item used to read
+#    "AAASM-6151 caps what any job here can assert — nothing shipped binds
+#    /tmp/aa-runtime-<agent_id>.sock". That was wrong on both counts and the
+#    ticket is retracted. The release ships a `runtime` component for all four
+#    darwin/linux × amd64/arm64 targets, listed in components.json and covered by
+#    the same SHA256SUMS; the absent Cargo bin-target section proved nothing,
+#    because Cargo auto-discovers src/main.rs. This lane had simply never
+#    installed or started it, so `runtime unreachable; failing closed under
+#    enforce` was the SDK failing closed against a socket nobody had bound —
+#    a setup gap of ours wearing a product defect's label, for the fourth time.
+#    start-aasm.sh now installs and starts the runtime, and the lane asserts a
+#    real allow/deny pair via assert-policy-decision.sh.
 #
-# 4. AAASM-6149 makes the assertion timing-dependent. aa-api-server serves REST
-#    for exactly 30 s and then stops listening while the process stays alive and
-#    keeps serving gRPC. Measured on the released v0.0.1-rc.6 `aasm start --mode
-#    local`: authenticated 200 at t=6s, connection failure at t=40s, only :50051
-#    still bound. These jobs currently finish inside that window, which is why it
-#    has stayed invisible. Dropping continue-on-error before it is fixed and
-#    released would make main red on a product race, so it stays until then;
-#    assert-agent.sh at least names it instead of blaming the SDK.
+# 4. FIXED UPSTREAM AND RELEASED. This item used to read "AAASM-6149 makes the
+#    assertion timing-dependent — aa-api-server serves REST for exactly 30 s then
+#    stops listening". The behaviour was real on rc.6 but the ticket was a
+#    duplicate, filed off a stale checkout: it is AAASM-5908, fixed 2026-08-25 and
+#    released in rc.7. Re-measured on rc.7: health and authenticated
+#    /api/v1/agents both 200 through t≈67 s with all three ports still bound, and
+#    no drain-timeout line. This lane now pins rc.7, so the race is gone rather
+#    than merely unobserved.
 #
 # AAASM-4449 was cited here as a second blocker — "the release pipeline does not
 # yet ship aa-api-server". That is no longer accurate: the agent-assembly release
@@ -85,13 +89,16 @@
 # this repo's Verification policy exists to stop.
 #
 # This repo has no `rc_pending` pytest mechanism, so the quarantine is expressed
-# at the workflow level: each live job is `continue-on-error: true`. Dropping it
-# needs AAASM-6149 fixed and released (otherwise main goes red on the 30 s race)
-# and, for the Go job, AAASM-6150. When those land, drop `continue-on-error` (and
-# delete this note) so the lane becomes a hard, red-on-regression gate — and
-# update `.claude/CLAUDE.md`. AAASM-6151 governs something different: not whether
-# these jobs can be trusted, but whether this lane can ever assert more than
-# registration.
+# at the workflow level: each live job is `continue-on-error: true`. After the
+# corrections above, only ONE external blocker is left, and it is confined to one
+# job: AAASM-6150, for live-go.
+#
+# So `continue-on-error` should come off live-python and live-node — but only
+# once a real scheduled or dispatched run of THIS configuration passes. Removing
+# it before that would not be a fix; it would be asserting a result nobody has
+# observed, which is the same mistake as the four above in a different direction.
+# It stays on live-go until AAASM-6150 ships. When it comes off, delete the
+# matching note here and in `.claude/CLAUDE.md`.
 #
 # Related: scenarios/live-core-enforcement's `live-core-enforcement-live` job
 # (in verify-scenarios.yml) stays workflow_dispatch-only for a *distinct*
@@ -131,9 +138,10 @@ jobs:
   live-python:
     name: "live: python (real init_assembly)"
     runs-on: ubuntu-latest
-    # QUARANTINED: the 401 is fixed, but AAASM-6149 (REST stops listening 30s
-    # after start) makes the assertion timing-dependent, so this stays until that
-    # is released. AAASM-6151 caps it at registration. See the file header.
+    # QUARANTINED, but no longer on an external blocker: the 401, the missing
+    # runtime, and the REST drain are all addressed (see the file header). This
+    # stays only until a real run of this configuration is observed to pass —
+    # dropping it first would assert a result nobody has measured.
     continue-on-error: true
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
@@ -176,9 +184,9 @@ jobs:
   live-node:
     name: "live: node (real initAssembly)"
     runs-on: ubuntu-latest
-    # QUARANTINED: same as live-python — AAASM-6149 for the timing, AAASM-6151 for
-    # how far the assertion can reach. Node registers successfully today; the
-    # earlier AAASM-4467/4468 reasons no longer describe this job. See the header.
+    # QUARANTINED: same as live-python — pending one observed passing run, not an
+    # external blocker. Node registers successfully today; the earlier
+    # AAASM-4467/4468 reasons no longer describe this job. See the header.
     continue-on-error: true
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1

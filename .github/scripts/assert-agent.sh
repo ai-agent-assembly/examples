@@ -60,18 +60,25 @@ if ! AGENTS_JSON="$(aasm agent list --api-url "${AA_API_BASE}" --output json 2>/
   # cannot connect then the surface is not listening and the listing was never
   # reached.
   #
-  # That happens on a known product defect: aa-api-server serves REST for
-  # exactly 30 seconds, then stops listening while the process stays alive and
-  # keeps serving gRPC (AAASM-6149). Measured on the released v0.0.1-rc.6 `aasm
-  # start --mode local`: authenticated 200 at t=6s, connection failure at t=40s,
-  # with only :50051 still bound. Naming it here matters because the symptom
-  # otherwise looks like a transport failure in the SDK under test.
+  # On v0.0.1-rc.6 that had a known cause: aa-api-server served REST for exactly
+  # 30 seconds, then stopped listening while the process stayed alive and kept
+  # serving gRPC (authenticated 200 at t=6s, connection failure at t=40s, only
+  # :50051 still bound). That is AAASM-5908, fixed upstream and released in
+  # rc.7 — which this lane now pins — and re-measured green there: health and
+  # authenticated /api/v1/agents both 200 through t≈67s with all three ports
+  # bound. It was briefly re-filed as AAASM-6149 off a stale checkout; that
+  # ticket is closed as a duplicate.
+  #
+  # Naming it here still matters: if the surface does disappear mid-job again,
+  # the symptom looks like a transport failure in the SDK under test.
   HEALTH="$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "${AA_API_BASE}/api/v1/health" || true)"
   if [[ "${HEALTH}" == "000" ]]; then
     echo "       The public /api/v1/health probe could not connect either (curl 000)," >&2
     echo "       so the REST surface is not listening; the query never reached it." >&2
-    echo "       If the gateway was healthy earlier in this job, this is AAASM-6149:" >&2
-    echo "       aa-api-server stops serving REST 30s after start, process still up." >&2
+    echo "       If the gateway was healthy earlier in this job, the REST surface went" >&2
+    echo "       away mid-job. That was AAASM-5908 on rc.6 and is fixed in the rc.7 this" >&2
+    echo "       lane pins, so a recurrence here is a new finding — file it, do not" >&2
+    echo "       attribute it to the closed ticket." >&2
   else
     echo "       /api/v1/health answered HTTP ${HEALTH}, so the REST surface is up and" >&2
     echo "       the listing itself was refused. Check the credential and the error." >&2
