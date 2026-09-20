@@ -183,9 +183,10 @@ jobs:
         with:
           version: "latest"
 
-      # `agent-framework` lives under the `live` extra (heavy, pre-release tree),
-      # so CI installs `dev` only. The smoke tests importorskip it and the mock
-      # demo runs without it — the offline path this repo's CI is meant to verify.
+      # `agent-framework` lives under the `live` extra (heavy, pre-release tree
+      # with no Linux wheels), so CI installs `dev` only. The four offline policy
+      # tests run here; the four that drive the real framework importorskip it via
+      # the `governed_adapter` fixture. The mock demo also runs without it.
       - name: Install dependencies
         run: uv sync --extra dev --locked --no-build
 
