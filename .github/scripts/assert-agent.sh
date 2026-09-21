@@ -1,7 +1,32 @@
 #!/usr/bin/env bash
-# Assert that a given agent id is registered and visible in the gateway's
-# /api/v1/agents REST surface — the real signal this lane exists to check
-# (not merely "the driver process didn't crash").
+# Assert that a given agent id is registered and visible to an authenticated
+# operator — the real signal this lane exists to check (not merely "the driver
+# process didn't crash").
+#
+# WHY NOT curl (AAASM-6147)
+# -------------------------
+# This used to be `curl -fsS "${AA_API_BASE}/api/v1/agents"` with no credential.
+# That endpoint is protected — only /api/v1/health is public — so it answered
+# `401 {"detail":"Missing Authorization header"}` every run, and the 401 was read
+# as the lane's rc-gated transport failure. The endpoint was behaving correctly;
+# the lane had simply never authenticated.
+#
+# The fix is not to bolt a bearer header onto the curl. An operator does not hand
+# a token to curl to list their agents; they run the CLI, which reads the
+# credential from AASM_API_KEY (`aasm --help` documents preferring the env var
+# over the --api-key flag, because a flag leaves the token in argv where `ps` and
+# shell history can read it). Going through `aasm agent list` asserts the path a
+# real operator uses — the CLI's own auth, URL handling and JSON contract —
+# instead of a hand-rolled request that merely resembles it. start-aasm.sh
+# provisions the key; see its AASM_API_KEY block.
+#
+# WHY jq AND NOT grep
+# -------------------
+# The old check was `grep -q -- "${AGENT_ID}" <<<"${AGENTS_JSON}"`, which passes
+# on the id appearing anywhere in the payload: inside another agent's metadata, a
+# label, an error string. The surface returns the 32-hex registry hash as `id`
+# and the human agent id as `name`, so this asserts structurally on `.name`, with
+# `.id` accepted too in case a caller passes the hash.
 #
 # Usage: assert-agent.sh <agent-id>
 set -euo pipefail
@@ -14,14 +39,62 @@ AGENT_ID="${1:?usage: assert-agent.sh <agent-id>}"
 # within ~200 ms, and the timeout was then reported as the rc-gate (AAASM-5675).
 AA_API_BASE="${AA_API_BASE:-http://127.0.0.1:7391}"
 
-echo "Querying ${AA_API_BASE}/api/v1/agents for '${AGENT_ID}' ..."
-AGENTS_JSON="$(curl -fsS "${AA_API_BASE}/api/v1/agents")"
+if [[ -z "${AASM_API_KEY:-}" ]]; then
+  echo "FAIL: AASM_API_KEY is not set, so this assertion cannot authenticate." >&2
+  echo "      start-aasm.sh provisions it and exports it through GITHUB_ENV; run" >&2
+  echo "      this after that script, in the same job." >&2
+  echo "      Do not work around this by querying the endpoint unauthenticated —" >&2
+  echo "      that is the defect AAASM-6147 fixed. It returns 401, not a listing." >&2
+  exit 1
+fi
 
-if grep -q -- "${AGENT_ID}" <<<"${AGENTS_JSON}"; then
-  echo "OK: agent '${AGENT_ID}' is registered and visible."
+echo "Asking the gateway at ${AA_API_BASE} for its agents, as an authenticated operator..."
+
+# `aasm` reads the credential from the environment; it is never passed as a flag.
+if ! AGENTS_JSON="$(aasm agent list --api-url "${AA_API_BASE}" --output json 2>/tmp/assert-agent.err)"; then
+  echo "FAIL: 'aasm agent list' did not succeed." >&2
+  sed 's/^/       /' /tmp/assert-agent.err >&2
+
+  # Separate "the REST surface is gone" from "the query was rejected".
+  # /api/v1/health is public, so it answers with no credential; if even that
+  # cannot connect then the surface is not listening and the listing was never
+  # reached.
+  #
+  # On v0.0.1-rc.6 that had a known cause: aa-api-server served REST for exactly
+  # 30 seconds, then stopped listening while the process stayed alive and kept
+  # serving gRPC (authenticated 200 at t=6s, connection failure at t=40s, only
+  # :50051 still bound). That is AAASM-5908, fixed upstream and released in
+  # rc.7 — which this lane now pins — and re-measured green there: health and
+  # authenticated /api/v1/agents both 200 through t≈67s with all three ports
+  # bound. It was briefly re-filed as AAASM-6149 off a stale checkout; that
+  # ticket is closed as a duplicate.
+  #
+  # Naming it here still matters: if the surface does disappear mid-job again,
+  # the symptom looks like a transport failure in the SDK under test.
+  HEALTH="$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "${AA_API_BASE}/api/v1/health" || true)"
+  if [[ "${HEALTH}" == "000" ]]; then
+    echo "       The public /api/v1/health probe could not connect either (curl 000)," >&2
+    echo "       so the REST surface is not listening; the query never reached it." >&2
+    echo "       If the gateway was healthy earlier in this job, the REST surface went" >&2
+    echo "       away mid-job. That was AAASM-5908 on rc.6 and is fixed in the rc.7 this" >&2
+    echo "       lane pins, so a recurrence here is a new finding — file it, do not" >&2
+    echo "       attribute it to the closed ticket." >&2
+  else
+    echo "       /api/v1/health answered HTTP ${HEALTH}, so the REST surface is up and" >&2
+    echo "       the listing itself was refused. Check the credential and the error." >&2
+  fi
+  exit 1
+fi
+
+if jq -e --arg id "${AGENT_ID}" \
+  '(if type == "array" then . else .items end) | any(.name == $id or .id == $id)' \
+  <<<"${AGENTS_JSON}" >/dev/null; then
+  echo "OK: agent '${AGENT_ID}' is registered and visible to an authenticated operator."
 else
-  echo "FAIL: agent '${AGENT_ID}' is NOT present in /api/v1/agents." >&2
-  echo "Response was:" >&2
-  echo "${AGENTS_JSON}" >&2
+  echo "FAIL: agent '${AGENT_ID}' is NOT in the gateway's agent list." >&2
+  echo "      The query itself succeeded, so this is a registration failure, not an" >&2
+  echo "      auth or transport one. Agents the gateway does know about:" >&2
+  jq -r '(if type == "array" then . else .items end) | map(.name) | join(", ")' \
+    <<<"${AGENTS_JSON}" >&2 || echo "      (could not parse the response as agent JSON)" >&2
   exit 1
 fi
