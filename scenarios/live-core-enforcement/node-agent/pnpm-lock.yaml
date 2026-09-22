@@ -9,37 +9,37 @@ importers:
   .:
     dependencies:
       '@agent-assembly/sdk':
-        specifier: 0.0.1-rc.6
-        version: 0.0.1-rc.6
+        specifier: 0.0.1-rc.7
+        version: 0.0.1-rc.7
 
 packages:
 
-  '@agent-assembly/runtime-darwin-arm64@0.0.1-rc.6':
-    resolution: {integrity: sha512-qzLvYBsYN0k3rlr12emEj5UeODOY07jZgI13NqlNsJnZW+UEcITue5wFuSChXQ8jmrAr1TdrEtQgRsohXY24HQ==}
+  '@agent-assembly/runtime-darwin-arm64@0.0.1-rc.7':
+    resolution: {integrity: sha512-sdh740VoRiX9ftuunWSTLV7dvCwx0HqJkk//hVL/N9n0otBVv4vPlfK00ci9z+Eawy58OENBy8s5WMDJF3SkpA==}
     cpu: [arm64]
     os: [darwin]
     hasBin: true
 
-  '@agent-assembly/runtime-darwin-x64@0.0.1-rc.6':
-    resolution: {integrity: sha512-dVtBDt1VjjrumJnG4560626Jb1ce1YeZUb5mWKl/Nsde7+wweBa5y6EiwmwHLySBRNaFprDM+TsjnHC/YJSoRQ==}
+  '@agent-assembly/runtime-darwin-x64@0.0.1-rc.7':
+    resolution: {integrity: sha512-eI6wRYVGttdMXeg6nA7ag7ZHP1V8fGzSJwSgrFpCEB/1N0kxmJqhO7UHyoBVha7vDfEua6Ag/+wCP70XaF9RiA==}
     cpu: [x64]
     os: [darwin]
     hasBin: true
 
-  '@agent-assembly/runtime-linux-arm64@0.0.1-rc.6':
-    resolution: {integrity: sha512-4xwQGYa1uu715FQ7RkmZ1sH7qJ9PM4b6cWrOsFwebJZpqh0EaBtfq0arinEJR7U+ycxr1mkkzrUa+ir/vFOf9g==}
+  '@agent-assembly/runtime-linux-arm64@0.0.1-rc.7':
+    resolution: {integrity: sha512-7Pkwo4MOdeF0V/Yoe5Rg3j++1bcljvDeOj+L8bgzWlSiOtkyhdvgE4io08qGZQdIQMdBdtfDhTsIFKpPZXsi2Q==}
     cpu: [arm64]
     os: [linux]
     hasBin: true
 
-  '@agent-assembly/runtime-linux-x64@0.0.1-rc.6':
-    resolution: {integrity: sha512-ta9xN4EVfb11N0NCWmfT9PyrlEjAV0LPOL86OAiWCgsRsuN5VBB/+Ro0BVqR+idFEWnDkHFZJnFvWOl0ySU9EQ==}
+  '@agent-assembly/runtime-linux-x64@0.0.1-rc.7':
+    resolution: {integrity: sha512-4cSu4Z5QeTMWrkapvxQxrP9ocIej9h7jmtJtxPvL5SfL4RMYdvYcqJE31wgFPZJdH5KQPbMOZiTeVdlNLz6qYA==}
     cpu: [x64]
     os: [linux]
     hasBin: true
 
-  '@agent-assembly/sdk@0.0.1-rc.6':
-    resolution: {integrity: sha512-Z9VYRIIQCgri/3PwbnQ/+gp7ymQJ9dGWc9NVTSJ8TsM4yPk2tgAI/hm6neIMsGJuB++nvxysAlVna9F+7DvIwg==}
+  '@agent-assembly/sdk@0.0.1-rc.7':
+    resolution: {integrity: sha512-vN+Vtys1HD83jKMl/TD4ZDM8Ki8DOQpXMUT0CqAe2IEK2fE9eyn1gicP87h4yfNe6Urgh5FuXjBAKYw9Wt6xdw==}
     engines: {node: '>=18.18.0', pnpm: '>=10'}
     peerDependencies:
       '@langchain/core': '>=0.3.0'
@@ -181,27 +181,27 @@ packages:
 
 snapshots:
 
-  '@agent-assembly/runtime-darwin-arm64@0.0.1-rc.6':
+  '@agent-assembly/runtime-darwin-arm64@0.0.1-rc.7':
     optional: true
 
-  '@agent-assembly/runtime-darwin-x64@0.0.1-rc.6':
+  '@agent-assembly/runtime-darwin-x64@0.0.1-rc.7':
     optional: true
 
-  '@agent-assembly/runtime-linux-arm64@0.0.1-rc.6':
+  '@agent-assembly/runtime-linux-arm64@0.0.1-rc.7':
     optional: true
 
-  '@agent-assembly/runtime-linux-x64@0.0.1-rc.6':
+  '@agent-assembly/runtime-linux-x64@0.0.1-rc.7':
     optional: true
 
-  '@agent-assembly/sdk@0.0.1-rc.6':
+  '@agent-assembly/sdk@0.0.1-rc.7':
     dependencies:
       '@bufbuild/protobuf': 2.12.1
       '@grpc/grpc-js': 1.14.4
     optionalDependencies:
-      '@agent-assembly/runtime-darwin-arm64': 0.0.1-rc.6
-      '@agent-assembly/runtime-darwin-x64': 0.0.1-rc.6
-      '@agent-assembly/runtime-linux-arm64': 0.0.1-rc.6
-      '@agent-assembly/runtime-linux-x64': 0.0.1-rc.6
+      '@agent-assembly/runtime-darwin-arm64': 0.0.1-rc.7
+      '@agent-assembly/runtime-darwin-x64': 0.0.1-rc.7
+      '@agent-assembly/runtime-linux-arm64': 0.0.1-rc.7
+      '@agent-assembly/runtime-linux-x64': 0.0.1-rc.7
 
   '@bufbuild/protobuf@2.12.1': {}
 
