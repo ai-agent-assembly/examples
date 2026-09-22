@@ -14,7 +14,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@agent-assembly/sdk": "0.0.1-rc.6"
+    "@agent-assembly/sdk": "0.0.1-rc.7"
   },
   "devDependencies": {
     "@types/node": "^26.6.1",
