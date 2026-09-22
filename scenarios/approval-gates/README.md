@@ -74,7 +74,7 @@ Node.js implementation:
 |---|---|
 | Node.js | ≥ 20 |
 | pnpm | latest |
-| `@agent-assembly/sdk` | ≥ 0.0.1-rc.6 |
+| `@agent-assembly/sdk` | ≥ 0.0.1-rc.7 |
 
 ## Run: Python
 
