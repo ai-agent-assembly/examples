@@ -69,19 +69,26 @@ async def test_pending_tool_raises_policy_violation(governed_tool_class: type[De
 
 def test_init_assembly_sdk_only_requires_no_gateway() -> None:
     from agent_assembly import init_assembly
-    from agent_assembly.core import assembly as _core
+    from agent_assembly.adapters.registry import AdapterRegistry
 
-    with patch.object(_core, "_register_adapters", return_value=[]):
-        with patch.object(
-            _core, "_start_network_layer", return_value=("sdk-only", lambda: None)
-        ):
-            ctx = init_assembly(
-                gateway_url="http://localhost:8080",
-                agent_id="test-google-adk-agent",
-                mode="sdk-only",
-            )
-            try:
-                assert ctx.client.agent_id == "test-google-adk-agent"
-                assert ctx.network_mode == "sdk-only"
-            finally:
-                ctx.shutdown()
+    # AAASM-6156 -- patch adapter *discovery*, not the private
+    # ``_register_adapters`` helper the examples used to reach for. Discovery's
+    # contract is "the available adapters, in priority order", which does not
+    # move with the SDK's internal return shape; that helper's did (rc.7 made it
+    # return a 2-tuple), and because all 16 Python examples pinned the old shape
+    # the same upgrade broke every one of them at once.
+    #
+    # ``_start_network_layer`` needs no patch either: under ``mode="sdk-only"``
+    # the real function is already a no-op returning exactly what the old mock
+    # returned, so patching it only pinned a second internal shape.
+    with patch.object(AdapterRegistry, "get_available_adapters_by_priority", return_value=[]):
+        ctx = init_assembly(
+            gateway_url="http://localhost:8080",
+            agent_id="test-google-adk-agent",
+            mode="sdk-only",
+        )
+        try:
+            assert ctx.client.agent_id == "test-google-adk-agent"
+            assert ctx.network_mode == "sdk-only"
+        finally:
+            ctx.shutdown()
