@@ -19,7 +19,7 @@
 
 python:
   package: "agent-assembly"
-  version: "0.0.1rc6"
+  version: "0.0.1rc7"
   install_pip: "pip install agent-assembly=={{version}}"
   install_uv: "uv add agent-assembly=={{version}}"
 

@@ -5,14 +5,14 @@
 <!-- Edit metadata/sdk-versions.yaml and re-run the generator. -->
 | Requirement | Version |
 |---|---|
-| Agent Assembly Python SDK (agent-assembly) | >= 0.0.1rc6 |
+| Agent Assembly Python SDK (agent-assembly) | >= 0.0.1rc7 |
 
 Install:
 
 ```bash
-uv add agent-assembly==0.0.1rc6
+uv add agent-assembly==0.0.1rc7
 # or
-pip install agent-assembly==0.0.1rc6
+pip install agent-assembly==0.0.1rc7
 ```
 <!-- END GENERATED: sdk-install -->
 
@@ -42,7 +42,7 @@ audit event.
 |---|---|
 | Python | >= 3.12 |
 | [uv](https://github.com/astral-sh/uv) | latest |
-| Agent Assembly Python SDK | >= 0.0.1rc6 |
+| Agent Assembly Python SDK | >= 0.0.1rc7 |
 
 The mock demo needs no gateway, no `crewai`, and no API keys — and it is the
 only run mode this example implements (see "A real CrewAI integration is not
