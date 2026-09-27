@@ -85,11 +85,21 @@ def test_denied_tool_runs_normally_after_revert() -> None:
     tools_module.EXECUTED.clear()
 
 
-def test_init_assembly_sdk_only_requires_no_gateway() -> None:
+def test_init_assembly_sdk_only_requires_no_gateway(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     from unittest.mock import patch as mock_patch
 
     from agent_assembly import init_assembly
     from agent_assembly.adapters.registry import AdapterRegistry
+
+    # AAASM-6196 -- make "no gateway" a fact instead of an assumption about the
+    # machine. Nothing here used to stop a locally running gateway from answering:
+    # ``gateway_url`` steers only the *host*, because the resolver always
+    # substitutes the fixed gRPC port 50051. ``AA_GATEWAY_ENDPOINT`` is the one
+    # lever honoured verbatim. Port 1 is privileged, so no user process can
+    # occupy it and the connection is refused immediately.
+    monkeypatch.setenv("AA_GATEWAY_ENDPOINT", "http://127.0.0.1:1")
 
     # AAASM-6156 -- patch adapter *discovery*, not the private
     # ``_register_adapters`` helper the examples used to reach for. Discovery's
