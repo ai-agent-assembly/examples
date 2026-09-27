@@ -11,6 +11,10 @@ The fixtures below are the real shapes: ``BEFORE`` is what all 16 Python
 examples contained before AAASM-6156 (including the aliased-``patch`` and
 combined-``with`` variants that a text-level check would have missed), and
 ``AFTER`` is the replacement.
+
+``AFTER`` now also carries the AAASM-6196 endpoint pin, because the fixture has
+to stay the tree's real current shape: a fixture frozen at the previous fix would
+quietly stop exercising the rule added after it.
 """
 
 from __future__ import annotations
@@ -24,6 +28,7 @@ from scripts.check_example_sdk_mocks import (
     PatchSite,
     check_consistency,
     discover_test_files,
+    gateway_coverage,
     main,
     scan_text,
 )
@@ -54,11 +59,15 @@ BEFORE = textwrap.dedent(
 
 AFTER = textwrap.dedent(
     """\
-    def test_init_assembly_sdk_only_requires_no_gateway() -> None:
+    def test_init_assembly_sdk_only_requires_no_gateway(
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
         from unittest.mock import patch
 
         from agent_assembly import init_assembly
         from agent_assembly.adapters.registry import AdapterRegistry
+
+        monkeypatch.setenv("AA_GATEWAY_ENDPOINT", "http://127.0.0.1:1")
 
         with patch.object(AdapterRegistry, "get_available_adapters_by_priority", return_value=[]):
             ctx = init_assembly(
@@ -81,9 +90,13 @@ def _rules(source: str) -> list[str]:
 
 class TestPrivateSeamDetection(unittest.TestCase):
     def test_reproduces_aaasm_6156_private_helper_patch(self) -> None:
-        # The real defect, verbatim. Two private patches, so two findings.
+        # The real defect, verbatim. Two private patches, so two findings — plus
+        # EX-MOCK-05, because that same text also left the gateway endpoint
+        # unpinned (AAASM-6196). Both defects were in the tree at once.
         findings, sites = scan_text("python/crewai-research-crew/tests/test_smoke.py", BEFORE)
-        self.assertEqual([f.rule_id for f in findings], ["EX-MOCK-01", "EX-MOCK-01"])
+        self.assertEqual(
+            [f.rule_id for f in findings], ["EX-MOCK-01", "EX-MOCK-01", "EX-MOCK-05"]
+        )
         self.assertEqual(len(sites), 2)
         names = sorted(str(s.target).rsplit(".", 1)[-1] for s in sites)
         self.assertEqual(names, ["_register_adapters", "_start_network_layer"])
@@ -102,7 +115,7 @@ class TestPrivateSeamDetection(unittest.TestCase):
         source = BEFORE.replace("import patch", "import patch as mock_patch").replace(
             "patch.object", "mock_patch.object"
         )
-        self.assertEqual(_rules(source), ["EX-MOCK-01", "EX-MOCK-01"])
+        self.assertEqual(_rules(source), ["EX-MOCK-01", "EX-MOCK-01", "EX-MOCK-05"])
 
     def test_combined_with_statement_is_still_seen(self) -> None:
         # Several examples used a single parenthesised `with (a, b):` instead of
@@ -258,6 +271,94 @@ class TestConsistency(unittest.TestCase):
         for name in ("langgraph", "pydantic-ai", "google-adk"):
             sites.extend(self._site(f"python/{name}/tests/test_smoke.py", None))
         self.assertEqual(check_consistency(sites), [])
+
+
+class TestGatewayPin(unittest.TestCase):
+    """EX-MOCK-05 / EX-MOCK-06, AAASM-6196.
+
+    The defect these rules exist for is a test that passes for a reason outside
+    itself, so each case below pairs the shape that must be clean with the shape
+    that must be red — including the two that look like fixes and are not.
+    """
+
+    def test_the_real_pre_fix_text_is_reported(self) -> None:
+        self.assertIn("EX-MOCK-05", _rules(BEFORE))
+
+    def test_the_fix_is_clean(self) -> None:
+        self.assertEqual(_rules(AFTER), [])
+
+    def test_pinning_the_default_grpc_port_is_not_a_fix(self) -> None:
+        # :50051 is the one port a locally running gateway occupies, so pinning
+        # to it restores exactly the ambient dependency being removed.
+        source = AFTER.replace("127.0.0.1:1", "127.0.0.1:50051")
+        self.assertEqual(_rules(source), ["EX-MOCK-06"])
+
+    def test_a_computed_endpoint_value_is_refused_rather_than_assumed(self) -> None:
+        # The variable name is right, so EX-MOCK-05 is satisfied — but a value
+        # built at runtime could be :50051, and the gate must not guess.
+        source = AFTER.replace('"http://127.0.0.1:1")', "endpoint)")
+        self.assertEqual(_rules(source), ["EX-MOCK-06"])
+
+    def test_a_computed_env_name_does_not_count_as_a_pin(self) -> None:
+        # A string built at runtime cannot be read statically, so the gate must
+        # refuse it rather than assume it spells the right variable.
+        source = AFTER.replace('"AA_GATEWAY_ENDPOINT"', '"AA_GATEWAY" + "_ENDPOINT"')
+        self.assertEqual(_rules(source), ["EX-MOCK-05"])
+
+    def test_gateway_url_alone_is_not_a_pin(self) -> None:
+        # The whole point: gateway_url steers the host and the resolver forces
+        # port 50051, so no value of it makes the test hermetic.
+        source = AFTER.replace(
+            '    monkeypatch.setenv("AA_GATEWAY_ENDPOINT", "http://127.0.0.1:1")\n\n', ""
+        ).replace("http://localhost:8080", "http://127.0.0.1:1")
+        self.assertEqual(_rules(source), ["EX-MOCK-05"])
+
+    def test_patch_dict_on_os_environ_is_accepted(self) -> None:
+        source = AFTER.replace(
+            '    monkeypatch.setenv("AA_GATEWAY_ENDPOINT", "http://127.0.0.1:1")',
+            '    patch.dict(os.environ, {"AA_GATEWAY_ENDPOINT": "http://127.0.0.1:1"}).start()',
+        )
+        self.assertEqual(_rules(source), [])
+
+    def test_direct_os_environ_assignment_is_accepted(self) -> None:
+        source = AFTER.replace(
+            '    monkeypatch.setenv("AA_GATEWAY_ENDPOINT", "http://127.0.0.1:1")',
+            '    os.environ["AA_GATEWAY_ENDPOINT"] = "http://127.0.0.1:1"',
+        )
+        self.assertEqual(_rules(source), [])
+
+    def test_a_pin_in_a_sibling_test_does_not_vouch_for_this_one(self) -> None:
+        # Scoping matters: file-level matching would let one guarded test make
+        # every other test in the file look guarded.
+        source = AFTER + textwrap.dedent(
+            """\
+
+            def test_other() -> None:
+                from agent_assembly import init_assembly
+
+                init_assembly(mode="sdk-only")
+            """
+        )
+        self.assertEqual(_rules(source), ["EX-MOCK-05"])
+
+    def test_the_module_qualified_call_form_is_seen(self) -> None:
+        source = textwrap.dedent(
+            """\
+            import agent_assembly
+
+
+            def test_x() -> None:
+                agent_assembly.init_assembly(mode="sdk-only")
+            """
+        )
+        self.assertEqual(_rules(source), ["EX-MOCK-05"])
+
+    def test_coverage_counts_what_was_measured(self) -> None:
+        # A parser that stops recognising these calls reports 0 sites, which is
+        # visibly not a clean tree. Asserted so the counter cannot go vacuous.
+        self.assertEqual(gateway_coverage(AFTER), (1, 1))
+        self.assertEqual(gateway_coverage(BEFORE), (1, 0))
+        self.assertEqual(gateway_coverage("def test_x() -> None:\n    pass\n"), (0, 0))
 
 
 class TestDiscoveryAndExit(unittest.TestCase):
