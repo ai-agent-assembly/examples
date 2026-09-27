@@ -293,6 +293,12 @@ class TestGatewayPin(unittest.TestCase):
         source = AFTER.replace("127.0.0.1:1", "127.0.0.1:50051")
         self.assertEqual(_rules(source), ["EX-MOCK-06"])
 
+    def test_a_computed_endpoint_value_is_refused_rather_than_assumed(self) -> None:
+        # The variable name is right, so EX-MOCK-05 is satisfied — but a value
+        # built at runtime could be :50051, and the gate must not guess.
+        source = AFTER.replace('"http://127.0.0.1:1")', "endpoint)")
+        self.assertEqual(_rules(source), ["EX-MOCK-06"])
+
     def test_a_computed_env_name_does_not_count_as_a_pin(self) -> None:
         # A string built at runtime cannot be read statically, so the gate must
         # refuse it rather than assume it spells the right variable.

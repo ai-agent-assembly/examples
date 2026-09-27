@@ -41,7 +41,8 @@ one port a local gateway occupies. Hence:
   function, so the gateway's reachability is a fact of the test rather than a
   property of the machine.
 * ``EX-MOCK-06`` — and that pin may not name port 50051, which would restore
-  the ambient dependency while looking like a fix.
+  the ambient dependency while looking like a fix, nor be a value this gate
+  cannot read, which would hide either outcome.
 
 Run against the tracked example tests:
 
@@ -190,7 +191,7 @@ def _env_pins(node: ast.AST) -> list[tuple[int, str | None]]:
     for child in ast.walk(node):
         if isinstance(child, ast.Call):
             callee = _dotted(child.func) or ""
-            if callee.endswith("setenv") and len(child.args) >= 2:
+            if callee.rsplit(".", 1)[-1] == "setenv" and len(child.args) >= 2:
                 if _string_value(child.args[0]) == GATEWAY_ENDPOINT_ENV:
                     pins.append((child.lineno, _string_value(child.args[1])))
             for argument in child.args + [kw.value for kw in child.keywords]:
@@ -206,23 +207,6 @@ def _env_pins(node: ast.AST) -> list[tuple[int, str | None]]:
                 if _string_value(target.slice) == GATEWAY_ENDPOINT_ENV:
                     pins.append((child.lineno, _string_value(child.value)))
     return pins
-
-
-def gateway_coverage(source: str) -> tuple[int, int]:
-    """``(init_assembly call sites, of those with the endpoint pinned)``.
-
-    Reported by ``main`` so the EX-MOCK-05 rule cannot pass by measuring nothing:
-    a parser that stops recognising these calls shows 0 sites, not a clean tree.
-    """
-    tree = ast.parse(source)
-    bindings = _sdk_bindings(tree)
-    total = 0
-    pinned = 0
-    for scope, _node in _init_sites(tree, bindings):
-        total += 1
-        if _env_pins(scope):
-            pinned += 1
-    return total, pinned
 
 
 def _init_sites(
@@ -256,6 +240,23 @@ def _init_sites(
     return sites
 
 
+def gateway_coverage(source: str) -> tuple[int, int]:
+    """``(init_assembly call sites, of those with the endpoint pinned)``.
+
+    Reported by ``main`` so the EX-MOCK-05 rule cannot pass by measuring nothing:
+    a parser that stops recognising these calls shows 0 sites, not a clean tree.
+    """
+    tree = ast.parse(source)
+    bindings = _sdk_bindings(tree)
+    total = 0
+    pinned = 0
+    for scope, _node in _init_sites(tree, bindings):
+        total += 1
+        if _env_pins(scope):
+            pinned += 1
+    return total, pinned
+
+
 def _gateway_findings(path: str, tree: ast.AST, bindings: dict[str, str]) -> list[Finding]:
     """EX-MOCK-05 / EX-MOCK-06: AAASM-6196."""
     findings: list[Finding] = []
@@ -279,7 +280,18 @@ def _gateway_findings(path: str, tree: ast.AST, bindings: dict[str, str]) -> lis
             continue
 
         for line, value in pins:
-            if value is not None and f":{DEFAULT_GRPC_PORT}" in value:
+            if value is None:
+                findings.append(
+                    Finding(
+                        path,
+                        line,
+                        "EX-MOCK-06",
+                        f"sets {GATEWAY_ENDPOINT_ENV} to a value this gate cannot read, so it "
+                        "cannot tell whether the endpoint ends up unreachable or pointed at a "
+                        f"live gateway on :{DEFAULT_GRPC_PORT}. Pass a string literal.",
+                    )
+                )
+            elif f":{DEFAULT_GRPC_PORT}" in value:
                 findings.append(
                     Finding(
                         path,
