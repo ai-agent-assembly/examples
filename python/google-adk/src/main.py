@@ -73,6 +73,9 @@ async def _run_demo() -> None:
             api_key=api_key,
             agent_id="google-adk-demo-agent",
             mode="sdk-only",
+            # No gateway here: the default posture fails closed when registration
+            # can't reach one, so an offline demo must name its dry-run posture.
+            enforcement_mode="observe",
         ) as ctx:
             # endregion
             print(f"  Agent:    {ctx.client.agent_id}")
