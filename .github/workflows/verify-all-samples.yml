@@ -104,6 +104,13 @@ jobs:
           # it must be built from source. `--locked` still applies. That
           # example has a tests/ dir, so discover_samples.py always classifies
           # it as `uv-pytest` — there is no `uv-main`/`py-script` case for it.
+          #
+          # Both commands in this branch omit the flag, which is why they look
+          # different from the identical-looking `uv-pytest` case below. uv
+          # rejects the *distribution* for having no binary form rather than
+          # rejecting the act of building, so `uv run` fails the same way even
+          # after the sync has already built and installed pybars4 (verified,
+          # AAASM-6208). This is not an oversight on the `uv run` line.
           if [[ "$PWD" == *"semantic-kernel-tool-policy"* ]]; then
             if [[ "$RUNNER" != "uv-pytest" ]]; then
               echo "::error::semantic-kernel-tool-policy runner changed to $RUNNER — update this exception"

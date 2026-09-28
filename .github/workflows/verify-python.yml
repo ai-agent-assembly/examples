@@ -308,15 +308,25 @@ jobs:
           version: "latest"
 
       - name: Install dependencies
-        # `--no-build` (S8541) can't be used here: pybars4 (a transitive dep
-        # of semantic-kernel's templating) ships no wheel on PyPI, sdist only,
-        # so it must be built from source. `--locked` (S8544) still applies.
+        # `--no-build` (S8541) can't be used anywhere in this job, not just
+        # here: pybars4 (a hard dependency of semantic-kernel, via its
+        # templating) ships no wheel on PyPI, sdist only, so it has to be built
+        # from source. uv rejects the *distribution* for having no binary form
+        # rather than rejecting the act of building, so the two `uv run` steps
+        # below fail with the same "has no binary distribution" error even
+        # though this step has already built and installed it — a warm cache
+        # and a complete venv make no difference (verified, AAASM-6208). Add
+        # the flag to any step here and this lane goes red on its own.
+        # `--locked` (S8544) still applies throughout, and uv.lock pins the
+        # sdist's sha256, so only that exact artifact is ever built.
         run: uv sync --extra dev --locked
 
       - name: Run smoke tests
+        # No `--no-build` here by necessity; see Install dependencies above.
         run: uv run --locked pytest tests/ -v
 
       - name: Run offline demo
+        # No `--no-build` here by necessity; see Install dependencies above.
         run: uv run --locked python src/main.py
 
   strands-agents-tool-policy:
