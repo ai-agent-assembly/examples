@@ -17,6 +17,8 @@ on:
       - "go/**/README.md"
       - "go/**/main.go"
       - "snippets/**"
+      - ".sonarcloud.properties"
+      - "scripts/check_cpd_exclusions.py"
       - "scenarios/**/pyproject.toml"
       - "scenarios/**/package.json"
       - "scenarios/**/go.mod"
@@ -69,3 +71,14 @@ jobs:
 
       - name: Run generator unit tests
         run: python -m unittest scripts.test_generate_example_metadata
+
+      # AAASM-6206. The snippets this job regenerates all duplicate their source
+      # entrypoint by construction, and SonarCloud's Automatic Analysis config
+      # cannot express that with a wildcard, so each one has to be named in
+      # .sonarcloud.properties. The selftest runs first because a gate whose
+      # value is that it can fail has to be shown to still fail.
+      - name: Exclusion gate still fails closed
+        run: python3 scripts/check_cpd_exclusions.py --selftest
+
+      - name: Every generated snippet is excluded from copy-paste detection
+        run: python3 scripts/check_cpd_exclusions.py --verbose
