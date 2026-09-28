@@ -36,7 +36,7 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 # `maturin develop` instead (see README). Versions are pinned and
 # `--only-binary=:all:` forces wheel-only installs (both ship wheels for this
 # platform), so no arbitrary sdist build script runs during install.
-RUN pip install --no-cache-dir --only-binary=:all: "maturin==1.14.1" "agent-assembly==0.0.1rc6"
+RUN pip install --no-cache-dir --only-binary=:all: "maturin==1.14.1" "agent-assembly==0.0.1rc7"
 
 WORKDIR /app
 COPY agent.py /app/agent.py

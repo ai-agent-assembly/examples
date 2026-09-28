@@ -5,14 +5,14 @@
 <!-- Edit metadata/sdk-versions.yaml and re-run the generator. -->
 | Requirement | Version |
 |---|---|
-| Agent Assembly Python SDK (agent-assembly) | >= 0.0.1rc6 |
+| Agent Assembly Python SDK (agent-assembly) | >= 0.0.1rc7 |
 
 Install:
 
 ```bash
-uv add agent-assembly==0.0.1rc6
+uv add agent-assembly==0.0.1rc7
 # or
-pip install agent-assembly==0.0.1rc6
+pip install agent-assembly==0.0.1rc7
 ```
 <!-- END GENERATED: sdk-install -->
 
@@ -39,7 +39,7 @@ In ADK 1.x, concrete tools (`FunctionTool` and custom `BaseTool` subclasses) ove
 |---|---|
 | Python | >= 3.12 |
 | [uv](https://github.com/astral-sh/uv) | latest |
-| Agent Assembly Python SDK | >= 0.0.1rc6 |
+| Agent Assembly Python SDK | >= 0.0.1rc7 |
 
 No running Agent Assembly gateway and no Google Cloud credentials are required for the offline demo.
 

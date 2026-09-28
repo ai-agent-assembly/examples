@@ -5,14 +5,14 @@
 <!-- Edit metadata/sdk-versions.yaml and re-run the generator. -->
 | Requirement | Version |
 |---|---|
-| Agent Assembly Python SDK (agent-assembly) | >= 0.0.1rc6 |
+| Agent Assembly Python SDK (agent-assembly) | >= 0.0.1rc7 |
 
 Install:
 
 ```bash
-uv add agent-assembly==0.0.1rc6
+uv add agent-assembly==0.0.1rc7
 # or
-pip install agent-assembly==0.0.1rc6
+pip install agent-assembly==0.0.1rc7
 ```
 <!-- END GENERATED: sdk-install -->
 
@@ -34,7 +34,7 @@ Agno runs every function-tool call through a single chokepoint — `agno.tools.f
 |---|---|
 | Python | >= 3.12 |
 | [uv](https://github.com/astral-sh/uv) | latest |
-| Agent Assembly Python SDK | >= 0.0.1rc6 |
+| Agent Assembly Python SDK | >= 0.0.1rc7 |
 | Agno | >= 2.7.2 |
 
 No API key or running gateway is required for the offline demo.

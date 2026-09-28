@@ -5,14 +5,14 @@
 <!-- Edit metadata/sdk-versions.yaml and re-run the generator. -->
 | Requirement | Version |
 |---|---|
-| Agent Assembly Python SDK (agent-assembly) | >= 0.0.1rc6 |
+| Agent Assembly Python SDK (agent-assembly) | >= 0.0.1rc7 |
 
 Install:
 
 ```bash
-uv add agent-assembly==0.0.1rc6
+uv add agent-assembly==0.0.1rc7
 # or
-pip install agent-assembly==0.0.1rc6
+pip install agent-assembly==0.0.1rc7
 ```
 <!-- END GENERATED: sdk-install -->
 
@@ -33,7 +33,7 @@ Demonstrates how to integrate [Agent Assembly](https://github.com/ai-agent-assem
 |---|---|
 | Python | >= 3.12 |
 | [uv](https://github.com/astral-sh/uv) | latest |
-| Agent Assembly Python SDK | >= 0.0.1rc6 |
+| Agent Assembly Python SDK | >= 0.0.1rc7 |
 
 No running Agent Assembly gateway is required for the offline demo.
 
@@ -99,7 +99,7 @@ AGENT_ASSEMBLY_API_KEY=your-key \
 uv run python src/main.py
 ```
 
-In production, remove the `mode="sdk-only"` argument from `init_assembly()` and replace `LocalPolicyEngine` with the gateway-backed interceptor. The SDK will enforce policy rules configured in the gateway automatically.
+In production, remove **both** the `mode="sdk-only"` and the `enforcement_mode="observe"` arguments from `init_assembly()`, and replace `LocalPolicyEngine` with the gateway-backed interceptor. The SDK will enforce policy rules configured in the gateway automatically. Dropping `enforcement_mode` matters as much as dropping `mode`: `observe` is a dry-run posture that lets the SDK carry on when it cannot reach the gateway, which is what makes this offline demo runnable and exactly what you do not want in production.
 
 ## Troubleshooting
 
