@@ -99,7 +99,7 @@ AGENT_ASSEMBLY_API_KEY=your-key \
 uv run python src/main.py
 ```
 
-In production, remove the `mode="sdk-only"` argument from `init_assembly()` and replace `LocalPolicyEngine` with the gateway-backed interceptor. The SDK will enforce policy rules configured in the gateway automatically.
+In production, remove **both** the `mode="sdk-only"` and the `enforcement_mode="observe"` arguments from `init_assembly()`, and replace `LocalPolicyEngine` with the gateway-backed interceptor. The SDK will enforce policy rules configured in the gateway automatically. Dropping `enforcement_mode` matters as much as dropping `mode`: `observe` is a dry-run posture that lets the SDK carry on when it cannot reach the gateway, which is what makes this offline demo runnable and exactly what you do not want in production.
 
 ## Troubleshooting
 
