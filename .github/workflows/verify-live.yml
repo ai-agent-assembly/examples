@@ -158,7 +158,7 @@ jobs:
           python-version: "3.13"   # cp313 wheel gap (AAASM-4446) is part of what this lane must catch
 
       - name: Install the real published SDK (no shim)
-        run: "pip install --pre --only-binary=:all: 'agent-assembly==0.0.1rc6'"
+        run: "pip install --pre --only-binary=:all: 'agent-assembly==0.0.1rc7'"
 
       - name: Install and start the real aasm gateway
         # The agent id is an argument because aa-runtime binds a per-agent socket

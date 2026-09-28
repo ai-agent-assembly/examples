@@ -65,7 +65,7 @@ the standard `AssemblyCallbackHandler` from the Agent Assembly SDK.
 |---|---|
 | Python | ≥ 3.12 |
 | uv | latest |
-| `agent-assembly` SDK | ≥ 0.0.1rc6 |
+| `agent-assembly` SDK | ≥ 0.0.1rc7 |
 | PyYAML | ≥ 6.0 |
 
 Node.js implementation:
