@@ -7,10 +7,12 @@ AAASM-6243: nine directories here failed ``pnpm install`` outright under pnpm 11
 with ``ERR_PNPM_IGNORED_BUILDS``, because pnpm 11 reads a directory's
 build-script decision **only** from ``allowBuilds`` in ``pnpm-workspace.yaml``.
 It does not read ``package.json``'s ``pnpm`` field (dropped in pnpm 11) and it
-does not read ``onlyBuiltDependencies`` (pnpm 10's key). Two of the nine already
-declared ``onlyBuiltDependencies`` in ``pnpm-workspace.yaml`` and failed anyway,
-which is what makes this a parity problem rather than a migration problem: the
-two keys mean the same thing to different majors and have to be kept in step.
+does not read ``onlyBuiltDependencies`` (pnpm 10's key). Three of the nine
+already declared ``onlyBuiltDependencies`` in ``pnpm-workspace.yaml`` and failed
+anyway — ``node/mastra``, ``scenarios/approval-gates/node`` and
+``scenarios/policy-enforcement/node``. That is what makes this a parity problem
+rather than a migration problem: the two keys mean the same thing to different
+majors and have to be kept in step.
 
 CI pins pnpm 10 (``pnpm/action-setup`` with ``version: 10``), so pnpm 11's half
 of the decision has no runtime consumer in CI today and nothing would notice it
