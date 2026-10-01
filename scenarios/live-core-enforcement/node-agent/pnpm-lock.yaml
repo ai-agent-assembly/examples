@@ -62,8 +62,8 @@ packages:
   '@bufbuild/protobuf@2.12.1':
     resolution: {integrity: sha512-BvAMfS6LrgZiryOAZ4pBYucu4wG/Ei/9o9DZ9akbREnMLbPJiom2i8b9C8IsKErQoiKqVhrerzt3kOT/RrzLHg==}
 
-  '@grpc/grpc-js@1.14.4':
-    resolution: {integrity: sha512-k9Dj3DV/itK9D06Y8f190Qgop7/Ui+D0njFV3LHMPwPT75DpXLQohE9Wmz0QElrJnzsjB7KPWiKJbOl7IPDArQ==}
+  '@grpc/grpc-js@1.14.5':
+    resolution: {integrity: sha512-7VZM+SVdEcUUqSQeNI3zM8Qs/BhQKZndPo2h5VkYkAM8Iz0wJIa8mKV5ekQGqG8UUsnkQ0NMxIxwkIHYvj0qOw==}
     engines: {node: '>=12.10.0'}
 
   '@grpc/proto-loader@0.8.1':
@@ -196,7 +196,7 @@ snapshots:
   '@agent-assembly/sdk@0.0.1-rc.7':
     dependencies:
       '@bufbuild/protobuf': 2.12.1
-      '@grpc/grpc-js': 1.14.4
+      '@grpc/grpc-js': 1.14.5
     optionalDependencies:
       '@agent-assembly/runtime-darwin-arm64': 0.0.1-rc.7
       '@agent-assembly/runtime-darwin-x64': 0.0.1-rc.7
@@ -205,7 +205,7 @@ snapshots:
 
   '@bufbuild/protobuf@2.12.1': {}
 
-  '@grpc/grpc-js@1.14.4':
+  '@grpc/grpc-js@1.14.5':
     dependencies:
       '@grpc/proto-loader': 0.8.1
       '@js-sdsl/ordered-map': 4.4.2

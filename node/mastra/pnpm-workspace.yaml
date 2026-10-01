@@ -16,6 +16,17 @@ overrides:
   # keeps the resolution explicit and prevents a future relock from drifting
   # back below the fix.
   qs: ^6.16.0
+  # GHSA-m9gg-hp2v-232j (high: in certain configurations getAuthContext returns
+  # unauthorized certificates as though they were authorized) and
+  # GHSA-f596-whhp-79r4, both fixed in 1.14.5. Transitive only -- no
+  # package.json in this repo declares @grpc/grpc-js, so Dependabot's security
+  # updates could open no PR for it. Two parents pull it here and both already
+  # admit the fix (@agent-assembly/sdk@0.0.1-rc.7 at ^1.14.4, @a2a-js/sdk at
+  # ^1.11.0), so this floor pins rather than unblocks. Unscoped is safe because
+  # only one instance resolves and every parent is on 1.x; see the sibling
+  # examples, which carry the same bump as a plain relock because they have no
+  # pnpm-workspace.yaml to put a floor in.
+  '@grpc/grpc-js': ^1.14.5
 
 onlyBuiltDependencies:
   - '@agent-assembly/sdk'
