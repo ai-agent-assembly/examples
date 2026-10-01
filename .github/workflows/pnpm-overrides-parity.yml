@@ -1,4 +1,5 @@
-# pnpm Overrides Parity — assert pnpm-workspace.yaml and pnpm-lock.yaml agree.
+# pnpm Config Parity — assert each pnpm-workspace.yaml agrees with its lockfile
+# and declares its build decision to both pnpm majors.
 #
 # WHY THIS EXISTS
 # ----------------
@@ -10,6 +11,16 @@
 # the cause directly instead of leaving it to be diagnosed from a resolver
 # error. `scripts/check_pnpm_overrides_parity.py` has more detail.
 #
+# AAASM-6243: the second check covers a defect the install step provably
+# cannot see. pnpm 11 reads a directory's build-script decision only from
+# `allowBuilds`, so nine directories here failed `pnpm install` with
+# ERR_PNPM_IGNORED_BUILDS — including three that already declared
+# `onlyBuiltDependencies` and looked correct. CI pins pnpm 10, and every
+# `pnpm install` in these workflows passes `--ignore-scripts`, which suppresses
+# that error outright; so not even bumping the pin to `version: 11` would
+# surface it. `scripts/check_pnpm_build_decision_parity.py` has more detail,
+# including what it deliberately does not claim to catch.
+#
 # WHY THERE IS NO `paths:` FILTER
 # --------------------------------
 # The defect this guards against is a relock landing in any directory that
@@ -17,7 +28,7 @@
 # runs on every PR and push to main rather than trying to predict which paths
 # matter. It is stdlib-only and finishes in well under a second.
 
-name: pnpm Overrides Parity
+name: pnpm Config Parity
 
 on:
   pull_request:
@@ -34,7 +45,7 @@ permissions:
 
 jobs:
   parity:
-    name: pnpm overrides parity
+    name: pnpm config parity
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
@@ -43,8 +54,16 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Run the checker's unit tests
-        run: python -m unittest scripts.test_check_pnpm_overrides_parity
+      - name: Run both checkers' unit tests
+        run: |
+          python -m unittest \
+            scripts.test_check_pnpm_overrides_parity \
+            scripts.test_check_pnpm_build_decision_parity
 
       - name: Assert pnpm-workspace.yaml and pnpm-lock.yaml overrides agree
         run: python scripts/check_pnpm_overrides_parity.py
+
+      - name: Assert each build decision is declared to both pnpm majors
+        # Invoked as a module, not as a path: it imports its sibling checker's
+        # parsing helpers, so it needs the repo root on sys.path.
+        run: python -m scripts.check_pnpm_build_decision_parity

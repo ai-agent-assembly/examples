@@ -28,7 +28,16 @@ overrides:
   # pnpm-workspace.yaml to put a floor in.
   '@grpc/grpc-js': ^1.14.5
 
+# AAASM-6243: pnpm 11 ignores onlyBuiltDependencies and reads allowBuilds
+# instead, so this directory failed `pnpm install` with
+# ERR_PNPM_IGNORED_BUILDS despite already declaring the list below. Both
+# keys are kept: pnpm 10 honours the first, pnpm 11 the second.
 onlyBuiltDependencies:
   - '@agent-assembly/sdk'
   - esbuild
   - protobufjs
+
+allowBuilds:
+  '@agent-assembly/sdk': true
+  esbuild: true
+  protobufjs: true

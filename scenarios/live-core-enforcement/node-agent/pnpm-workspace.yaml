@@ -1,0 +1,21 @@
+# AAASM-6243: pnpm 11 refuses to install a directory that has not made an
+# explicit decision about its dependencies' build scripts, and it reads that
+# decision only from "allowBuilds" here -- not from package.json's "pnpm" field
+# (dropped in pnpm 11) and not from "onlyBuiltDependencies" (pnpm 10's key,
+# which pnpm 11 ignores). Without this file `pnpm install` exits 1 with
+# ERR_PNPM_IGNORED_BUILDS, so the documented setup step in this sample's README
+# fails for anyone on pnpm 11.
+#
+# Both keys are declared deliberately. pnpm 10 honours onlyBuiltDependencies
+# and pnpm 11 honours allowBuilds; each ignores the other's. Declaring only one
+# would leave the other major either failing (11) or silently skipping the
+# postinstall scripts these packages need (10). CI pins pnpm 10 today, so both
+# are load-bearing.
+
+onlyBuiltDependencies:
+  - '@agent-assembly/sdk'
+  - protobufjs
+
+allowBuilds:
+  '@agent-assembly/sdk': true
+  protobufjs: true
