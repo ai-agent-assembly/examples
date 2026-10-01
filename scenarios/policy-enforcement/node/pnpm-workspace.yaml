@@ -8,5 +8,12 @@ overrides:
   esbuild: '>=0.28.1'
   vite: ^7.3.5
 
+# AAASM-6243: pnpm 11 ignores onlyBuiltDependencies and reads allowBuilds
+# instead, so `pnpm install` here exited 1 with ERR_PNPM_IGNORED_BUILDS
+# despite the list below already naming esbuild. Both keys are kept:
+# pnpm 10 honours the first, pnpm 11 the second.
 onlyBuiltDependencies:
   - esbuild
+
+allowBuilds:
+  esbuild: true
