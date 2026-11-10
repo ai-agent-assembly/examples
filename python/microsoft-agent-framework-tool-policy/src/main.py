@@ -122,8 +122,9 @@ async def _run_demo(*, mock: bool) -> None:
             api_key=api_key,
             agent_id="microsoft-agent-framework-demo-agent",
             mode="sdk-only",
-            # No gateway here: the default posture fails closed when registration
-            # can't reach one, so an offline demo must name its dry-run posture.
+            # No gateway here, so the offline demo runs in observe, the dry-run posture:
+            # every action proceeds, the SDK's local checks fail open, and a gateway
+            # would only record what it would have blocked.
             enforcement_mode="observe",
         ) as ctx:
             # endregion
