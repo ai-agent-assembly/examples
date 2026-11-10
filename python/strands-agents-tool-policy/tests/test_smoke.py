@@ -81,8 +81,8 @@ def test_init_assembly_sdk_only_requires_no_gateway(
             gateway_url="http://localhost:8080",
             agent_id="test-strands-agent",
             mode="sdk-only",
-            # AAASM-6204: the default posture fails closed when registration
-            # can't reach a gateway, and this test asserts the offline path.
+            # AAASM-6204: this test asserts the offline path, so it runs in observe, the
+            # dry-run posture where every action proceeds and local checks fail open.
             enforcement_mode="observe",
         )
         try:
